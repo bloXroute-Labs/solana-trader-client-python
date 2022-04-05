@@ -1,4 +1,4 @@
-from typing import Type, TYPE_CHECKING
+from typing import Type, TYPE_CHECKING, AsyncGenerator
 
 import grpclib.const
 from grpclib import client
@@ -15,7 +15,7 @@ class GrpcProvider(Provider):
 
     async def request(
         self, route: str, request: "IProtoMessage", response_type: Type[T]
-    ):
+    ) -> T:
         async with self.channel.request(
             route, grpclib.const.Cardinality.UNARY_UNARY, type(request), response_type
         ) as stream:
@@ -26,7 +26,7 @@ class GrpcProvider(Provider):
 
     async def stream(
         self, route: str, request: "IProtoMessage", response_type: Type[T]
-    ):
+    ) -> AsyncGenerator[T, None]:
         # TODO: request kwargs
         async with self.channel.request(
             route, grpclib.const.Cardinality.UNARY_STREAM, type(request), response_type

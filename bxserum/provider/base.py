@@ -16,13 +16,13 @@ class Provider(ABC):
     @abstractmethod
     async def request(
         self, route: str, request: "IProtoMessage", response_type: Type[T]
-    ):
+    ) -> T:
         pass
 
     @abstractmethod
     async def stream(
         self, route: str, request: "IProtoMessage", response_type: Type[T]
-    ):
+    ) -> AsyncGenerator[T, None]:
         pass
 
 
@@ -55,4 +55,5 @@ class ApiWrapper(proto.ApiStub):
         deadline: Optional["Deadline"] = None,
         metadata: Optional["_MetadataLike"] = None,
     ) -> AsyncGenerator[T, None]:
-        return await self._provider.stream(route, request, response_type)
+        async for response in self._provider.stream(route, request, response_type):
+            yield response

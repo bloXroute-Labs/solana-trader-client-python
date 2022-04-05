@@ -9,6 +9,45 @@ import betterproto
 import grpclib
 
 
+class MarketStatus(betterproto.Enum):
+    MS_UNKNOWN = 0
+    MS_ONLINE = 1
+
+
+class Side(betterproto.Enum):
+    S_UNKNOWN = 0
+    S_BID = 1
+    S_ASK = 2
+
+
+class OrderType(betterproto.Enum):
+    OT_MARKET = 0
+    OT_LIMIT = 1
+    OT_IOC = 2
+    OT_POST = 3
+
+
+class OrderStatus(betterproto.Enum):
+    OS_UNKNOWN = 0
+    OS_OPEN = 1
+    OS_PARTIAL_FILL = 2
+    OS_FILLED = 3
+    OS_CANCELLED = 4
+    OS_PENDING = 5
+
+
+class Direction(betterproto.Enum):
+    D_ASCENDING = 0
+    D_DESCENDING = 1
+
+
+class Step(betterproto.Enum):
+    STEP0 = 0
+    STEP1 = 1
+    STEP2 = 2
+    STEP3 = 3
+
+
 @dataclass
 class GetMarketsRequest(betterproto.Message):
     pass
@@ -16,9 +55,16 @@ class GetMarketsRequest(betterproto.Message):
 
 @dataclass
 class GetMarketsResponse(betterproto.Message):
-    markets: Dict[str, "Ticker"] = betterproto.map_field(
+    markets: Dict[str, "Market"] = betterproto.map_field(
         1, betterproto.TYPE_STRING, betterproto.TYPE_MESSAGE
     )
+
+
+@dataclass
+class Market(betterproto.Message):
+    market: str = betterproto.string_field(1)
+    status: "MarketStatus" = betterproto.enum_field(2)
+    address: str = betterproto.string_field(3)
 
 
 @dataclass
@@ -34,7 +80,7 @@ class GetTickerResponse(betterproto.Message):
 @dataclass
 class Ticker(betterproto.Message):
     market: str = betterproto.string_field(1)
-    status: str = betterproto.string_field(2)
+    status: "MarketStatus" = betterproto.enum_field(2)
     market_address: str = betterproto.string_field(3)
     close: float = betterproto.double_field(4)
     open: float = betterproto.double_field(5)
@@ -151,15 +197,15 @@ class TokenBalance(betterproto.Message):
 class PostOrderRequest(betterproto.Message):
     address: str = betterproto.string_field(1)
     market: str = betterproto.string_field(2)
-    type: str = betterproto.string_field(3)
-    amount: float = betterproto.double_field(4)
-    price: float = betterproto.double_field(5)
+    side: "Side" = betterproto.enum_field(3)
+    type: List["OrderType"] = betterproto.enum_field(4)
+    amount: float = betterproto.double_field(5)
+    price: float = betterproto.double_field(6)
 
 
 @dataclass
 class PostOrderResponse(betterproto.Message):
-    status: str = betterproto.string_field(1)
-    order_i_d: str = betterproto.string_field(2)
+    order_i_d: str = betterproto.string_field(1)
 
 
 @dataclass
@@ -169,7 +215,7 @@ class PostCancelOrderRequest(betterproto.Message):
 
 @dataclass
 class PostCancelOrderResponse(betterproto.Message):
-    status: str = betterproto.string_field(1)
+    order_i_d: str = betterproto.string_field(1)
 
 
 @dataclass
@@ -179,7 +225,7 @@ class PostCancelAllRequest(betterproto.Message):
 
 @dataclass
 class PostCancelAllResponse(betterproto.Message):
-    statuses: List[str] = betterproto.string_field(1)
+    order_i_ds: List[str] = betterproto.string_field(1)
 
 
 @dataclass
@@ -189,8 +235,7 @@ class PostSettleRequest(betterproto.Message):
 
 @dataclass
 class PostSettleResponse(betterproto.Message):
-    status: str = betterproto.string_field(1)
-    settlement: "Settlement" = betterproto.message_field(2)
+    settlement: "Settlement" = betterproto.message_field(1)
 
 
 @dataclass
@@ -203,12 +248,12 @@ class Settlement(betterproto.Message):
 @dataclass
 class GetOrdersRequest(betterproto.Message):
     market: str = betterproto.string_field(1)
-    status: str = betterproto.string_field(2)
-    side: str = betterproto.string_field(3)
-    types: List[str] = betterproto.string_field(4)
+    status: "OrderStatus" = betterproto.enum_field(2)
+    side: "Side" = betterproto.enum_field(3)
+    types: List["OrderType"] = betterproto.enum_field(4)
     from_: datetime = betterproto.message_field(5)
     limit: int = betterproto.int32_field(6)
-    direction: str = betterproto.string_field(7)
+    direction: "Direction" = betterproto.enum_field(7)
 
 
 @dataclass
@@ -220,28 +265,28 @@ class GetOrdersResponse(betterproto.Message):
 class Order(betterproto.Message):
     order_i_d: str = betterproto.string_field(1)
     market: str = betterproto.string_field(2)
-    side: str = betterproto.string_field(3)
-    types: List[str] = betterproto.string_field(4)
+    side: "Side" = betterproto.enum_field(3)
+    types: List["OrderType"] = betterproto.enum_field(4)
     price: float = betterproto.double_field(5)
     size: float = betterproto.double_field(6)
     remaining_size: float = betterproto.double_field(7)
     created_at: datetime = betterproto.message_field(8)
-    status: str = betterproto.string_field(9)
+    status: "OrderStatus" = betterproto.enum_field(9)
 
 
 @dataclass
 class GetOpenOrdersRequest(betterproto.Message):
     market: str = betterproto.string_field(1)
-    side: str = betterproto.string_field(2)
-    types: List[str] = betterproto.string_field(3)
+    side: "Side" = betterproto.enum_field(2)
+    types: List["OrderType"] = betterproto.enum_field(3)
     from_: datetime = betterproto.message_field(4)
     limit: int = betterproto.int32_field(5)
-    direction: str = betterproto.string_field(6)
+    direction: "Direction" = betterproto.enum_field(6)
 
 
 @dataclass
 class GetOpenOrdersResponse(betterproto.Message):
-    status: str = betterproto.string_field(1)
+    status: "OrderStatus" = betterproto.enum_field(1)
     orders: List["Order"] = betterproto.message_field(2)
 
 
@@ -252,7 +297,7 @@ class GetOrderByIDRequest(betterproto.Message):
 
 @dataclass
 class GetOrderByIDResponse(betterproto.Message):
-    status: str = betterproto.string_field(1)
+    status: "OrderStatus" = betterproto.enum_field(1)
     order: "Order" = betterproto.message_field(2)
 
 
@@ -283,7 +328,7 @@ class GetTickerStreamResponse(betterproto.Message):
 class GetMarketDepthRequest(betterproto.Message):
     market: str = betterproto.string_field(1)
     depth: int = betterproto.int32_field(2)
-    step: int = betterproto.int32_field(3)
+    step: "Step" = betterproto.enum_field(3)
 
 
 @dataclass
@@ -402,7 +447,8 @@ class ApiStub(betterproto.ServiceStub):
         *,
         address: str = "",
         market: str = "",
-        type: str = "",
+        side: "Side" = 0,
+        type: List["OrderType"] = [],
         amount: float = 0,
         price: float = 0,
     ) -> PostOrderResponse:
@@ -411,6 +457,7 @@ class ApiStub(betterproto.ServiceStub):
         request = PostOrderRequest()
         request.address = address
         request.market = market
+        request.side = side
         request.type = type
         request.amount = amount
         request.price = price
@@ -457,12 +504,12 @@ class ApiStub(betterproto.ServiceStub):
         self,
         *,
         market: str = "",
-        status: str = "",
-        side: str = "",
-        types: List[str] = [],
+        status: "OrderStatus" = 0,
+        side: "Side" = 0,
+        types: List["OrderType"] = [],
         from_: Optional[datetime] = None,
         limit: int = 0,
-        direction: str = "",
+        direction: "Direction" = 0,
     ) -> GetOrdersResponse:
         request = GetOrdersRequest()
         request.market = market
@@ -484,11 +531,11 @@ class ApiStub(betterproto.ServiceStub):
         self,
         *,
         market: str = "",
-        side: str = "",
-        types: List[str] = [],
+        side: "Side" = 0,
+        types: List["OrderType"] = [],
         from_: Optional[datetime] = None,
         limit: int = 0,
-        direction: str = "",
+        direction: "Direction" = 0,
     ) -> GetOpenOrdersResponse:
         request = GetOpenOrdersRequest()
         request.market = market
@@ -525,7 +572,7 @@ class ApiStub(betterproto.ServiceStub):
             GetUnsettledResponse,
         )
 
-    async def get_orderbook_updates(
+    async def get_orderbook_stream(
         self, *, market: str = "", limit: int = 0
     ) -> AsyncGenerator[GetOrderbookStreamResponse, None]:
         """streaming endpoints"""
@@ -535,38 +582,38 @@ class ApiStub(betterproto.ServiceStub):
         request.limit = limit
 
         async for response in self._unary_stream(
-            "/api.Api/GetOrderbookUpdates",
+            "/api.Api/GetOrderbookStream",
             request,
             GetOrderbookStreamResponse,
         ):
             yield response
 
-    async def get_ticker_updates(
+    async def get_ticker_stream(
         self, *, market: str = ""
     ) -> AsyncGenerator[GetTickerStreamResponse, None]:
         request = GetTickerRequest()
         request.market = market
 
         async for response in self._unary_stream(
-            "/api.Api/GetTickerUpdates",
+            "/api.Api/GetTickerStream",
             request,
             GetTickerStreamResponse,
         ):
             yield response
 
-    async def get_market_depth_updates(
+    async def get_market_depth_stream(
         self,
     ) -> AsyncGenerator[GetMarketDepthStreamResponse, None]:
         request = GetMarketsRequest()
 
         async for response in self._unary_stream(
-            "/api.Api/GetMarketDepthUpdates",
+            "/api.Api/GetMarketDepthStream",
             request,
             GetMarketDepthStreamResponse,
         ):
             yield response
 
-    async def get_trade_updates(
+    async def get_trade_stream(
         self, *, market: str = "", from_: Optional[datetime] = None, limit: int = 0
     ) -> AsyncGenerator[GetTradesStreamResponse, None]:
         request = GetTradesRequest()
@@ -576,7 +623,7 @@ class ApiStub(betterproto.ServiceStub):
         request.limit = limit
 
         async for response in self._unary_stream(
-            "/api.Api/GetTradeUpdates",
+            "/api.Api/GetTradeStream",
             request,
             GetTradesStreamResponse,
         ):

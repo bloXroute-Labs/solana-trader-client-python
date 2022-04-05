@@ -1,20 +1,22 @@
 import asyncio
 
-from grpclib import client
-
-from bxserum import proto
+import bxserum
+from bxserum import provider
 
 
 async def main():
-    async with client.Channel("127.0.0.1", 7002) as channel:
+    p = provider.GrpcProvider("127.0.0.1", 7002)
+    api = bxserum.serum(p)
+
+    try:
         print("checking request...")
-        service = proto.ApiStub(channel)
-        result = await service.get_orderbook(market="ETHUSDT")
-        print(result)
+        print(await api.get_orderbook(market="ETHUSDT"))
 
         print("checking stream...")
-        async for response in service.get_orderbook_updates(market="ETHUSDC"):
+        async for response in api.get_orderbook_stream(market="ETHUSDC"):
             print(response)
+    finally:
+        p.close()
 
 
 if __name__ == "__main__":

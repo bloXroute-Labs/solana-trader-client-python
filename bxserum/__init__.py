@@ -1,5 +1,5 @@
-from bxserum import proto
+from bxserum import proto, provider
 
 
-def bxserum() -> proto.ApiStub:
-    pass
+def serum(connection_provider: provider.Provider) -> proto.ApiStub:
+    return provider.ApiWrapper(connection_provider)
