@@ -1,39 +1,29 @@
-from typing import Type, TYPE_CHECKING, AsyncGenerator
+from typing import TYPE_CHECKING, Optional
 
-import grpclib.const
 from grpclib import client
 
-from bxserum.provider.base import Provider, T
+from bxserum.provider.base import Provider
 
 if TYPE_CHECKING:
+    # noinspection PyUnresolvedReferences,PyProtectedMember
     from grpclib._protocols import IProtoMessage
+
+    # noinspection PyProtectedMember
+    from betterproto import _MetadataLike, Deadline
 
 
 class GrpcProvider(Provider):
-    def __init__(self, ip: str, port: int):
-        self.channel = client.Channel(ip, port)
-
-    async def request(
-        self, route: str, request: "IProtoMessage", response_type: Type[T]
-    ) -> T:
-        async with self.channel.request(
-            route, grpclib.const.Cardinality.UNARY_UNARY, type(request), response_type
-        ) as stream:
-            await stream.send_message(request, end=True)
-            response = await stream.recv_message()
-            assert response is not None
-            return response
-
-    async def stream(
-        self, route: str, request: "IProtoMessage", response_type: Type[T]
-    ) -> AsyncGenerator[T, None]:
-        # TODO: request kwargs
-        async with self.channel.request(
-            route, grpclib.const.Cardinality.UNARY_STREAM, type(request), response_type
-        ) as stream:
-            await stream.send_message(request, end=True)
-            async for message in stream:
-                yield message
+    def __init__(
+        self,
+        ip: str,
+        port: int,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["_MetadataLike"] = None,
+    ):
+        channel = client.Channel(ip, port)
+        super().__init__(channel, timeout=timeout, deadline=deadline, metadata=metadata)
 
     def close(self):
         self.channel.close()

@@ -1,2 +1,3 @@
-from .base import ApiWrapper, Provider
+from .base import Provider
 from .grpc import GrpcProvider
+from .http import HttpProvider
