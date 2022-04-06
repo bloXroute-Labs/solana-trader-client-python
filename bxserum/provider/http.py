@@ -1,5 +1,7 @@
 from typing import Type, AsyncGenerator, Optional, TYPE_CHECKING
 
+import aiohttp
+
 from bxserum import proto
 from bxserum.provider.base import Provider
 
@@ -16,13 +18,19 @@ class HttpProvider(Provider):
 
     # noinspection PyMissingConstructor
     def __init__(self, ip: str, port: int):
-        self.endpoint = f"http://{ip}:{port}"
+        self.endpoint = f"http://{ip}:{port}/api/v1"
 
     async def get_orderbook(
         self, *, market: str = "", limit: int = 0
     ) -> proto.GetOrderbookResponse:
-        pass
+        request = proto.GetOrderBookRequest()
+        request.market = market
+        request.limit = limit
 
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f"{self.endpoint}/market/orderbooks/{request.market}") as res:
+                response = await res.json()
+                return proto.GetOrderbookResponse().from_dict(response)
 
     async def _unary_stream(
         self,
@@ -34,4 +42,5 @@ class HttpProvider(Provider):
         deadline: Optional["Deadline"] = None,
         metadata: Optional["_MetadataLike"] = None,
     ) -> AsyncGenerator["T", None]:
+        yield NotImplementedError("streams not supported for HTTP")
         raise NotImplementedError("streams not supported for HTTP")

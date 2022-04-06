@@ -5,11 +5,20 @@ from bxserum import provider
 
 
 async def main():
-    await http()
+    # await http()
+    await ws()
+    # await grpc()
 
 
 async def http():
     p = provider.HttpProvider("127.0.0.1", 7000)
+    api = bxserum.serum(p)
+
+    await do_things(api)
+
+
+async def ws():
+    p = provider.WsProvider("127.0.0.1", 7001)
     api = bxserum.serum(p)
 
     await do_things(api)
@@ -29,9 +38,9 @@ async def do_things(api: bxserum.Api):
     print("checking request...")
     print(await api.get_orderbook(market="ETHUSDT"))
 
-    print("checking stream...")
-    async for response in api.get_orderbook_stream(market="ETHUSDT"):
-        print(response)
+    # print("checking stream...")
+    # async for response in api.get_orderbook_stream(market="ETHUSDT"):
+    #     print(response)
 
 
 if __name__ == "__main__":
