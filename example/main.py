@@ -35,12 +35,12 @@ async def grpc():
 
 
 async def do_things(api: bxserum.Api):
-    print("checking request...")
-    print(await api.get_orderbook(market="ETHUSDT"))
+    # print("checking request...")
+    # print(await api.get_orderbook(market="ETHUSDT"))
 
-    # print("checking stream...")
-    # async for response in api.get_orderbook_stream(market="ETHUSDT"):
-    #     print(response)
+    print("checking stream...")
+    async for response in api.get_orderbook_stream(market="ETHUSDT"):
+        print(response)
 
 
 if __name__ == "__main__":

@@ -47,5 +47,7 @@ class WsProvider(Provider):
     ) -> AsyncGenerator["T", None]:
         async with aiohttp.ClientSession() as session:
             async with session.ws_connect(self.endpoint) as ws:
+                ws_endpoint = route.split("/")[-1]
+                await ws.send_json(JsonRpcRequest("1", ws_endpoint, request).to_json())
                 async for msg in ws:
                     yield msg

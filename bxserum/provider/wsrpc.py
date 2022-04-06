@@ -29,7 +29,7 @@ class JsonRpcRequest:
             "params": self.params.to_dict(include_default_values=True),
         }
 
-class JsonRpcResponse:
-    id: Optional[str]
-    result: Optional[Any]
-    error: Optional[RpcError]
+# class JsonRpcResponse:
+#     id: Optional[str]
+#     result: Optional[Any]
+#     error: Optional[RpcError]
