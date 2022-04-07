@@ -15,19 +15,14 @@ async def http():
     api = await bxserum.serum(p)
 
     try:
-        await do_things(api)
+        await do(api)
     finally:
         await p.close()
 
 
 async def ws():
-    p = provider.WsProvider("127.0.0.1", 7001)
-    api = await bxserum.serum(p)
-
-    try:
-        await do_things(api)
-    finally:
-        await p.close()
+    async with provider.WsProvider("127.0.0.1", 7001) as api:
+        await do(api)
 
 
 async def grpc():
@@ -35,12 +30,12 @@ async def grpc():
     api = await bxserum.serum(p)
 
     try:
-        await do_things(api)
+        await do(api)
     finally:
         await p.close()
 
 
-async def do_things(api: bxserum.Api):
+async def do(api: bxserum.Api):
     print("checking request...")
     print(await api.get_orderbook(market="ETHUSDT"))
 
