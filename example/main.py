@@ -21,7 +21,7 @@ async def http():
 
 
 async def ws():
-    async with provider.WsProvider("127.0.0.1", 7001) as api:
+    async with provider.WsProvider() as api:
         await do(api)
 
 
