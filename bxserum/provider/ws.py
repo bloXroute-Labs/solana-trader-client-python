@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Type, Optional, AsyncGenerator
 import aiohttp
 
 from bxserum.provider import Provider
+from bxserum.provider.base import NotConnectedException
 from bxserum.provider.wsrpc import JsonRpcRequest, JsonRpcResponse
 
 if TYPE_CHECKING:
@@ -16,16 +17,33 @@ if TYPE_CHECKING:
 
 
 class WsProvider(Provider):
+    _ws: Optional[aiohttp.ClientWebSocketResponse] = None
+
+    _endpoint: str
+    _session: aiohttp.ClientSession
+    _request_id: int
+    _request_lock: asyncio.Lock
+
     # noinspection PyMissingConstructor
     def __init__(self, ip: str, port: int):
-        self.endpoint = f"ws://{ip}:{port}/ws"
-        self.request_id = 1
-        self.request_lock = asyncio.Lock()
+        self._endpoint = f"ws://{ip}:{port}/ws"
+        self._session = aiohttp.ClientSession()
+        self._request_id = 1
+        self._request_lock = asyncio.Lock()
+
+    async def connect(self):
+        if self._ws is None:
+            self._ws = await self._session.ws_connect(self._endpoint)
+
+    async def close(self):
+        ws = self._ws
+        if ws is not None:
+            await ws.close()
 
     async def _next_request_id(self) -> int:
-        async with self.request_lock:
-            previous = self.request_id
-            self.request_id += 1
+        async with self._request_lock:
+            previous = self._request_id
+            self._request_id += 1
             return previous
 
     async def _create_request(
@@ -45,14 +63,16 @@ class WsProvider(Provider):
         deadline: Optional["Deadline"] = None,
         metadata: Optional["_MetadataLike"] = None,
     ) -> "T":
-        async with aiohttp.ClientSession() as session:
-            async with session.ws_connect(self.endpoint) as ws:
-                request = await self._create_request(route, request)
-                await ws.send_json(request.to_json())
+        ws = self._ws
+        if ws is None:
+            raise NotConnectedException()
 
-                raw_result = await ws.receive_json()
-                rpc_result = JsonRpcResponse.from_json(raw_result)
-                return _deserialize_result(rpc_result, response_type)
+        request = await self._create_request(route, request)
+        await ws.send_json(request.to_json())
+
+        raw_result = await ws.receive_json()
+        rpc_result = JsonRpcResponse.from_json(raw_result)
+        return _deserialize_result(rpc_result, response_type)
 
     async def _unary_stream(
         self,
@@ -64,15 +84,18 @@ class WsProvider(Provider):
         deadline: Optional["Deadline"] = None,
         metadata: Optional["_MetadataLike"] = None,
     ) -> AsyncGenerator["T", None]:
-        async with aiohttp.ClientSession() as session:
-            async with session.ws_connect(self.endpoint) as ws:
-                request = await self._create_request(route, request)
-                await ws.send_json(request.to_json())
+        ws = self._ws
+        if ws is None:
+            raise NotConnectedException()
 
-                msg: aiohttp.WSMessage
-                async for msg in ws:
-                    rpc_result = JsonRpcResponse.from_json(json.loads(msg.data))
-                    yield _deserialize_result(rpc_result, response_type)
+        request = await self._create_request(route, request)
+        await ws.send_json(request.to_json())
+
+        # TODO: this doesn't really work since it'll intercept all kinds of message
+        msg: aiohttp.WSMessage
+        async for msg in ws:
+            rpc_result = JsonRpcResponse.from_json(json.loads(msg.data))
+            yield _deserialize_result(rpc_result, response_type)
 
 
 def _ws_endpoint(route: str) -> str:

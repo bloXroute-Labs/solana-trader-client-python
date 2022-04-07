@@ -12,26 +12,32 @@ async def main():
 
 async def http():
     p = provider.HttpProvider("127.0.0.1", 7000)
-    api = bxserum.serum(p)
-
-    await do_things(api)
-
-
-async def ws():
-    p = provider.WsProvider("127.0.0.1", 7001)
-    api = bxserum.serum(p)
-
-    await do_things(api)
-
-
-async def grpc():
-    p = provider.GrpcProvider("127.0.0.1", 7002)
-    api = bxserum.serum(p)
+    api = await bxserum.serum(p)
 
     try:
         await do_things(api)
     finally:
-        p.close()
+        await p.close()
+
+
+async def ws():
+    p = provider.WsProvider("127.0.0.1", 7001)
+    api = await bxserum.serum(p)
+
+    try:
+        await do_things(api)
+    finally:
+        await p.close()
+
+
+async def grpc():
+    p = provider.GrpcProvider("127.0.0.1", 7002)
+    api = await bxserum.serum(p)
+
+    try:
+        await do_things(api)
+    finally:
+        await p.close()
 
 
 async def do_things(api: bxserum.Api):

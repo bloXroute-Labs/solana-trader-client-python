@@ -14,11 +14,19 @@ if TYPE_CHECKING:
 
 
 class HttpProvider(Provider):
-    endpoint: str
+    _endpoint: str
+    _session: aiohttp.ClientSession
 
     # noinspection PyMissingConstructor
     def __init__(self, ip: str, port: int):
-        self.endpoint = f"http://{ip}:{port}/api/v1"
+        self._endpoint = f"http://{ip}:{port}/api/v1"
+        self._session = aiohttp.ClientSession()
+
+    async def connect(self):
+        pass
+
+    async def close(self):
+        await self._session.close()
 
     async def get_orderbook(
         self, *, market: str = "", limit: int = 0
@@ -27,10 +35,11 @@ class HttpProvider(Provider):
         request.market = market
         request.limit = limit
 
-        async with aiohttp.ClientSession() as session:
-            async with session.get(f"{self.endpoint}/market/orderbooks/{request.market}") as res:
-                response = await res.json()
-                return proto.GetOrderbookResponse().from_dict(response)
+        async with self._session.get(
+            f"{self._endpoint}/market/orderbooks/{request.market}"
+        ) as res:
+            response = await res.json()
+            return proto.GetOrderbookResponse().from_dict(response)
 
     async def _unary_stream(
         self,
@@ -42,5 +51,6 @@ class HttpProvider(Provider):
         deadline: Optional["Deadline"] = None,
         metadata: Optional["_MetadataLike"] = None,
     ) -> AsyncGenerator["T", None]:
+        # seems to require yield some result otherwise this isn't an async generator?
         yield NotImplementedError("streams not supported for HTTP")
         raise NotImplementedError("streams not supported for HTTP")

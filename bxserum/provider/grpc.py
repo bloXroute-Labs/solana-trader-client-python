@@ -13,6 +13,11 @@ if TYPE_CHECKING:
 
 
 class GrpcProvider(Provider):
+    channel: Optional[client.Channel] = None
+
+    _ip: str
+    _port: int
+
     def __init__(
         self,
         ip: str,
@@ -22,8 +27,15 @@ class GrpcProvider(Provider):
         deadline: Optional["Deadline"] = None,
         metadata: Optional["_MetadataLike"] = None,
     ):
-        channel = client.Channel(ip, port)
-        super().__init__(channel, timeout=timeout, deadline=deadline, metadata=metadata)
+        self._ip = ip
+        self._port = port
+        super().__init__(None, timeout=timeout, deadline=deadline, metadata=metadata)
 
-    def close(self):
-        self.channel.close()
+    async def connect(self):
+        if self.channel is None:
+            self.channel = client.Channel(self._ip, self._port)
+
+    async def close(self):
+        channel = self.channel
+        if channel is not None:
+            self.channel.close()
