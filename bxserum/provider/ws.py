@@ -1,9 +1,11 @@
+import asyncio
+import json
 from typing import TYPE_CHECKING, Type, Optional, AsyncGenerator
 
 import aiohttp
 
 from bxserum.provider import Provider
-from bxserum.provider.wsrpc import JsonRpcRequest
+from bxserum.provider.wsrpc import JsonRpcRequest, JsonRpcResponse
 
 if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences,PyProtectedMember
@@ -17,6 +19,21 @@ class WsProvider(Provider):
     # noinspection PyMissingConstructor
     def __init__(self, ip: str, port: int):
         self.endpoint = f"ws://{ip}:{port}/ws"
+        self.request_id = 1
+        self.request_lock = asyncio.Lock()
+
+    async def _next_request_id(self) -> int:
+        async with self.request_lock:
+            previous = self.request_id
+            self.request_id += 1
+            return previous
+
+    async def _create_request(
+        self, route: str, request: "IProtoMessage"
+    ) -> JsonRpcRequest:
+        return JsonRpcRequest(
+            await self._next_request_id(), _ws_endpoint(route), request
+        )
 
     async def _unary_unary(
         self,
@@ -30,10 +47,12 @@ class WsProvider(Provider):
     ) -> "T":
         async with aiohttp.ClientSession() as session:
             async with session.ws_connect(self.endpoint) as ws:
-                ws_endpoint = route.split("/")[-1]
-                await ws.send_json(JsonRpcRequest("1", ws_endpoint, request).to_json())
-                result = await ws.receive_json()
-                return result
+                request = await self._create_request(route, request)
+                await ws.send_json(request.to_json())
+
+                raw_result = await ws.receive_json()
+                rpc_result = JsonRpcResponse.from_json(raw_result)
+                return _deserialize_result(rpc_result, response_type)
 
     async def _unary_stream(
         self,
@@ -47,7 +66,18 @@ class WsProvider(Provider):
     ) -> AsyncGenerator["T", None]:
         async with aiohttp.ClientSession() as session:
             async with session.ws_connect(self.endpoint) as ws:
-                ws_endpoint = route.split("/")[-1]
-                await ws.send_json(JsonRpcRequest("1", ws_endpoint, request).to_json())
+                request = await self._create_request(route, request)
+                await ws.send_json(request.to_json())
+
+                msg: aiohttp.WSMessage
                 async for msg in ws:
-                    yield msg
+                    rpc_result = JsonRpcResponse.from_json(json.loads(msg.data))
+                    yield _deserialize_result(rpc_result, response_type)
+
+
+def _ws_endpoint(route: str) -> str:
+    return route.split("/")[-1]
+
+
+def _deserialize_result(rpc_response: JsonRpcResponse, response_type: Type["T"]) -> "T":
+    return response_type().from_dict(rpc_response.result)
