@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, Optional
 from grpclib import client
 
 from bxserum.provider.base import Provider
+from bxserum.provider.constants import DEFAULT_HOST, DEFAULT_GRPC_PORT
 
 if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences,PyProtectedMember
@@ -15,25 +16,25 @@ if TYPE_CHECKING:
 class GrpcProvider(Provider):
     channel: Optional[client.Channel] = None
 
-    _ip: str
+    _host: str
     _port: int
 
     def __init__(
         self,
-        ip: str,
-        port: int,
+        host: str = DEFAULT_HOST,
+        port: int = DEFAULT_GRPC_PORT,
         *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["_MetadataLike"] = None,
     ):
-        self._ip = ip
+        self._host = host
         self._port = port
         super().__init__(None, timeout=timeout, deadline=deadline, metadata=metadata)
 
     async def connect(self):
         if self.channel is None:
-            self.channel = client.Channel(self._ip, self._port)
+            self.channel = client.Channel(self._host, self._port)
 
     async def close(self):
         channel = self.channel

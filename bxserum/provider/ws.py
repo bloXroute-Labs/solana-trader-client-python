@@ -6,6 +6,7 @@ import aiohttp
 
 from bxserum.provider import Provider
 from bxserum.provider.base import NotConnectedException
+from bxserum.provider.constants import DEFAULT_HOST, DEFAULT_WS_PORT
 from bxserum.provider.wsrpc import JsonRpcRequest, JsonRpcResponse
 
 if TYPE_CHECKING:
@@ -25,8 +26,8 @@ class WsProvider(Provider):
     _request_lock: asyncio.Lock
 
     # noinspection PyMissingConstructor
-    def __init__(self, ip: str, port: int):
-        self._endpoint = f"ws://{ip}:{port}/ws"
+    def __init__(self, host: str = DEFAULT_HOST, port: int = DEFAULT_WS_PORT):
+        self._endpoint = f"ws://{host}:{port}/ws"
         self._session = aiohttp.ClientSession()
         self._request_id = 1
         self._request_lock = asyncio.Lock()
@@ -91,7 +92,7 @@ class WsProvider(Provider):
         request = await self._create_request(route, request)
         await ws.send_json(request.to_json())
 
-        # TODO: this doesn't really work since it'll intercept all kinds of message
+        # https://bloxroute.atlassian.net/browse/BX-4123 this doesn't really work since it'll intercept all kinds of message
         msg: aiohttp.WSMessage
         async for msg in ws:
             rpc_result = JsonRpcResponse.from_json(json.loads(msg.data))

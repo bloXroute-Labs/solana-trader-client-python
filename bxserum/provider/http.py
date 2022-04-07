@@ -4,6 +4,7 @@ import aiohttp
 
 from bxserum import proto
 from bxserum.provider.base import Provider
+from bxserum.provider.constants import DEFAULT_HOST, DEFAULT_HTTP_PORT
 
 if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences,PyProtectedMember
@@ -18,8 +19,8 @@ class HttpProvider(Provider):
     _session: aiohttp.ClientSession
 
     # noinspection PyMissingConstructor
-    def __init__(self, ip: str, port: int):
-        self._endpoint = f"http://{ip}:{port}/api/v1"
+    def __init__(self, host: str = DEFAULT_HOST, port: int = DEFAULT_HTTP_PORT):
+        self._endpoint = f"http://{host}:{port}/api/v1"
         self._session = aiohttp.ClientSession()
 
     async def connect(self):
