@@ -5,47 +5,41 @@ from bxserum import provider
 class TestHTTP(aiounittest.AsyncTestCase):
     async def test_orderbook_equivalent_input_formats(self):
         async with provider.HttpProvider() as http:
-            orderbook1 = await http.get_orderbook(market="ETH/USDT")
+            orderbook1 = await http.get_orderbook(market="ETHUSDT")
             self.assertIsNotNone(orderbook1)
-            self.assertEqual(orderbook1.market, "ETH/USDT")
+            self.assertEqual(orderbook1.market, "ETHUSDT")
 
-            orderbook2 = await http.get_orderbook(market="ETHUSDT")
+            orderbook2 = await http.get_orderbook(market="ETH-USDT")
             self.assertIsNotNone(orderbook2)
-            self.assertEqual(orderbook2.market, "ETHUSDT")
+            self.assertEqual(orderbook2.market, "ETH-USDT")
 
-            orderbook3 = await http.get_orderbook(market="ETH-USDT")
+            orderbook3 = await http.get_orderbook(market="ETH:USDT")
             self.assertIsNotNone(orderbook3)
-            self.assertEqual(orderbook3.market, "ETH-USDT")
-
-            orderbook4 = await http.get_orderbook(market="ETH:USDT")
-            self.assertIsNotNone(orderbook4)
-            self.assertEqual(orderbook4.market, "ETH:USDT")
+            self.assertEqual(orderbook3.market, "ETH:USDT")
 
             self.assertEqual(orderbook1.asks, orderbook2.asks)
             self.assertEqual(orderbook2.asks, orderbook3.asks)
-            self.assertEqual(orderbook3.asks, orderbook4.asks)
 
             self.assertEqual(orderbook1.bids, orderbook2.bids)
             self.assertEqual(orderbook2.bids, orderbook3.bids)
-            self.assertEqual(orderbook3.bids, orderbook4.bids)
 
     async def test_orderbook_different_markets(self):
         async with provider.HttpProvider() as http:
-            orderbook1 = await http.get_orderbook(market="ETH/USDT")
+            orderbook1 = await http.get_orderbook(market="ETHUSDT")
             self.assertIsNotNone(orderbook1)
-            self.assertEqual(orderbook1.market, "ETH/USDT")
+            self.assertEqual(orderbook1.market, "ETHUSDT")
 
-            orderbook2 = await http.get_orderbook(market="BTC/USDC")
+            orderbook2 = await http.get_orderbook(market="BTCUSDC")
             self.assertIsNotNone(orderbook2)
-            self.assertEqual(orderbook2.market, "BTC/USDC")
+            self.assertEqual(orderbook2.market, "BTCUSDC")
 
-            orderbook3 = await http.get_orderbook(market="MSRM/soUSDC")
+            orderbook3 = await http.get_orderbook(market="MSRMUSDC")
             self.assertIsNotNone(orderbook3)
-            self.assertEqual(orderbook3.market, "MSRM/soUSDC")
+            self.assertEqual(orderbook3.market, "MSRMUSDC")
 
-            orderbook4 = await http.get_orderbook(market="soYFI/soUSDC")
+            orderbook4 = await http.get_orderbook(market="xCOPEUSDC")
             self.assertIsNotNone(orderbook4)
-            self.assertEqual(orderbook4.market, "soYFI/soUSDC")
+            self.assertEqual(orderbook4.market, "xCOPEUSDC")
 
     async def test_markets(self):
         async with provider.HttpProvider() as http:
