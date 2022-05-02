@@ -36,15 +36,15 @@ class TestGRPC(aiounittest.AsyncTestCase):
             orderbook2 = await grpc.get_orderbook(market="BTC/USDC")
             self.assertIsNotNone(orderbook2)
             self.assertEqual(orderbook2.market, "BTC/USDC")
-            """
-            orderbook3 = await grpc.get_orderbook(market="MSRM/soUSDC")
+
+            orderbook3 = await grpc.get_orderbook(market="MSRM/USDC")
             self.assertIsNotNone(orderbook3)
-            self.assertEqual(orderbook3.market, "MSRM/soUSDC")
+            self.assertEqual(orderbook3.market, "MSRM/USDC")
             
-            orderbook4 = await grpc.get_orderbook(market="soYFI/soUSDC")
+            orderbook4 = await grpc.get_orderbook(market="xCOPE/USDC")
             self.assertIsNotNone(orderbook4)
-            self.assertEqual(orderbook4.market, "soYFI/soUSDC")
-            """
+            self.assertEqual(orderbook4.market, "xCOPE/USDC")
+
     async def test_markets(self):
         async with provider.GrpcProvider() as grpc:
             markets = await grpc.get_markets()
