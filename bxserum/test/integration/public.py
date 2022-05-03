@@ -1,7 +1,7 @@
 import unittest
-from bxserum import provider
+import bxserum
 
-async def test_orderbook_equivalent_input_formats(t: unittest.TestCase, p: provider.Provider):
+async def test_orderbook_equivalent_input_formats(t: unittest.TestCase, p: bxserum.provider.Provider):
     orderbook1 = await p.get_orderbook(market="ETHUSDT")
     t.assertIsNotNone(orderbook1)
     t.assertEqual(orderbook1.market, "ETHUSDT")
@@ -20,7 +20,7 @@ async def test_orderbook_equivalent_input_formats(t: unittest.TestCase, p: provi
     t.assertEqual(orderbook1.bids, orderbook2.bids)
     t.assertEqual(orderbook2.bids, orderbook3.bids)
 
-    if type(p) != provider.HttpProvider:
+    if type(p) != bxserum.provider.HttpProvider:
         orderbook4 = await p.get_orderbook(market="ETH/USDT")
         t.assertIsNotNone(orderbook4)
         t.assertEqual(orderbook4.market, "ETH/USDT")
@@ -28,7 +28,7 @@ async def test_orderbook_equivalent_input_formats(t: unittest.TestCase, p: provi
         t.assertEqual(orderbook3.asks, orderbook4.asks)
         t.assertEqual(orderbook3.bids, orderbook4.bids)
 
-async def test_orderbook_different_markets(t: unittest.TestCase, p: provider.Provider):
+async def test_orderbook_different_markets(t: unittest.TestCase, p: bxserum.provider.Provider):
     orderbook1 = await p.get_orderbook(market="ETHUSDT")
     t.assertIsNotNone(orderbook1)
     t.assertEqual(orderbook1.market, "ETHUSDT")
@@ -45,7 +45,7 @@ async def test_orderbook_different_markets(t: unittest.TestCase, p: provider.Pro
     t.assertIsNotNone(orderbook4)
     t.assertEqual(orderbook4.market, "xCOPEUSDC")
 
-async def test_markets(t: unittest.TestCase, p: provider.Provider):
+async def test_markets(t: unittest.TestCase, p: bxserum.provider.Provider):
     markets = await p.get_markets()
     t.assertIsNotNone(markets)
 
