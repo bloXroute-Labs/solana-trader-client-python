@@ -1,7 +1,6 @@
 from unittest import TestCase
 from bxserum import provider
 
-
 async def test_orderbook_equivalent_input_formats(t: TestCase, p: provider.Provider):
     orderbook1 = await p.get_orderbook(market="ETHUSDT")
     t.assertIsNotNone(orderbook1)
