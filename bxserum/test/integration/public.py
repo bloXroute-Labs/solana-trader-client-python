@@ -1,7 +1,7 @@
-from unittest import TestCase
+import unittest
 from bxserum import provider
 
-async def test_orderbook_equivalent_input_formats(t: TestCase, p: provider.Provider):
+async def test_orderbook_equivalent_input_formats(t: unittest.TestCase, p: provider.Provider):
     orderbook1 = await p.get_orderbook(market="ETHUSDT")
     t.assertIsNotNone(orderbook1)
     t.assertEqual(orderbook1.market, "ETHUSDT")
@@ -28,7 +28,7 @@ async def test_orderbook_equivalent_input_formats(t: TestCase, p: provider.Provi
         t.assertEqual(orderbook3.asks, orderbook4.asks)
         t.assertEqual(orderbook3.bids, orderbook4.bids)
 
-async def test_orderbook_different_markets(t: TestCase, p: provider.Provider):
+async def test_orderbook_different_markets(t: unittest.TestCase, p: provider.Provider):
     orderbook1 = await p.get_orderbook(market="ETHUSDT")
     t.assertIsNotNone(orderbook1)
     t.assertEqual(orderbook1.market, "ETHUSDT")
@@ -45,7 +45,7 @@ async def test_orderbook_different_markets(t: TestCase, p: provider.Provider):
     t.assertIsNotNone(orderbook4)
     t.assertEqual(orderbook4.market, "xCOPEUSDC")
 
-async def test_markets(t: TestCase, p: provider.Provider):
+async def test_markets(t: unittest.TestCase, p: provider.Provider):
     markets = await p.get_markets()
     t.assertIsNotNone(markets)
 
