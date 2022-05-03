@@ -40,7 +40,7 @@ async def do(api: bxserum.Api):
     print(await api.get_orderbook(market="ETHUSDT"))
 
     print("checking stream...")
-    async for response in api.get_orderbook_stream(market="SOLUSDC"):
+    async for response in api.get_orderbook_stream(market="ETHUSDT"):
         print(response)
 
 
