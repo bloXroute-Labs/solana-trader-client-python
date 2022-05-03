@@ -15,7 +15,7 @@ async def test_stream(t: unittest.TestCase, stream: typing.AsyncGenerator):
                 await stream.__anext__()
                 counter += 1
     except asyncio.TimeoutError:
-        t.fail(f"{counter} values found with timeout of {stream_expect_timeout} seconds")
+        t.fail(f"{counter}/{stream_expect_entries} values found with timeout of {stream_expect_timeout} seconds")
 
 async def test_orderbook_stream(t: unittest.TestCase, p: bxserum.Api):
     stream = p.get_orderbook_stream(market="SOL/USDC")
