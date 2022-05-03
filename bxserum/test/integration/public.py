@@ -24,8 +24,8 @@ async def test_orderbook_equivalent_input_formats(t: TestCase, p: provider.Provi
     if type(p) != provider.HttpProvider:
         orderbook4 = await p.get_orderbook(market="ETH/USDT")
         t.assertIsNotNone(orderbook4)
-
         t.assertEqual(orderbook4.market, "ETH/USDT")
+
         t.assertEqual(orderbook3.asks, orderbook4.asks)
         t.assertEqual(orderbook3.bids, orderbook4.bids)
 
@@ -50,15 +50,15 @@ async def test_markets(t: TestCase, p: provider.Provider):
     markets = await p.get_markets()
     t.assertIsNotNone(markets)
 
-    market1 = markets.markets["AAVE/USDT"]
+    market1 = markets.markets["ETH/USDT"]
     t.assertIsNotNone(market1)
 
-    market2 = markets.markets["LINK/USDC"]
+    market2 = markets.markets["BTC/USDC"]
     t.assertIsNotNone(market2)
 
     market3 = markets.markets["MSRM/USDC"]
     t.assertIsNotNone(market3)
 
-    market4 = markets.markets["YFI/USDC"]
+    market4 = markets.markets["xCOPE/USDC"]
     t.assertIsNotNone(market4)
 
