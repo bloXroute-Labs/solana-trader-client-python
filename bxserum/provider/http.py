@@ -42,6 +42,13 @@ class HttpProvider(Provider):
             response = await res.json()
             return proto.GetOrderbookResponse().from_dict(response)
 
+    async def get_markets(self) -> proto.GetMarketsResponse:
+        async with self._session.get(
+            f"{self._endpoint}/market/markets"
+        ) as res:
+            response = await res.json()
+            return proto.GetMarketsResponse().from_dict(response)
+
     async def _unary_stream(
         self,
         route: str,
