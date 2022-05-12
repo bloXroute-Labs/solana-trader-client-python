@@ -1,14 +1,10 @@
-import base58, base64
 import os
-
-import based58
-import solana.keypair
-from solana.blockhash import Blockhash
+import base58
+import base64
 from solana.keypair import Keypair
-from solana.transaction import AccountMeta, Transaction, TransactionInstruction
+from solana.transaction import Transaction
 
-
-def sign_tx(unsigned_tx_base64: str):
+def sign_tx(unsigned_tx_base64: str) -> Transaction:
     # get base58 encoded private key
     pkey_str = os.getenv("PRIVATE_KEY")
     if pkey_str == None:
@@ -23,7 +19,10 @@ def sign_tx(unsigned_tx_base64: str):
     tx_bytes_base64 = bytes(unsigned_tx_base64, encoding="utf-8")
     tx_bytes = base64.decodebytes(tx_bytes_base64)
     tx = Transaction.deserialize(tx_bytes)
+
+    # sign transaction using keypair
     tx.sign(key_pair)
+    return tx
 
 if __name__ == "__main__":
     sign_tx("AAEAAQPT0EY4p9ErpYaI7SjuRYIJZnZGKpkE0ijKL5XDwhHK8Ntthose+d93bfMQ+Ry51ssLFMiRPqFe27iY7ryDPv3pAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwHDKRQmyQHHokjruWGNrJQWdcYM1ZcQimhLQNbLV0dgECAgABDAIAAAABAAAAAAAAAA==")
