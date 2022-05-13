@@ -57,7 +57,7 @@ def _replace_zero_signature(tx: Transaction, key_pair: Keypair):
 
     if zero_sig_index == -1:
         raise Exception("no zero signatures to replace in transaction")
-    tx.signatures[zero_sig_index].signature = signed_message_content
+    tx.signatures[zero_sig_index].signature = signed_message_content.signature
 
 if __name__ == "__main__":
     print(sign_tx("AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAED09BGOKfRK6WGiO0o7kWCCWZ2RiqZBNIoyi+Vw8IRyvDbbYaLHvnfd23zEPkcudbLCxTIkT6hXtu4mO68gz796QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAedOROtza44ZAyO1+X+t7VLZ6u9p37/4c1q3S8bO5Kj8BAgIAAQwCAAAAAQAAAAAAAAA="))
