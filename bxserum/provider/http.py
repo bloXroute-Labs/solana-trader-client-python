@@ -48,6 +48,44 @@ class HttpProvider(Provider):
         ) as res:
             return await map_response(res, proto.GetOrderbookResponse())
 
+    async def get_orders(
+        self, *, market: str = "", address: str = ""
+    ) -> proto.GetOrdersResponse:
+        request = proto.GetOrdersRequest()
+        request.market = market
+        request.address = address
+
+        async with self._session.get(
+            f"{self._endpoint}/trade/orders/{request.market}?address={request.address}"
+        ) as res:
+            response = await res.json()
+            return proto.GetOrdersResponse().from_dict(response)
+
+    async def get_tickers(
+        self, *, market: str = ""
+    ) -> proto.GetTickersResponse:
+        request = proto.GetTickersRequest()
+        request.market = market
+
+        async with self._session.get(
+            f"{self._endpoint}/market/tickers/{request.market}"
+        ) as res:
+            response = await res.json()
+            return proto.GetTickersResponse().from_dict(response)
+
+    async def get_trades(
+        self, *, market: str = "", limit: int = 0
+    ) -> proto.GetTradesResponse:
+        request = proto.GetTradesRequest()
+        request.market = market
+        request.limit = limit
+
+        async with self._session.get(
+            f"{self._endpoint}/market/trades/{request.market}"
+        ) as res:
+            response = await res.json()
+            return proto.GetTradesResponse().from_dict(response)
+
     async def get_markets(self) -> proto.GetMarketsResponse:
         async with self._session.get(f"{self._endpoint}/market/markets") as res:
             return await map_response(res, proto.GetMarketsResponse())
