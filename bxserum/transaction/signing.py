@@ -15,10 +15,10 @@ def sign_tx(unsigned_tx_base64: str) -> str:
     pkey_bytes = base58.b58decode(pkey_bytes_base58)
     key_pair = Keypair.from_secret_key(pkey_bytes)
 
-    sign_tx_with_private_key(unsigned_tx_base64, key_pair)
+    return sign_tx_with_private_key(unsigned_tx_base64, key_pair)
 
 
-def sign_tx_with_private_key(unsigned_tx_base64: str, key_pair: Keypair):
+def sign_tx_with_private_key(unsigned_tx_base64: str, key_pair: Keypair) -> str:
     # convert base64 transaction string to a transaction
     tx_bytes_base64 = bytes(unsigned_tx_base64, encoding="utf-8")
     tx_bytes = base64.decodebytes(tx_bytes_base64)
@@ -57,7 +57,7 @@ def _replace_zero_signature(tx: Transaction, key_pair: Keypair):
 
     if zero_sig_index == -1:
         raise Exception("no zero signatures to replace in transaction")
-    tx.signatures[zero_sig_index] = signed_message_content
+    tx.signatures[zero_sig_index].signature = signed_message_content
 
 if __name__ == "__main__":
-    sign_tx("AAEAAQPT0EY4p9ErpYaI7SjuRYIJZnZGKpkE0ijKL5XDwhHK8Ntthose+d93bfMQ+Ry51ssLFMiRPqFe27iY7ryDPv3pAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwHDKRQmyQHHokjruWGNrJQWdcYM1ZcQimhLQNbLV0dgECAgABDAIAAAABAAAAAAAAAA==")
+    print(sign_tx("AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAED09BGOKfRK6WGiO0o7kWCCWZ2RiqZBNIoyi+Vw8IRyvDbbYaLHvnfd23zEPkcudbLCxTIkT6hXtu4mO68gz796QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAedOROtza44ZAyO1+X+t7VLZ6u9p37/4c1q3S8bO5Kj8BAgIAAQwCAAAAAQAAAAAAAAA="))
