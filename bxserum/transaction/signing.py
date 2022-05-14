@@ -21,32 +21,33 @@ def sign_tx(unsigned_tx_base64: str) -> str:
 # sign_tx_with_private_key uses the provided private key to sign the message content and replace the zero signature
 def sign_tx_with_private_key(unsigned_tx_base64: str, key_pair: Keypair) -> str:
     # convert base64 transaction string to a transaction
-    tx_bytes_base64 = bytes(unsigned_tx_base64, encoding="utf-8")
-    tx_bytes = base64.decodebytes(tx_bytes_base64)
-    tx = Transaction.deserialize(tx_bytes)
+    tx_bytes = bytes(unsigned_tx_base64, encoding="utf-8")
+    tx_bytes_base64 = base64.decodebytes(tx_bytes)
+    tx = Transaction.deserialize(tx_bytes_base64)
 
     # sign transaction using keypair
     _sign_tx(tx, key_pair)
 
     # convert transaction back to base64
-    tx_base_64_bytes = base64.b64encode(tx.serialize())
-    return tx_base_64_bytes.decode("utf-8")
+    signed_tx_bytes_base64 = base64.b64encode(tx.serialize())
+    return signed_tx_bytes_base64.decode("utf-8")
 
 def _sign_tx(tx: Transaction, key_pair: Keypair):
+    # validate number of signatures
     signatures_required = tx.compile_message().header.num_required_signatures
     signatures_present = len(tx.signatures)
     if signatures_present != signatures_required:
         raise Exception(f"transaction requires {signatures_required} signatures and has {signatures_present} signatures")
+
     _replace_zero_signature(tx, key_pair)
 
 def _replace_zero_signature(tx: Transaction, key_pair: Keypair):
-    # get message
+    # get new signature by signing the message content with `key_pair`
     message_content = tx.serialize_message()
-
-    # sign message
     signed_message_content = key_pair.sign(message_content)
+    new_signature = signed_message_content.signature
 
-    # replace zero signature with signed message
+    # replace zero signature with signed message signature
     if not tx.signatures:
         raise Exception("transaction does not have any signatures")
 
@@ -59,7 +60,7 @@ def _replace_zero_signature(tx: Transaction, key_pair: Keypair):
 
     if zero_sig_index == -1:
         raise Exception("no zero signatures to replace in transaction")
-    tx.signatures[zero_sig_index].signature = signed_message_content.signature
+    tx.signatures[zero_sig_index].signature = new_signature
 
 if __name__ == "__main__":
     print(sign_tx("AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAED09BGOKfRK6WGiO0o7kWCCWZ2RiqZBNIoyi+Vw8IRyvDbbYaLHvnfd23zEPkcudbLCxTIkT6hXtu4mO68gz796QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAedOROtza44ZAyO1+X+t7VLZ6u9p37/4c1q3S8bO5Kj8BAgIAAQwCAAAAAQAAAAAAAAA="))
