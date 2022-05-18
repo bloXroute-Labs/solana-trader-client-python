@@ -3,7 +3,9 @@ import json
 from typing import TYPE_CHECKING, Type, Optional, AsyncGenerator
 
 import aiohttp
+from solana import keypair
 
+from bxserum import transaction
 from bxserum.provider import Provider
 from bxserum.provider.base import NotConnectedException
 from bxserum.provider.constants import DEFAULT_HOST, DEFAULT_WS_PORT
@@ -31,6 +33,8 @@ class WsProvider(Provider):
         self._session = aiohttp.ClientSession()
         self._request_id = 1
         self._request_lock = asyncio.Lock()
+
+        self.private_key = transaction.load_private_key()
 
     async def connect(self):
         if self._ws is None:

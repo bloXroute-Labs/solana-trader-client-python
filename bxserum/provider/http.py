@@ -1,8 +1,9 @@
-from typing import Type, AsyncGenerator, Optional, TYPE_CHECKING
+from typing import Type, AsyncGenerator, Optional, TYPE_CHECKING, List
 
 import aiohttp
+from solana import keypair
 
-from bxserum import proto
+from bxserum import proto, transaction
 from bxserum.provider.base import Provider
 from bxserum.provider.constants import DEFAULT_HOST, DEFAULT_HTTP_PORT
 
@@ -43,11 +44,48 @@ class HttpProvider(Provider):
             return proto.GetOrderbookResponse().from_dict(response)
 
     async def get_markets(self) -> proto.GetMarketsResponse:
-        async with self._session.get(
-            f"{self._endpoint}/market/markets"
-        ) as res:
+        async with self._session.get(f"{self._endpoint}/market/markets") as res:
             response = await res.json()
             return proto.GetMarketsResponse().from_dict(response)
+
+    async def post_order(
+        self,
+        *,
+        owner_address: str = "",
+        payer_address: str = "",
+        market: str = "",
+        side: "proto.Side" = 0,
+        type: List["proto.OrderType"] = [],
+        amount: float = 0,
+        price: float = 0,
+        open_orders_address: str = "",
+        client_order_i_d: int = 0,
+    ) -> proto.PostOrderResponse:
+        request = proto.PostOrderRequest(
+            owner_address,
+            payer_address,
+            market,
+            side,
+            type,
+            amount,
+            price,
+            open_orders_address,
+            client_order_i_d,
+        )
+
+        async with self._session.post(
+            f"{self._endpoint}/trade/place", json=request.to_dict()
+        ) as res:
+            response = await res.json()
+            return proto.PostOrderResponse().from_dict(response)
+
+    async def post_submit(self, *, transaction: str = "") -> proto.PostSubmitResponse:
+        request = proto.PostSubmitRequest(transaction)
+        async with self._session.post(
+            f"{self._endpoint}/trade/submit", json=request.to_dict()
+        ) as res:
+            response = await res.json()
+            return proto.PostSubmitResponse().from_dict(response)
 
     async def _unary_stream(
         self,

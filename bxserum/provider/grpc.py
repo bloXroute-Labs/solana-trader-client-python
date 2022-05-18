@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING, Optional
 
 from grpclib import client
 
+from bxserum import transaction
 from bxserum.provider.base import Provider
 from bxserum.provider.constants import DEFAULT_HOST, DEFAULT_GRPC_PORT
 
@@ -30,6 +31,7 @@ class GrpcProvider(Provider):
     ):
         self._host = host
         self._port = port
+        self.private_key = transaction.load_private_key()
         super().__init__(None, timeout=timeout, deadline=deadline, metadata=metadata)
 
     async def connect(self):
