@@ -2,3 +2,5 @@ aiohttp==3.8.1
 betterproto==1.2.5
 grpclib==0.4.2
 aiounittest==1.4.1
+base58==2.1.1
+solana==0.23.3
