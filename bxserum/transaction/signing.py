@@ -4,8 +4,8 @@ import base64
 from solana.keypair import Keypair
 from solana.transaction import Transaction
 
-# sign_tx uses the environment variable for `PRIVATE_KEY` to sign the message content and replace the zero signature
 def sign_tx(unsigned_tx_base64: str) -> str:
+    """Uses the environment variable for `PRIVATE_KEY` to sign the message content and replace the zero signature"""
     # get base58 encoded private key
     pkey_str = os.getenv("PRIVATE_KEY")
     if pkey_str == None:
@@ -18,8 +18,8 @@ def sign_tx(unsigned_tx_base64: str) -> str:
 
     return sign_tx_with_private_key(unsigned_tx_base64, keypair)
 
-# sign_tx_with_private_key uses the provided private key to sign the message content and replace the zero signature
 def sign_tx_with_private_key(unsigned_tx_base64: str, keypair: Keypair) -> str:
+    """Uses the provided private key to sign the message content and replace the zero signature"""
     # convert base64 transaction string to a transaction
     tx_bytes = bytes(unsigned_tx_base64, encoding="utf-8")
     tx_bytes_base64 = base64.decodebytes(tx_bytes)
