@@ -6,6 +6,7 @@ from solana import keypair
 from bxserum import proto, transaction
 from bxserum.provider.base import Provider
 from bxserum.provider.constants import DEFAULT_HOST, DEFAULT_HTTP_PORT
+from bxserum.provider.http_error import map_response
 
 if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences,PyProtectedMember
@@ -81,8 +82,7 @@ class HttpProvider(Provider):
         async with self._session.post(
             f"{self._endpoint}/trade/place", json=request.to_dict()
         ) as res:
-            response = await res.json()
-            return proto.PostOrderResponse().from_dict(response)
+            return await map_response(res, proto.PostOrderResponse())
 
     async def post_submit(self, *, transaction: str = "") -> proto.PostSubmitResponse:
         request = proto.PostSubmitRequest(transaction)
