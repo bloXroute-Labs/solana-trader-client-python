@@ -111,4 +111,7 @@ def _ws_endpoint(route: str) -> str:
 
 
 def _deserialize_result(rpc_response: JsonRpcResponse, response_type: Type["T"]) -> "T":
-    return response_type().from_dict(rpc_response.result)
+    if rpc_response.error is None:
+        return response_type().from_dict(rpc_response.result)
+
+    raise rpc_response.error
