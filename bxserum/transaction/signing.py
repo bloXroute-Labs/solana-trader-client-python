@@ -2,7 +2,8 @@ import os
 import base58
 import base64
 from solana.keypair import Keypair
-from solana.transaction import Transaction
+
+from bxserum.transaction.deserializer import PartialTransaction
 
 
 def load_private_key() -> Keypair:
@@ -36,45 +37,9 @@ def sign_tx_with_private_key(unsigned_tx_base64: str, keypair: Keypair) -> str:
     :param keypair: key pair to sign with
     :return: signed transaction
     """
-    # convert base64 transaction string to a transaction
-    tx_bytes = bytes(unsigned_tx_base64, encoding="utf-8")
-    tx_bytes_base64 = base64.decodebytes(tx_bytes)
-    tx = Transaction.deserialize(tx_bytes_base64)
-
-    # sign transaction using keypair
-    _sign_tx(tx, keypair)
+    partial_tx = PartialTransaction.deserialize(unsigned_tx_base64)
+    partial_tx.complete_signing(keypair)
 
     # convert transaction back to base64
-    signed_tx_bytes_base64 = base64.b64encode(tx.serialize())
+    signed_tx_bytes_base64 = base64.b64encode(partial_tx.serialize())
     return signed_tx_bytes_base64.decode("utf-8")
-
-
-def _sign_tx(tx: Transaction, keypair: Keypair):
-    signatures_required = tx.compile_message().header.num_required_signatures
-    signatures_present = len(tx.signatures)
-    if signatures_present != signatures_required:
-        raise Exception(
-            f"transaction requires {signatures_required} signatures and has {signatures_present} signatures"
-        )
-
-    _replace_zero_signature(tx, keypair)
-
-
-def _replace_zero_signature(tx: Transaction, keypair: Keypair):
-    message_content = tx.serialize_message()
-    signed_message_content = keypair.sign(message_content)
-    new_signature = signed_message_content.signature
-
-    if not tx.signatures:
-        raise Exception("transaction does not have any signatures")
-
-    zero_sig_index = -1
-    for index, pub_keypair in enumerate(tx.signatures):
-        if pub_keypair.signature == None:
-            if zero_sig_index != -1:
-                raise Exception("more than one zero signature provided in transaction")
-            zero_sig_index = index
-
-    if zero_sig_index == -1:
-        raise Exception("no zero signatures to replace in transaction")
-    tx.signatures[zero_sig_index].signature = new_signature

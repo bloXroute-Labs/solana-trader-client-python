@@ -46,13 +46,11 @@ class HttpProvider(Provider):
         async with self._session.get(
             f"{self._endpoint}/market/orderbooks/{request.market}"
         ) as res:
-            response = await res.json()
-            return proto.GetOrderbookResponse().from_dict(response)
+            return await map_response(res, proto.GetOrderbookResponse())
 
     async def get_markets(self) -> proto.GetMarketsResponse:
         async with self._session.get(f"{self._endpoint}/market/markets") as res:
-            response = await res.json()
-            return proto.GetMarketsResponse().from_dict(response)
+            return await map_response(res, proto.GetMarketsResponse())
 
     async def post_order(
         self,
@@ -89,8 +87,7 @@ class HttpProvider(Provider):
         async with self._session.post(
             f"{self._endpoint}/trade/submit", json=request.to_dict()
         ) as res:
-            response = await res.json()
-            return proto.PostSubmitResponse().from_dict(response)
+            return await map_response(res, proto.PostSubmitResponse())
 
     async def _unary_stream(
         self,

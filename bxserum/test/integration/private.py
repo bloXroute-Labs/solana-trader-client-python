@@ -3,6 +3,7 @@ import unittest
 
 import aiohttp
 from grpclib import GRPCError
+from solana import keypair
 
 from bxserum import provider, transaction, proto
 from bxserum.provider.http_error import HttpError
@@ -38,9 +39,52 @@ async def test_submit_order(t: unittest.TestCase, p: provider.Provider):
             0.1,
             10_000,
         )
-        t.fail("unexpectedly recieved no error from payer mismatch")
+        t.fail("unexpectedly received no error from payer mismatch")
     except (GRPCError, HttpError, RpcError) as e:
-        t.assertEqual("invalid payer specified: owner cannot match payer unless selling SOL", e.message)
+        t.assertEqual(
+            "invalid payer specified: owner cannot match payer unless selling SOL",
+            e.message,
+        )
+
+    try:
+        # quantity too low
+        await p.submit_order(
+            public_key,
+            public_key,
+            "SOLUSDC",
+            proto.Side.S_ASK,
+            [proto.OrderType.OT_LIMIT],
+            0.000001,
+            10_000,
+        )
+        t.fail("unexpectedly received no error from quantity too low")
+    except (GRPCError, HttpError, RpcError) as e:
+        t.assertEqual(
+            "Transaction simulation failed: Error processing Instruction 2: "
+            "invalid program argument",
+            e.message,
+        )
+
+    kp = keypair.Keypair()
+    try:
+        # bad open orders address
+        await p.submit_order(
+            public_key,
+            public_key,
+            "SOLUSDC",
+            proto.Side.S_ASK,
+            [proto.OrderType.OT_LIMIT],
+            0.1,
+            10_000,
+            str(kp.public_key)
+        )
+        t.fail("unexpectedly received no error from bad open orders address")
+    except (GRPCError, HttpError, RpcError) as e:
+        t.assertEqual(
+            "Transaction simulation failed: Error processing Instruction 2: "
+            "invalid program argument",
+            e.message,
+        )
 
 
 async def verify_tx(t: unittest.TestCase, tx_hash: str):
