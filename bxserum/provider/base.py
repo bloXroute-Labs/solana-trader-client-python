@@ -7,8 +7,6 @@ from bxserum import proto, transaction
 
 
 class Provider(proto.ApiStub, ABC):
-    private_key: keypair.Keypair
-
     async def __aenter__(self):
         await self.connect()
         return self
@@ -18,6 +16,10 @@ class Provider(proto.ApiStub, ABC):
 
     @abstractmethod
     async def connect(self):
+        pass
+
+    @abstractmethod
+    def private_key(self) -> keypair.Keypair:
         pass
 
     @abstractmethod
@@ -47,7 +49,7 @@ class Provider(proto.ApiStub, ABC):
             open_orders_address=open_orders_address,
             client_order_i_d=client_order_id,
         )
-        signed_tx = transaction.sign_tx_with_private_key(order.transaction, self.private_key)
+        signed_tx = transaction.sign_tx_with_private_key(order.transaction, self.private_key())
         result = await self.post_submit(transaction=signed_tx)
         return result.signature
 

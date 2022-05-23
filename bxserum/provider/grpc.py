@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING, Optional
 
 from grpclib import client
+from solana import keypair
 
 from bxserum import transaction
 from bxserum.provider.base import Provider
@@ -19,6 +20,7 @@ class GrpcProvider(Provider):
 
     _host: str
     _port: int
+    _private_key: keypair.Keypair
 
     def __init__(
         self,
@@ -31,12 +33,15 @@ class GrpcProvider(Provider):
     ):
         self._host = host
         self._port = port
-        self.private_key = transaction.load_private_key()
+        self._private_key = transaction.load_private_key()
         super().__init__(None, timeout=timeout, deadline=deadline, metadata=metadata)
 
     async def connect(self):
         if self.channel is None:
             self.channel = client.Channel(self._host, self._port)
+
+    def private_key(self) -> keypair.Keypair:
+        return self._private_key
 
     async def close(self):
         channel = self.channel

@@ -26,6 +26,7 @@ class WsProvider(Provider):
     _session: aiohttp.ClientSession
     _request_id: int
     _request_lock: asyncio.Lock
+    _private_key: keypair.Keypair
 
     # noinspection PyMissingConstructor
     def __init__(self, host: str = DEFAULT_HOST, port: int = DEFAULT_WS_PORT):
@@ -33,12 +34,14 @@ class WsProvider(Provider):
         self._session = aiohttp.ClientSession()
         self._request_id = 1
         self._request_lock = asyncio.Lock()
-
-        self.private_key = transaction.load_private_key()
+        self._private_key = transaction.load_private_key()
 
     async def connect(self):
         if self._ws is None:
             self._ws = await self._session.ws_connect(self._endpoint)
+
+    def private_key(self) -> keypair.Keypair:
+        return self._private_key
 
     async def close(self):
         ws = self._ws

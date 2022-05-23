@@ -18,14 +18,19 @@ if TYPE_CHECKING:
 class HttpProvider(Provider):
     _endpoint: str
     _session: aiohttp.ClientSession
+    _private_key: keypair.Keypair
 
     # noinspection PyMissingConstructor
     def __init__(self, host: str = DEFAULT_HOST, port: int = DEFAULT_HTTP_PORT):
         self._endpoint = f"http://{host}:{port}/api/v1"
         self._session = aiohttp.ClientSession()
+        self._private_key = transaction.load_private_key()
 
     async def connect(self):
         pass
+
+    def private_key(self) -> keypair.Keypair:
+        return self._private_key
 
     async def close(self):
         await self._session.close()
