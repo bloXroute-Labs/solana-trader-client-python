@@ -12,6 +12,6 @@ class TestHTTP(aiounittest.AsyncTestCase):
             await public.test_markets(self, http)
 
     async def test_http_private(self):
-        async with provider.HttpProvider("127.0.0.1", 9000) as http:
+        async with provider.HttpProvider() as http:
             await private.test_submit_order(self, http)
 

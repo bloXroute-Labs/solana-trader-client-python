@@ -12,7 +12,7 @@ class TestWS(aiounittest.AsyncTestCase):
             await public.test_markets(self, ws)
 
     async def test_ws_private(self):
-        async with provider.WsProvider("127.0.0.1", 9001) as ws:
+        async with provider.WsProvider() as ws:
             await private.test_submit_order(self, ws)
 
     async def test_ws_stream(self):

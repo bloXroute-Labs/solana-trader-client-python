@@ -12,7 +12,7 @@ class TestGRPC(aiounittest.AsyncTestCase):
             await public.test_markets(self, grpc)
 
     async def test_grpc_private(self):
-        async with provider.GrpcProvider("127.0.0.1", 9002) as grpc:
+        async with provider.GrpcProvider() as grpc:
             await private.test_submit_order(self, grpc)
 
     async def test_grpc_stream(self):
