@@ -40,11 +40,17 @@ async def test_submit_order(t: unittest.TestCase, p: provider.Provider):
             10_000,
         )
         t.fail("unexpectedly received no error from payer mismatch")
-    except (GRPCError, HttpError, RpcError) as e:
+    except (GRPCError, HttpError) as e:
         t.assertEqual(
             "invalid payer specified: owner cannot match payer unless selling SOL",
             e.message,
         )
+    except RpcError as e:
+        t.assertEqual(
+            "invalid payer specified: owner cannot match payer unless selling SOL",
+            e.data,
+        )
+
 
     try:
         # quantity too low
@@ -58,11 +64,17 @@ async def test_submit_order(t: unittest.TestCase, p: provider.Provider):
             10_000,
         )
         t.fail("unexpectedly received no error from quantity too low")
-    except (GRPCError, HttpError, RpcError) as e:
+    except (GRPCError, HttpError) as e:
         t.assertEqual(
             "Transaction simulation failed: Error processing Instruction 2: "
             "invalid program argument",
             e.message,
+        )
+    except RpcError as e:
+        t.assertEqual(
+            "Transaction simulation failed: Error processing Instruction 2: "
+            "invalid program argument",
+            e.data,
         )
 
     kp = keypair.Keypair()
@@ -79,11 +91,17 @@ async def test_submit_order(t: unittest.TestCase, p: provider.Provider):
             str(kp.public_key)
         )
         t.fail("unexpectedly received no error from bad open orders address")
-    except (GRPCError, HttpError, RpcError) as e:
+    except (GRPCError, HttpError) as e:
         t.assertEqual(
             "Transaction simulation failed: Error processing Instruction 2: "
-            "invalid program argument",
+            "custom program error: 0x10000a4",
             e.message,
+        )
+    except RpcError as e:
+        t.assertEqual(
+            "Transaction simulation failed: Error processing Instruction 2: "
+            "custom program error: 0x10000a4",
+            e.data,
         )
 
 
