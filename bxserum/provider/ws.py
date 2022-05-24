@@ -48,6 +48,10 @@ class WsProvider(Provider):
         if ws is not None:
             await ws.close()
 
+        session = self._session
+        if session is not None:
+            await session.close()
+
     async def _next_request_id(self) -> int:
         async with self._request_lock:
             previous = self._request_id
