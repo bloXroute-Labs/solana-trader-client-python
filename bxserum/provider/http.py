@@ -1,10 +1,12 @@
-from typing import Type, AsyncGenerator, Optional, TYPE_CHECKING
+from typing import Type, AsyncGenerator, Optional, TYPE_CHECKING, List
 
 import aiohttp
+from solana import keypair
 
-from bxserum import proto
+from bxserum import proto, transaction
 from bxserum.provider.base import Provider
 from bxserum.provider.constants import DEFAULT_HOST, DEFAULT_HTTP_PORT
+from bxserum.provider.http_error import map_response
 
 if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences,PyProtectedMember
@@ -17,14 +19,19 @@ if TYPE_CHECKING:
 class HttpProvider(Provider):
     _endpoint: str
     _session: aiohttp.ClientSession
+    _private_key: keypair.Keypair
 
     # noinspection PyMissingConstructor
     def __init__(self, host: str = DEFAULT_HOST, port: int = DEFAULT_HTTP_PORT):
         self._endpoint = f"http://{host}:{port}/api/v1"
         self._session = aiohttp.ClientSession()
+        self._private_key = transaction.load_private_key()
 
     async def connect(self):
         pass
+
+    def private_key(self) -> keypair.Keypair:
+        return self._private_key
 
     async def close(self):
         await self._session.close()
@@ -39,15 +46,48 @@ class HttpProvider(Provider):
         async with self._session.get(
             f"{self._endpoint}/market/orderbooks/{request.market}"
         ) as res:
-            response = await res.json()
-            return proto.GetOrderbookResponse().from_dict(response)
+            return await map_response(res, proto.GetOrderbookResponse())
 
     async def get_markets(self) -> proto.GetMarketsResponse:
-        async with self._session.get(
-            f"{self._endpoint}/market/markets"
+        async with self._session.get(f"{self._endpoint}/market/markets") as res:
+            return await map_response(res, proto.GetMarketsResponse())
+
+    async def post_order(
+        self,
+        *,
+        owner_address: str = "",
+        payer_address: str = "",
+        market: str = "",
+        side: "proto.Side" = 0,
+        type: List["proto.OrderType"] = [],
+        amount: float = 0,
+        price: float = 0,
+        open_orders_address: str = "",
+        client_order_i_d: int = 0,
+    ) -> proto.PostOrderResponse:
+        request = proto.PostOrderRequest(
+            owner_address,
+            payer_address,
+            market,
+            side,
+            type,
+            amount,
+            price,
+            open_orders_address,
+            client_order_i_d,
+        )
+
+        async with self._session.post(
+            f"{self._endpoint}/trade/place", json=request.to_dict()
         ) as res:
-            response = await res.json()
-            return proto.GetMarketsResponse().from_dict(response)
+            return await map_response(res, proto.PostOrderResponse())
+
+    async def post_submit(self, *, transaction: str = "") -> proto.PostSubmitResponse:
+        request = proto.PostSubmitRequest(transaction)
+        async with self._session.post(
+            f"{self._endpoint}/trade/submit", json=request.to_dict()
+        ) as res:
+            return await map_response(res, proto.PostSubmitResponse())
 
     async def _unary_stream(
         self,

@@ -1,0 +1,34 @@
+from typing import List, Dict, Any, TypeVar, Type
+
+import aiohttp
+import betterproto
+
+
+class HttpError(Exception):
+    code: int
+    message: str
+    details: List[str]
+
+    def __init__(self, code: int, message: str, details: List[str]):
+        super().__init__()
+
+        self.code = code
+        self.message = message
+        self.details = details
+
+    @classmethod
+    def from_json(cls, payload: Dict[str, Any]) -> "HttpError":
+        return cls(
+            payload["code"],
+            payload["message"],
+            payload["details"],
+        )
+
+
+async def map_response(response: aiohttp.ClientResponse, destination: betterproto.Message):
+    response_json = await response.json()
+    try:
+        http_error = HttpError.from_json(response_json)
+        raise http_error
+    except KeyError:
+        return destination.from_dict(response_json)

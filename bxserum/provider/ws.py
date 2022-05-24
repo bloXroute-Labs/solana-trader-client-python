@@ -3,7 +3,9 @@ import json
 from typing import TYPE_CHECKING, Type, Optional, AsyncGenerator
 
 import aiohttp
+from solana import keypair
 
+from bxserum import transaction
 from bxserum.provider import Provider
 from bxserum.provider.base import NotConnectedException
 from bxserum.provider.constants import DEFAULT_HOST, DEFAULT_WS_PORT
@@ -24,6 +26,7 @@ class WsProvider(Provider):
     _session: aiohttp.ClientSession
     _request_id: int
     _request_lock: asyncio.Lock
+    _private_key: keypair.Keypair
 
     # noinspection PyMissingConstructor
     def __init__(self, host: str = DEFAULT_HOST, port: int = DEFAULT_WS_PORT):
@@ -31,15 +34,23 @@ class WsProvider(Provider):
         self._session = aiohttp.ClientSession()
         self._request_id = 1
         self._request_lock = asyncio.Lock()
+        self._private_key = transaction.load_private_key()
 
     async def connect(self):
         if self._ws is None:
             self._ws = await self._session.ws_connect(self._endpoint)
 
+    def private_key(self) -> keypair.Keypair:
+        return self._private_key
+
     async def close(self):
         ws = self._ws
         if ws is not None:
             await ws.close()
+
+        session = self._session
+        if session is not None:
+            await session.close()
 
     async def _next_request_id(self) -> int:
         async with self._request_lock:
@@ -104,4 +115,7 @@ def _ws_endpoint(route: str) -> str:
 
 
 def _deserialize_result(rpc_response: JsonRpcResponse, response_type: Type["T"]) -> "T":
-    return response_type().from_dict(rpc_response.result)
+    if rpc_response.error is None:
+        return response_type().from_dict(rpc_response.result)
+
+    raise rpc_response.error
