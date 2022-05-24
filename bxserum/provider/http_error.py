@@ -31,4 +31,4 @@ async def map_response(response: aiohttp.ClientResponse, destination: betterprot
         http_error = HttpError.from_json(response_json)
         raise http_error
     except KeyError:
-        raise destination.from_dict(response_json)
+        return destination.from_dict(response_json)
