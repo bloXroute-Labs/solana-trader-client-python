@@ -47,21 +47,21 @@ async def grpc():
 
 async def do_requests(api: bxserum.Provider):
     # markets API
-    # print("fetching all markets")
-    # print(await api.get_markets())
-    #
-    # print("fetching SOL/USDC orderbook")
-    # print(await api.get_orderbook(market="SOLUSDC"))
-    #
-    # print("fetching SOL/USDC ticker")
-    # print(await api.get_tickers(market="SOLUSDC"))
-    #
-    # print("fetching all tickers")
-    # print(await api.get_tickers())
+    print("fetching all markets")
+    print(await api.get_markets())
+
+    print("fetching SOL/USDC orderbook")
+    print(await api.get_orderbook(market="SOLUSDC"))
+
+    print("fetching SOL/USDC ticker")
+    print(await api.get_tickers(market="SOLUSDC"))
+
+    print("fetching all tickers")
+    print(await api.get_tickers())
 
     # trade API
-    # print("fetching open orders for account")
-    # print(await api.get_open_orders(market="SOLUSDC", address=PUBLIC_KEY))
+    print("fetching open orders for account")
+    print(await api.get_open_orders(market="SOLUSDC", address=PUBLIC_KEY))
 
     # TODO
     # print("fetching order by id")
@@ -152,12 +152,33 @@ async def do_requests(api: bxserum.Provider):
     # )
 
 
+# websockets / GRPC only
 async def do_stream(api: bxserum.Provider):
-    pass
+    item_count = 0
 
-    # print("checking stream...")
-    # async for response in api.get_orderbook_stream(market="SOLUSDC"):
-    #    print(response)
+    print("streaming orderbook updates...")
+    async for response in api.get_orderbook_stream(market="SOLUSDC"):
+        print(response)
+
+        if item_count == 5:
+            item_count = 0
+            break
+
+    print("streaming ticker updates...")
+    async for response in api.get_tickers_stream(market="SOLUSDC"):
+        print(response)
+
+        if item_count == 5:
+            item_count = 0
+            break
+
+    print("streaming trade updates...")
+    async for response in api.get_trade_stream(market="SOLUSDC"):
+        print(response)
+
+        if item_count == 5:
+            item_count = 0
+            break
 
 
 if __name__ == "__main__":
