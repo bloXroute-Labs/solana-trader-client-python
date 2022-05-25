@@ -1,7 +1,10 @@
 import asyncio
 
 import bxserum
-from bxserum import provider
+from bxserum import provider, proto
+
+# sample public key for trades API
+PUBLIC_KEY = "AFT8VayE7qr8MoQsW3wHsDS83HhEvhGWdbNSHRKeUDfQ"
 
 
 async def main():
@@ -11,6 +14,10 @@ async def main():
 
 
 async def http():
+    # private keys are loaded from environment variable `PRIVATE_KEY` by default
+    # alternatively, can specify the key manually in base58 str if loaded from other source
+    # p = provider.HttpProvider("127.0.0.1", 9000, private_key="...")
+
     p = provider.HttpProvider("127.0.0.1", 9000)
     api = await bxserum.serum(p)
 
@@ -38,30 +45,114 @@ async def grpc():
         await p.close()
 
 
-async def do_requests(api: bxserum.Api):
+async def do_requests(api: bxserum.Provider):
     # markets API
-    print("fetching all markets")
-    print(await api.get_markets())
+    # print("fetching all markets")
+    # print(await api.get_markets())
+    #
+    # print("fetching SOL/USDC orderbook")
+    # print(await api.get_orderbook(market="SOLUSDC"))
+    #
+    # print("fetching SOL/USDC ticker")
+    # print(await api.get_tickers(market="SOLUSDC"))
+    #
+    # print("fetching all tickers")
+    # print(await api.get_tickers())
 
-    print("fetching SOL/USDC orderbook")
-    print(await api.get_orderbook(market="SOLUSDC"))
+    # trade API
+    print("fetching open orders for account")
+    print(await api.get_open_orders(market="SOLUSDC", address=PUBLIC_KEY))
 
-    print("fetching SOL/USDC ticker")
-    print(await api.get_tickers(market="SOLUSDC"))
+    # TODO
+    # print("fetching order by id")
+    # print(await api.get_order_by_i_d(market="SOLUSDC", address=PUBLIC_KEY))
 
-    print("fetching all tickers")
-    print(await api.get_tickers())
+    print("fetching unsettled amounts")
+    print(await api.get_unsettled(market="SOLUSDC", owner=PUBLIC_KEY))
 
-    # print("fetching SOL/USDC ord")
-    # print(await api.get_orders(market="SOLUSDC", address="AFT8VayE7qr8MoQsW3wHsDS83HhEvhGWdbNSHRKeUDfQ"))
-    # print(await api.get_trades(market="SOLUSDC"))
+    print("generating unsigned order to sell 0.1 SOL for USDC at 150_000 USD/SOL")
+    print(
+        await api.post_order(
+            owner_address=PUBLIC_KEY,
+            payer_address=PUBLIC_KEY,
+            market="SOLUSDC",
+            side=proto.Side.S_ASK,
+            type=[proto.OrderType.OT_LIMIT],
+            amount=0.1,
+            price=150_000,
+            open_orders_address="",  # optional
+            client_order_i_d=0,  # optional
+        )
+    )
+
+    print(
+        "submitting order (generate + sign) to sell 0.1 SOL for USDC at 150_000 USD/SOL"
+    )
+    print(
+        await api.submit_order(
+            owner_address=PUBLIC_KEY,
+            payer_address=PUBLIC_KEY,
+            market="SOLUSDC",
+            side=proto.Side.S_ASK,
+            types=[proto.OrderType.OT_LIMIT],
+            amount=0.1,
+            price=150_000,
+            open_orders_address="",  # optional
+            client_order_id=0,  # optional
+        )
+    )
+
+    print("generate cancel order")
+    print(
+        await api.post_cancel_order(
+            order_i_d="",
+            side=proto.Side.S_ASK,
+            market="SOLUSDC",
+            owner=PUBLIC_KEY,
+            open_orders="",  # optional
+        )
+    )
+
+    print("submit cancel order")
+    # TODO
+    # print(
+    #     await api.post_cancel_order(
+    #         order_i_d="",
+    #         side=proto.Side.S_ASK,
+    #         market="SOLUSDC",
+    #         owner=PUBLIC_KEY,
+    #         open_orders="",  # optional
+    #     )
+    # )
+
+    print("generate cancel order by client ID")
+    print(
+        await api.post_cancel_order_by_client_i_d(
+            client_i_d=123,
+            market="SOLUSDC",
+            owner=PUBLIC_KEY,
+            open_orders="",  # optional
+        )
+    )
+
+    print("submit cancel order by client ID")
+    # TODO
+    # print(
+    #     await api.post_cancel_order(
+    #         order_i_d="",
+    #         side=proto.Side.S_ASK,
+    #         market="SOLUSDC",
+    #         owner=PUBLIC_KEY,
+    #         open_orders="",  # optional
+    #     )
+    # )
 
 
 async def do_stream(api: bxserum.Api):
     pass
 
-    #print("checking stream...")
-    #async for response in api.get_orderbook_stream(market="SOLUSDC"):
+    # print("checking stream...")
+    # async for response in api.get_orderbook_stream(market="SOLUSDC"):
     #    print(response)
 
 

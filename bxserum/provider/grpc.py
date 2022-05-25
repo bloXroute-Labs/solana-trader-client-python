@@ -39,7 +39,7 @@ class GrpcProvider(Provider):
             self._private_key = transaction.load_private_key_from_env()
         else:
             self._private_key = transaction.load_private_key(private_key)
-            
+
         super().__init__(None, timeout=timeout, deadline=deadline, metadata=metadata)
 
     async def connect(self):
