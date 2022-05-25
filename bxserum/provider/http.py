@@ -22,10 +22,19 @@ class HttpProvider(Provider):
     _private_key: keypair.Keypair
 
     # noinspection PyMissingConstructor
-    def __init__(self, host: str = DEFAULT_HOST, port: int = DEFAULT_HTTP_PORT):
+    def __init__(
+        self,
+        host: str = DEFAULT_HOST,
+        port: int = DEFAULT_HTTP_PORT,
+        private_key: Optional[str] = None,
+    ):
         self._endpoint = f"http://{host}:{port}/api/v1"
         self._session = aiohttp.ClientSession()
-        self._private_key = transaction.load_private_key()
+
+        if private_key is None:
+            self._private_key = transaction.load_private_key_from_env()
+        else:
+            self._private_key = transaction.load_private_key(private_key)
 
     async def connect(self):
         pass
@@ -61,9 +70,7 @@ class HttpProvider(Provider):
             response = await res.json()
             return proto.GetOrdersResponse().from_dict(response)
 
-    async def get_tickers(
-        self, *, market: str = ""
-    ) -> proto.GetTickersResponse:
+    async def get_tickers(self, *, market: str = "") -> proto.GetTickersResponse:
         request = proto.GetTickersRequest()
         request.market = market
 

@@ -26,6 +26,7 @@ class GrpcProvider(Provider):
         self,
         host: str = DEFAULT_HOST,
         port: int = DEFAULT_GRPC_PORT,
+        private_key: Optional[str] = None,
         *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
@@ -33,7 +34,12 @@ class GrpcProvider(Provider):
     ):
         self._host = host
         self._port = port
-        self._private_key = transaction.load_private_key()
+
+        if private_key is None:
+            self._private_key = transaction.load_private_key_from_env()
+        else:
+            self._private_key = transaction.load_private_key(private_key)
+            
         super().__init__(None, timeout=timeout, deadline=deadline, metadata=metadata)
 
     async def connect(self):
