@@ -8,6 +8,7 @@ from bxserum.provider import Provider
 from bxserum.provider.base import NotConnectedException
 from bxserum.provider.constants import DEFAULT_HOST, DEFAULT_WS_PORT
 from bxserum.provider.wsrpc import JsonRpcRequest, JsonRpcResponse
+from bxserum.provider.stream_manager import WSStreamManager
 
 if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences,PyProtectedMember
@@ -19,6 +20,7 @@ if TYPE_CHECKING:
 
 class WsProvider(Provider):
     _ws: Optional[aiohttp.ClientWebSocketResponse] = None
+    _ws_stream_manager: Optional[WSStreamManager] = None
 
     _endpoint: str
     _session: aiohttp.ClientSession
@@ -35,6 +37,8 @@ class WsProvider(Provider):
     async def connect(self):
         if self._ws is None:
             self._ws = await self._session.ws_connect(self._endpoint)
+            self._ws_stream_manager = WSStreamManager(self._ws)
+            asyncio.create_task(self._ws_stream_manager.run())
 
     async def close(self):
         ws = self._ws
@@ -86,17 +90,19 @@ class WsProvider(Provider):
         metadata: Optional["_MetadataLike"] = None,
     ) -> AsyncGenerator["T", None]:
         ws = self._ws
-        if ws is None:
+        ws_stream_manager = self._ws_stream_manager
+        if ws is None or ws_stream_manager is None:
             raise NotConnectedException()
 
         request = await self._create_request(route, request)
-        await ws.send_json(request.to_json())
+        ws_generator = await ws_stream_manager.subscribe(request)
 
         # https://bloxroute.atlassian.net/browse/BX-4123 this doesn't really work since it'll intercept all kinds of message
         msg: aiohttp.WSMessage
-        async for msg in ws:
+        async for msg in ws_generator:
             rpc_result = JsonRpcResponse.from_json(json.loads(msg.data))
             yield _deserialize_result(rpc_result, response_type)
+
 
 
 def _ws_endpoint(route: str) -> str:
