@@ -106,19 +106,8 @@ async def do_requests(api: bxserum.Provider):
         )
     )
 
-    print("generate cancel order")
-    print(
-        await api.post_cancel_order(
-            order_i_d="",
-            side=proto.Side.S_ASK,
-            market="SOLUSDC",
-            owner=PUBLIC_KEY,
-            open_orders="",  # optional
-        )
-    )
-
-    print("submit cancel order")
     # TODO
+    # print("generate cancel order")
     # print(
     #     await api.post_cancel_order(
     #         order_i_d="",
@@ -128,19 +117,30 @@ async def do_requests(api: bxserum.Provider):
     #         open_orders="",  # optional
     #     )
     # )
-
-    print("generate cancel order by client ID")
-    print(
-        await api.post_cancel_order_by_client_i_d(
-            client_i_d=123,
-            market="SOLUSDC",
-            owner=PUBLIC_KEY,
-            open_orders="",  # optional
-        )
-    )
-
-    print("submit cancel order by client ID")
-    # TODO
+    #
+    # print("submit cancel order")
+    # print(
+    #     await api.post_cancel_order(
+    #         order_i_d="",
+    #         side=proto.Side.S_ASK,
+    #         market="SOLUSDC",
+    #         owner=PUBLIC_KEY,
+    #         open_orders="",  # optional
+    #     )
+    # )
+    #
+    # print("generate cancel order by client ID")
+    # print(
+    #     await api.post_cancel_order_by_client_i_d(
+    #         client_i_d=123,
+    #         market="SOLUSDC",
+    #         owner=PUBLIC_KEY,
+    #         open_orders="",  # optional
+    #     )
+    # )
+    #
+    # print("submit cancel order by client ID")
+    #
     # print(
     #     await api.post_cancel_order(
     #         order_i_d="",
