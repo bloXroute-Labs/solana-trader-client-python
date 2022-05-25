@@ -48,43 +48,45 @@ async def grpc():
 async def do_requests(api: bxserum.Provider):
     # markets API
     print("fetching all markets")
-    print(await api.get_markets())
+    print((await api.get_markets()).to_json())
 
     print("fetching SOL/USDC orderbook")
-    print(await api.get_orderbook(market="SOLUSDC"))
+    print((await api.get_orderbook(market="SOLUSDC")).to_json())
 
     print("fetching SOL/USDC ticker")
-    print(await api.get_tickers(market="SOLUSDC"))
+    print((await api.get_tickers(market="SOLUSDC")).to_json())
 
     print("fetching all tickers")
-    print(await api.get_tickers())
+    print((await api.get_tickers()).to_json())
 
     # trade API
     print("fetching open orders for account")
-    print(await api.get_open_orders(market="SOLUSDC", address=PUBLIC_KEY))
+    print((await api.get_open_orders(market="SOLUSDC", address=PUBLIC_KEY)).to_json())
 
     # TODO
     # print("fetching order by id")
-    # print(await api.get_order_by_i_d(market="SOLUSDC", address=PUBLIC_KEY))
+    # print((await api.get_order_by_i_d(market="SOLUSDC", address=PUBLIC_KEY)).to_json())
 
     print("fetching unsettled amounts")
-    print(await api.get_unsettled(market="SOLUSDC", owner=PUBLIC_KEY))
+    print((await api.get_unsettled(market="SOLUSDC", owner=PUBLIC_KEY)).to_json())
 
     print("generating unsigned order to sell 0.1 SOL for USDC at 150_000 USD/SOL")
     print(
-        await api.post_order(
-            owner_address=PUBLIC_KEY,
-            payer_address=PUBLIC_KEY,
-            market="SOLUSDC",
-            side=proto.Side.S_ASK,
-            type=[proto.OrderType.OT_LIMIT],
-            amount=0.1,
-            price=150_000,
-            # optional, but much faster if known
-            open_orders_address="5yyh4mzzycmjfR6arY736d1mB6vNSLiUaFWfepKLf8kZ",
-            # optional, for identification
-            client_order_i_d=0,
-        )
+        (
+            await api.post_order(
+                owner_address=PUBLIC_KEY,
+                payer_address=PUBLIC_KEY,
+                market="SOLUSDC",
+                side=proto.Side.S_ASK,
+                type=[proto.OrderType.OT_LIMIT],
+                amount=0.1,
+                price=150_000,
+                # optional, but much faster if known
+                open_orders_address="5yyh4mzzycmjfR6arY736d1mB6vNSLiUaFWfepKLf8kZ",
+                # optional, for identification
+                client_order_i_d=0,
+            )
+        ).to_json()
     )
 
     print(
@@ -109,13 +111,15 @@ async def do_requests(api: bxserum.Provider):
     # TODO
     # print("generate cancel order")
     # print(
-    #     await api.post_cancel_order(
-    #         order_i_d="",
-    #         side=proto.Side.S_ASK,
-    #         market="SOLUSDC",
-    #         owner=PUBLIC_KEY,
-    #         open_orders="",  # optional
-    #     )
+    #     (
+    #         await api.post_cancel_order(
+    #             order_i_d="",
+    #             side=proto.Side.S_ASK,
+    #             market="SOLUSDC",
+    #             owner=PUBLIC_KEY,
+    #             open_orders="",  # optional
+    #         )
+    #     ).to_json()
     # )
     #
     # print("submit cancel order")
@@ -131,12 +135,14 @@ async def do_requests(api: bxserum.Provider):
     #
     # print("generate cancel order by client ID")
     # print(
-    #     await api.post_cancel_order_by_client_i_d(
-    #         client_i_d=123,
-    #         market="SOLUSDC",
-    #         owner=PUBLIC_KEY,
-    #         open_orders="",  # optional
-    #     )
+    #     (
+    #         await api.post_cancel_order_by_client_i_d(
+    #             client_i_d=123,
+    #             market="SOLUSDC",
+    #             owner=PUBLIC_KEY,
+    #             open_orders="",  # optional
+    #         )
+    #     ).to_json()
     # )
     #
     # print("submit cancel order by client ID")
@@ -158,7 +164,7 @@ async def do_stream(api: bxserum.Provider):
 
     print("streaming orderbook updates...")
     async for response in api.get_orderbook_stream(market="SOLUSDC"):
-        print(response)
+        print(response.to_json())
 
         if item_count == 5:
             item_count = 0
@@ -166,7 +172,7 @@ async def do_stream(api: bxserum.Provider):
 
     print("streaming ticker updates...")
     async for response in api.get_tickers_stream(market="SOLUSDC"):
-        print(response)
+        print(response.to_json())
 
         if item_count == 5:
             item_count = 0
@@ -174,7 +180,7 @@ async def do_stream(api: bxserum.Provider):
 
     print("streaming trade updates...")
     async for response in api.get_trade_stream(market="SOLUSDC"):
-        print(response)
+        print(response.to_json())
 
         if item_count == 5:
             item_count = 0
