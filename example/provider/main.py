@@ -9,8 +9,8 @@ PUBLIC_KEY = "AFT8VayE7qr8MoQsW3wHsDS83HhEvhGWdbNSHRKeUDfQ"
 
 async def main():
     await http()
-    # await ws()
-    # await grpc()
+    await ws()
+    await grpc()
 
 
 async def http():
