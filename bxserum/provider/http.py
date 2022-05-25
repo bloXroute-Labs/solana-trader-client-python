@@ -1,3 +1,4 @@
+import datetime
 from typing import Type, AsyncGenerator, Optional, TYPE_CHECKING, List
 
 import aiohttp
@@ -45,57 +46,70 @@ class HttpProvider(Provider):
     async def close(self):
         await self._session.close()
 
-    async def get_orderbook(
-        self, *, market: str = "", limit: int = 0
-    ) -> proto.GetOrderbookResponse:
-        request = proto.GetOrderBookRequest()
-        request.market = market
-        request.limit = limit
-
-        async with self._session.get(
-            f"{self._endpoint}/market/orderbooks/{request.market}"
-        ) as res:
-            return await map_response(res, proto.GetOrderbookResponse())
-
-    async def get_orders(
-        self, *, market: str = "", address: str = ""
-    ) -> proto.GetOrdersResponse:
-        request = proto.GetOrdersRequest()
-        request.market = market
-        request.address = address
-
-        async with self._session.get(
-            f"{self._endpoint}/trade/orders/{request.market}?address={request.address}"
-        ) as res:
-            response = await res.json()
-            return proto.GetOrdersResponse().from_dict(response)
-
-    async def get_tickers(self, *, market: str = "") -> proto.GetTickersResponse:
-        request = proto.GetTickersRequest()
-        request.market = market
-
-        async with self._session.get(
-            f"{self._endpoint}/market/tickers/{request.market}"
-        ) as res:
-            response = await res.json()
-            return proto.GetTickersResponse().from_dict(response)
-
-    async def get_trades(
-        self, *, market: str = "", limit: int = 0
-    ) -> proto.GetTradesResponse:
-        request = proto.GetTradesRequest()
-        request.market = market
-        request.limit = limit
-
-        async with self._session.get(
-            f"{self._endpoint}/market/trades/{request.market}"
-        ) as res:
-            response = await res.json()
-            return proto.GetTradesResponse().from_dict(response)
-
     async def get_markets(self) -> proto.GetMarketsResponse:
         async with self._session.get(f"{self._endpoint}/market/markets") as res:
             return await map_response(res, proto.GetMarketsResponse())
+
+    async def get_orderbook(
+        self, *, market: str = "", limit: int = 0
+    ) -> proto.GetOrderbookResponse:
+        async with self._session.get(
+            f"{self._endpoint}/market/orderbooks/{market}?limit={limit}"
+        ) as res:
+            return await map_response(res, proto.GetOrderbookResponse())
+
+    async def get_tickers(self, *, market: str = "") -> proto.GetTickersResponse:
+        async with self._session.get(
+            f"{self._endpoint}/market/tickers/{market}"
+        ) as res:
+            return await map_response(res, proto.GetTickersResponse())
+
+    async def get_orders(
+        self,
+        *,
+        market: str = "",
+        status: proto.OrderStatus = 0,
+        side: proto.Side = 0,
+        types: List[proto.OrderType] = [],
+        from_: Optional[datetime.datetime] = None,
+        limit: int = 0,
+        direction: proto.Direction = 0,
+        address: str = "",
+    ) -> proto.GetOrdersResponse:
+        raise NotImplementedError()
+
+    async def get_open_orders(
+        self,
+        *,
+        market: str = "",
+        side: proto.Side = 0,
+        types: List[proto.OrderType] = [],
+        from_: Optional[datetime.datetime] = None,
+        limit: int = 0,
+        direction: proto.Direction = proto.Direction.D_ASCENDING,
+        address: str = "",
+    ) -> proto.GetOpenOrdersResponse:
+        async with self._session.get(
+            f"{self._endpoint}/trade/orders/{market}"
+            f"?address={address}"
+            f"&side={side}"
+            f"&types=OT_LIMIT"
+            f"&direction={direction.name}"
+        ) as res:
+            return await map_response(res, proto.GetOpenOrdersResponse())
+
+    async def get_order_by_i_d(self, *, order_i_d: str = "") -> proto.GetOrderByIDResponse:
+        # TODO
+        raise NotImplementedError()
+
+    async def get_unsettled(
+        self, *, market: str = "", owner: str = ""
+    ) -> proto.GetUnsettledResponse:
+        async with self._session.get(
+            f"{self._endpoint}/trade/unsettled/{market}"
+            f"?owner={owner}"
+        ) as res:
+            return await map_response(res, proto.GetUnsettledResponse())
 
     async def post_order(
         self,

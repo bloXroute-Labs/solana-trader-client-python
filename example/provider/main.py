@@ -60,8 +60,8 @@ async def do_requests(api: bxserum.Provider):
     # print(await api.get_tickers())
 
     # trade API
-    print("fetching open orders for account")
-    print(await api.get_open_orders(market="SOLUSDC", address=PUBLIC_KEY))
+    # print("fetching open orders for account")
+    # print(await api.get_open_orders(market="SOLUSDC", address=PUBLIC_KEY))
 
     # TODO
     # print("fetching order by id")
@@ -80,8 +80,10 @@ async def do_requests(api: bxserum.Provider):
             type=[proto.OrderType.OT_LIMIT],
             amount=0.1,
             price=150_000,
-            open_orders_address="",  # optional
-            client_order_i_d=0,  # optional
+            # optional, but much faster if known
+            open_orders_address="5yyh4mzzycmjfR6arY736d1mB6vNSLiUaFWfepKLf8kZ",
+            # optional, for identification
+            client_order_i_d=0,
         )
     )
 
@@ -97,8 +99,10 @@ async def do_requests(api: bxserum.Provider):
             types=[proto.OrderType.OT_LIMIT],
             amount=0.1,
             price=150_000,
-            open_orders_address="",  # optional
-            client_order_id=0,  # optional
+            # optional, but much faster if known
+            open_orders_address="5yyh4mzzycmjfR6arY736d1mB6vNSLiUaFWfepKLf8kZ",
+            # optional, for identification
+            client_order_id=0,
         )
     )
 
@@ -148,7 +152,7 @@ async def do_requests(api: bxserum.Provider):
     # )
 
 
-async def do_stream(api: bxserum.Api):
+async def do_stream(api: bxserum.Provider):
     pass
 
     # print("checking stream...")
