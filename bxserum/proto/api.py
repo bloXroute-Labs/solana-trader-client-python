@@ -216,11 +216,23 @@ class PostOrderResponse(betterproto.Message):
 @dataclass
 class PostCancelOrderRequest(betterproto.Message):
     order_i_d: str = betterproto.string_field(1)
+    side: "Side" = betterproto.enum_field(2)
+    market: str = betterproto.string_field(3)
+    owner: str = betterproto.string_field(4)
+    open_orders: str = betterproto.string_field(5)
+
+
+@dataclass
+class PostCancelOrderByClientIDRequest(betterproto.Message):
+    client_i_d: int = betterproto.uint64_field(1)
+    market: str = betterproto.string_field(2)
+    owner: str = betterproto.string_field(3)
+    open_orders: str = betterproto.string_field(4)
 
 
 @dataclass
 class PostCancelOrderResponse(betterproto.Message):
-    order_i_d: str = betterproto.string_field(1)
+    transaction: bytes = betterproto.bytes_field(1)
 
 
 @dataclass
@@ -230,7 +242,7 @@ class PostCancelAllRequest(betterproto.Message):
 
 @dataclass
 class PostCancelAllResponse(betterproto.Message):
-    order_i_ds: List[str] = betterproto.string_field(1)
+    transaction: bytes = betterproto.bytes_field(1)
 
 
 @dataclass
@@ -283,6 +295,7 @@ class Order(betterproto.Message):
 @dataclass
 class PostSubmitRequest(betterproto.Message):
     transaction: str = betterproto.string_field(1)
+    skip_pre_flight: bool = betterproto.bool_field(2)
 
 
 @dataclass
@@ -298,6 +311,7 @@ class GetOpenOrdersRequest(betterproto.Message):
     from_: datetime = betterproto.message_field(4)
     limit: int = betterproto.uint32_field(5)
     direction: "Direction" = betterproto.enum_field(6)
+    address: str = betterproto.string_field(7)
 
 
 @dataclass
@@ -319,13 +333,27 @@ class GetOrderByIDResponse(betterproto.Message):
 
 @dataclass
 class GetUnsettledRequest(betterproto.Message):
-    symbol: str = betterproto.string_field(1)
+    market: str = betterproto.string_field(1)
+    owner: str = betterproto.string_field(2)
+
+
+@dataclass
+class UnsettledAccountToken(betterproto.Message):
+    address: str = betterproto.string_field(1)
+    amount: float = betterproto.double_field(2)
+
+
+@dataclass
+class UnsettledAccount(betterproto.Message):
+    account: str = betterproto.string_field(1)
+    base_token: "UnsettledAccountToken" = betterproto.message_field(2)
+    quote_token: "UnsettledAccountToken" = betterproto.message_field(3)
 
 
 @dataclass
 class GetUnsettledResponse(betterproto.Message):
-    symbol: str = betterproto.string_field(1)
-    unsettled: float = betterproto.double_field(2)
+    market: str = betterproto.string_field(1)
+    unsettled: List["UnsettledAccount"] = betterproto.message_field(2)
 
 
 @dataclass
@@ -490,9 +518,12 @@ class ApiStub(betterproto.ServiceStub):
             PostOrderResponse,
         )
 
-    async def post_submit(self, *, transaction: str = "") -> PostSubmitResponse:
+    async def post_submit(
+        self, *, transaction: str = "", skip_pre_flight: bool = False
+    ) -> PostSubmitResponse:
         request = PostSubmitRequest()
         request.transaction = transaction
+        request.skip_pre_flight = skip_pre_flight
 
         return await self._unary_unary(
             "/api.Api/PostSubmit",
@@ -501,13 +532,43 @@ class ApiStub(betterproto.ServiceStub):
         )
 
     async def post_cancel_order(
-        self, *, order_i_d: str = ""
+        self,
+        *,
+        order_i_d: str = "",
+        side: "Side" = 0,
+        market: str = "",
+        owner: str = "",
+        open_orders: str = "",
     ) -> PostCancelOrderResponse:
         request = PostCancelOrderRequest()
         request.order_i_d = order_i_d
+        request.side = side
+        request.market = market
+        request.owner = owner
+        request.open_orders = open_orders
 
         return await self._unary_unary(
             "/api.Api/PostCancelOrder",
+            request,
+            PostCancelOrderResponse,
+        )
+
+    async def post_cancel_order_by_client_i_d(
+        self,
+        *,
+        client_i_d: int = 0,
+        market: str = "",
+        owner: str = "",
+        open_orders: str = "",
+    ) -> PostCancelOrderResponse:
+        request = PostCancelOrderByClientIDRequest()
+        request.client_i_d = client_i_d
+        request.market = market
+        request.owner = owner
+        request.open_orders = open_orders
+
+        return await self._unary_unary(
+            "/api.Api/PostCancelOrderByClientID",
             request,
             PostCancelOrderResponse,
         )
@@ -570,6 +631,7 @@ class ApiStub(betterproto.ServiceStub):
         from_: Optional[datetime] = None,
         limit: int = 0,
         direction: "Direction" = 0,
+        address: str = "",
     ) -> GetOpenOrdersResponse:
         request = GetOpenOrdersRequest()
         request.market = market
@@ -579,6 +641,7 @@ class ApiStub(betterproto.ServiceStub):
             request.from_ = from_
         request.limit = limit
         request.direction = direction
+        request.address = address
 
         return await self._unary_unary(
             "/api.Api/GetOpenOrders",
@@ -596,9 +659,12 @@ class ApiStub(betterproto.ServiceStub):
             GetOrderByIDResponse,
         )
 
-    async def get_unsettled(self, *, symbol: str = "") -> GetUnsettledResponse:
+    async def get_unsettled(
+        self, *, market: str = "", owner: str = ""
+    ) -> GetUnsettledResponse:
         request = GetUnsettledRequest()
-        request.symbol = symbol
+        request.market = market
+        request.owner = owner
 
         return await self._unary_unary(
             "/api.Api/GetUnsettled",
