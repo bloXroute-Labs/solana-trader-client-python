@@ -18,6 +18,14 @@ def load_private_key() -> Keypair:
     return Keypair.from_secret_key(pkey_bytes_base58)
 
 
+def load_open_orders() -> str:
+    open_orders = os.getenv("OPEN_ORDERS")
+    if open_orders is None:
+        raise EnvironmentError("env variable `OPEN_ORDERS` not set")
+
+    return open_orders
+
+
 def sign_tx(unsigned_tx_base64: str) -> str:
     """
     Uses environment variable `PRIVATE_KEY` to sign message content and replace zero signatures.

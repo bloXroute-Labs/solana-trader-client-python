@@ -82,6 +82,48 @@ class HttpProvider(Provider):
         ) as res:
             return await map_response(res, proto.PostOrderResponse())
 
+    async def post_cancel_order(
+        self,
+        *,
+        order_i_d: string = "",
+        side: "proto.Side" = 0,
+        market_address: str = "",
+        owner_address: str = "",
+        open_orders_address: str = "",
+    ) -> proto.PostCancelOrderResponse:
+        request = proto.PostCancelOrderRequest(
+            order_i_d,
+            side,
+            market_address,
+            owner_address,
+            open_orders_address,
+        )
+
+        async with self._session.post(
+            f"{self._endpoint}/trade/cancel", json=request.to_dict()
+        ) as res:
+            return await map_response(res, proto.PostCancelOrderResponse())
+
+    async def post_cancel_order_by_client_i_d(
+        self,
+        *,
+        client_order_i_d: int = 0,
+        market_address: str = "",
+        owner_address: str = "",
+        open_orders_address: str = "",
+    ) -> proto.PostCancelOrderByClientIDResponse:
+        request = proto.PostCancelByClientOrderIDRequest(
+            client_order_i_d,
+            market_address,
+            owner_address,
+            open_orders_address,
+        )
+
+        async with self._session.post(
+            f"{self._endpoint}/trade/cancelbyid", json=request.to_dict()
+        ) as res:
+            return await map_response(res, proto.PostCancelOrderResponse())
+
     async def post_submit(self, *, transaction: str = "") -> proto.PostSubmitResponse:
         request = proto.PostSubmitRequest(transaction)
         async with self._session.post(
