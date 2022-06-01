@@ -13,7 +13,7 @@ class TestGRPC(aiounittest.AsyncTestCase):
 
     async def test_grpc_private(self):
         async with provider.GrpcProvider() as grpc:
-            await private.test_submit_order(self, grpc)
+            await private.test_submit_cancel_order(self, grpc)
 
     async def test_grpc_stream(self):
         async with provider.GrpcProvider() as grpc:

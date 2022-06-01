@@ -13,7 +13,7 @@ class TestWS(aiounittest.AsyncTestCase):
 
     async def test_ws_private(self):
         async with provider.WsProvider() as ws:
-            await private.test_submit_order(self, ws)
+            await private.test_submit_cancel_order(self, ws)
 
     async def test_ws_stream(self):
         async with provider.WsProvider() as ws:

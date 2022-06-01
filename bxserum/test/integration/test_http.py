@@ -13,5 +13,5 @@ class TestHTTP(aiounittest.AsyncTestCase):
 
     async def test_http_private(self):
         async with provider.HttpProvider() as http:
-            await private.test_submit_order(self, http)
+            await private.test_submit_cancel_order(self, http)
 
