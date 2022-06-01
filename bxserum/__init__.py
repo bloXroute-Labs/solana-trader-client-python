@@ -1,15 +1,14 @@
 from bxserum import proto, provider
 
-Api = proto.ApiStub
+Provider = provider.Provider
 
 
-async def serum(connection_provider: provider.Provider) -> Api:
+async def serum(connection_provider: Provider) -> Provider:
     await connection_provider.connect()
     return connection_provider
 
 
 _all = [
-    "Api",
     "serum",
-    "provider"
+    "Provider"
 ]

@@ -7,6 +7,7 @@ import typing
 stream_expect_entries = 2
 stream_expect_timeout = 60
 
+
 async def test_stream(t: unittest.TestCase, stream: typing.AsyncGenerator):
     counter = 0
     try:
@@ -15,7 +16,10 @@ async def test_stream(t: unittest.TestCase, stream: typing.AsyncGenerator):
                 await stream.__anext__()
                 counter += 1
     except asyncio.TimeoutError:
-        t.fail(f"{counter}/{stream_expect_entries} values found with timeout of {stream_expect_timeout} seconds")
+        t.fail(
+            f"{counter}/{stream_expect_entries} values found with timeout of {stream_expect_timeout} seconds"
+        )
+
 
 # Works if the market gets updated when running the test
 async def test_orderbook_stream(t: unittest.TestCase, p: provider.Provider):

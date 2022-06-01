@@ -28,7 +28,7 @@ class JsonRpcRequest:
             "jsonrpc": self.json_rpc_version,
             "id": self.id,
             "method": self.method_name,
-            "params": self.params.to_dict(include_default_values=True),
+            "params": self.params.to_dict(include_default_values=False),
         }
 
 
