@@ -26,7 +26,7 @@ async with provider.HttpProvider() as api:
     print(await api.get_orderbook(market="ETHUSDT"))
     
 async with provider.WsProvider() as api:
-    async for update in api.get_orderbook_stream(market="ETHUSDT"):
+    async for update in api.get_orderbooks_stream(market="ETHUSDT"):
         print(update)
 ```
 

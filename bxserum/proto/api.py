@@ -80,17 +80,11 @@ class GetTickersResponse(betterproto.Message):
 @dataclass
 class Ticker(betterproto.Message):
     market: str = betterproto.string_field(1)
-    status: "MarketStatus" = betterproto.enum_field(2)
-    market_address: str = betterproto.string_field(3)
-    close: float = betterproto.double_field(4)
-    open: float = betterproto.double_field(5)
-    amount: float = betterproto.double_field(6)
-    volume: float = betterproto.double_field(7)
-    count: float = betterproto.double_field(8)
-    bid: float = betterproto.double_field(9)
-    bid_size: float = betterproto.double_field(10)
-    ask: float = betterproto.double_field(11)
-    ask_size: float = betterproto.double_field(12)
+    market_address: str = betterproto.string_field(2)
+    bid: float = betterproto.double_field(3)
+    bid_size: float = betterproto.double_field(4)
+    ask: float = betterproto.double_field(5)
+    ask_size: float = betterproto.double_field(6)
 
 
 @dataclass
@@ -132,18 +126,12 @@ class GetOrderBookRequest(betterproto.Message):
 class GetOrderbookResponse(betterproto.Message):
     market: str = betterproto.string_field(1)
     market_address: str = betterproto.string_field(2)
-    bids: List["OrderbookBid"] = betterproto.message_field(3)
-    asks: List["OrderbookAsk"] = betterproto.message_field(4)
+    bids: List["OrderbookItem"] = betterproto.message_field(3)
+    asks: List["OrderbookItem"] = betterproto.message_field(4)
 
 
 @dataclass
-class OrderbookBid(betterproto.Message):
-    price: float = betterproto.double_field(1)
-    size: float = betterproto.double_field(2)
-
-
-@dataclass
-class OrderbookAsk(betterproto.Message):
+class OrderbookItem(betterproto.Message):
     price: float = betterproto.double_field(1)
     size: float = betterproto.double_field(2)
 
@@ -151,8 +139,7 @@ class OrderbookAsk(betterproto.Message):
 @dataclass
 class GetTradesRequest(betterproto.Message):
     market: str = betterproto.string_field(1)
-    from_: datetime = betterproto.message_field(2)
-    limit: int = betterproto.uint32_field(3)
+    limit: int = betterproto.uint32_field(2)
 
 
 @dataclass
@@ -165,7 +152,6 @@ class Trade(betterproto.Message):
     side: "Side" = betterproto.enum_field(1)
     size: float = betterproto.double_field(2)
     price: float = betterproto.double_field(3)
-    created_at: datetime = betterproto.message_field(4)
 
 
 @dataclass
@@ -175,7 +161,7 @@ class GetServerTimeRequest(betterproto.Message):
 
 @dataclass
 class GetServerTimeResponse(betterproto.Message):
-    timestamp: datetime = betterproto.message_field(1)
+    timestamp: str = betterproto.string_field(1)
 
 
 @dataclass
@@ -217,42 +203,48 @@ class PostOrderResponse(betterproto.Message):
 class PostCancelOrderRequest(betterproto.Message):
     order_i_d: str = betterproto.string_field(1)
     side: "Side" = betterproto.enum_field(2)
-    market: str = betterproto.string_field(3)
-    owner: str = betterproto.string_field(4)
-    open_orders: str = betterproto.string_field(5)
+    market_address: str = betterproto.string_field(3)
+    owner_address: str = betterproto.string_field(4)
+    open_orders_address: str = betterproto.string_field(5)
 
 
 @dataclass
-class PostCancelOrderByClientIDRequest(betterproto.Message):
-    client_i_d: int = betterproto.uint64_field(1)
-    market: str = betterproto.string_field(2)
-    owner: str = betterproto.string_field(3)
-    open_orders: str = betterproto.string_field(4)
+class PostCancelByClientOrderIDRequest(betterproto.Message):
+    client_order_i_d: int = betterproto.uint64_field(1)
+    market_address: str = betterproto.string_field(2)
+    owner_address: str = betterproto.string_field(3)
+    open_orders_address: str = betterproto.string_field(4)
 
 
 @dataclass
 class PostCancelOrderResponse(betterproto.Message):
-    transaction: bytes = betterproto.bytes_field(1)
+    transaction: str = betterproto.string_field(1)
 
 
 @dataclass
 class PostCancelAllRequest(betterproto.Message):
     market: str = betterproto.string_field(1)
+    owner_address: str = betterproto.string_field(2)
+    open_order_address: str = betterproto.string_field(3)
 
 
 @dataclass
 class PostCancelAllResponse(betterproto.Message):
-    transaction: bytes = betterproto.bytes_field(1)
+    transactions: List[str] = betterproto.string_field(1)
 
 
 @dataclass
 class PostSettleRequest(betterproto.Message):
-    symbol: str = betterproto.string_field(1)
+    owner_address: str = betterproto.string_field(1)
+    market: str = betterproto.string_field(2)
+    base_token_wallet: str = betterproto.string_field(3)
+    quote_token_wallet: str = betterproto.string_field(4)
+    open_orders_address: str = betterproto.string_field(5)
 
 
 @dataclass
 class PostSettleResponse(betterproto.Message):
-    settlement: "Settlement" = betterproto.message_field(1)
+    transaction: str = betterproto.string_field(1)
 
 
 @dataclass
@@ -286,10 +278,10 @@ class Order(betterproto.Message):
     side: "Side" = betterproto.enum_field(3)
     types: List["OrderType"] = betterproto.enum_field(4)
     price: float = betterproto.double_field(5)
-    size: float = betterproto.double_field(6)
-    remaining_size: float = betterproto.double_field(7)
-    created_at: datetime = betterproto.message_field(8)
-    status: "OrderStatus" = betterproto.enum_field(9)
+    remaining_size: float = betterproto.double_field(6)
+    created_at: datetime = betterproto.message_field(7)
+    client_order_i_d: str = betterproto.string_field(8)
+    open_order_account: str = betterproto.string_field(9)
 
 
 @dataclass
@@ -306,29 +298,24 @@ class PostSubmitResponse(betterproto.Message):
 @dataclass
 class GetOpenOrdersRequest(betterproto.Message):
     market: str = betterproto.string_field(1)
-    side: "Side" = betterproto.enum_field(2)
-    types: List["OrderType"] = betterproto.enum_field(3)
-    from_: datetime = betterproto.message_field(4)
-    limit: int = betterproto.uint32_field(5)
-    direction: "Direction" = betterproto.enum_field(6)
-    address: str = betterproto.string_field(7)
+    limit: int = betterproto.uint32_field(2)
+    address: str = betterproto.string_field(3)
 
 
 @dataclass
 class GetOpenOrdersResponse(betterproto.Message):
-    status: "OrderStatus" = betterproto.enum_field(1)
-    orders: List["Order"] = betterproto.message_field(2)
+    orders: List["Order"] = betterproto.message_field(1)
 
 
 @dataclass
 class GetOrderByIDRequest(betterproto.Message):
     order_i_d: str = betterproto.string_field(1)
+    market: str = betterproto.string_field(2)
 
 
 @dataclass
 class GetOrderByIDResponse(betterproto.Message):
-    status: "OrderStatus" = betterproto.enum_field(1)
-    order: "Order" = betterproto.message_field(2)
+    order: "Order" = betterproto.message_field(1)
 
 
 @dataclass
@@ -357,13 +344,13 @@ class GetUnsettledResponse(betterproto.Message):
 
 
 @dataclass
-class GetOrderbookStreamResponse(betterproto.Message):
+class GetOrderbooksStreamResponse(betterproto.Message):
     block_height: int = betterproto.int64_field(1)
     orderbook: "GetOrderbookResponse" = betterproto.message_field(2)
 
 
 @dataclass
-class GetTickerStreamResponse(betterproto.Message):
+class GetTickersStreamResponse(betterproto.Message):
     block_height: int = betterproto.int64_field(1)
     ticker: "GetTickersResponse" = betterproto.message_field(2)
 
@@ -384,8 +371,8 @@ class GetMarketDepthStreamResponse(betterproto.Message):
 @dataclass
 class MarketDepthTick(betterproto.Message):
     prev_block_height: int = betterproto.int64_field(1)
-    asks: List["OrderbookAsk"] = betterproto.message_field(2)
-    bids: List["OrderbookBid"] = betterproto.message_field(3)
+    asks: List["OrderbookItem"] = betterproto.message_field(2)
+    bids: List["OrderbookItem"] = betterproto.message_field(3)
 
 
 @dataclass
@@ -399,7 +386,7 @@ class ApiStub(betterproto.ServiceStub):
         request = GetMarketsRequest()
 
         return await self._unary_unary(
-            "/api.Api/GetMarkets",
+            "/.Api/GetMarkets",
             request,
             GetMarketsResponse,
         )
@@ -409,7 +396,7 @@ class ApiStub(betterproto.ServiceStub):
         request.market = market
 
         return await self._unary_unary(
-            "/api.Api/GetTickers",
+            "/.Api/GetTickers",
             request,
             GetTickersResponse,
         )
@@ -433,7 +420,7 @@ class ApiStub(betterproto.ServiceStub):
         request.limit = limit
 
         return await self._unary_unary(
-            "/api.Api/GetKline",
+            "/.Api/GetKline",
             request,
             GetKlineResponse,
         )
@@ -446,22 +433,20 @@ class ApiStub(betterproto.ServiceStub):
         request.limit = limit
 
         return await self._unary_unary(
-            "/api.Api/GetOrderbook",
+            "/.Api/GetOrderbook",
             request,
             GetOrderbookResponse,
         )
 
     async def get_trades(
-        self, *, market: str = "", from_: Optional[datetime] = None, limit: int = 0
+        self, *, market: str = "", limit: int = 0
     ) -> GetTradesResponse:
         request = GetTradesRequest()
         request.market = market
-        if from_ is not None:
-            request.from_ = from_
         request.limit = limit
 
         return await self._unary_unary(
-            "/api.Api/GetTrades",
+            "/.Api/GetTrades",
             request,
             GetTradesResponse,
         )
@@ -470,7 +455,7 @@ class ApiStub(betterproto.ServiceStub):
         request = GetServerTimeRequest()
 
         return await self._unary_unary(
-            "/api.Api/GetServerTime",
+            "/.Api/GetServerTime",
             request,
             GetServerTimeResponse,
         )
@@ -481,7 +466,7 @@ class ApiStub(betterproto.ServiceStub):
         request = GetAccountBalanceRequest()
 
         return await self._unary_unary(
-            "/api.Api/GetAccountBalance",
+            "/.Api/GetAccountBalance",
             request,
             GetAccountBalanceResponse,
         )
@@ -513,7 +498,7 @@ class ApiStub(betterproto.ServiceStub):
         request.client_order_i_d = client_order_i_d
 
         return await self._unary_unary(
-            "/api.Api/PostOrder",
+            "/.Api/PostOrder",
             request,
             PostOrderResponse,
         )
@@ -526,7 +511,7 @@ class ApiStub(betterproto.ServiceStub):
         request.skip_pre_flight = skip_pre_flight
 
         return await self._unary_unary(
-            "/api.Api/PostSubmit",
+            "/.Api/PostSubmit",
             request,
             PostSubmitResponse,
         )
@@ -536,59 +521,75 @@ class ApiStub(betterproto.ServiceStub):
         *,
         order_i_d: str = "",
         side: "Side" = 0,
-        market: str = "",
-        owner: str = "",
-        open_orders: str = "",
+        market_address: str = "",
+        owner_address: str = "",
+        open_orders_address: str = "",
     ) -> PostCancelOrderResponse:
         request = PostCancelOrderRequest()
         request.order_i_d = order_i_d
         request.side = side
-        request.market = market
-        request.owner = owner
-        request.open_orders = open_orders
+        request.market_address = market_address
+        request.owner_address = owner_address
+        request.open_orders_address = open_orders_address
 
         return await self._unary_unary(
-            "/api.Api/PostCancelOrder",
+            "/.Api/PostCancelOrder",
             request,
             PostCancelOrderResponse,
         )
 
-    async def post_cancel_order_by_client_i_d(
+    async def post_cancel_by_client_order_i_d(
         self,
         *,
-        client_i_d: int = 0,
-        market: str = "",
-        owner: str = "",
-        open_orders: str = "",
+        client_order_i_d: int = 0,
+        market_address: str = "",
+        owner_address: str = "",
+        open_orders_address: str = "",
     ) -> PostCancelOrderResponse:
-        request = PostCancelOrderByClientIDRequest()
-        request.client_i_d = client_i_d
-        request.market = market
-        request.owner = owner
-        request.open_orders = open_orders
+        request = PostCancelByClientOrderIDRequest()
+        request.client_order_i_d = client_order_i_d
+        request.market_address = market_address
+        request.owner_address = owner_address
+        request.open_orders_address = open_orders_address
 
         return await self._unary_unary(
-            "/api.Api/PostCancelOrderByClientID",
+            "/.Api/PostCancelByClientOrderID",
             request,
             PostCancelOrderResponse,
         )
 
-    async def post_cancel_all(self, *, market: str = "") -> PostCancelAllResponse:
+    async def post_cancel_all(
+        self, *, market: str = "", owner_address: str = "", open_order_address: str = ""
+    ) -> PostCancelAllResponse:
         request = PostCancelAllRequest()
         request.market = market
+        request.owner_address = owner_address
+        request.open_order_address = open_order_address
 
         return await self._unary_unary(
-            "/api.Api/PostCancelAll",
+            "/.Api/PostCancelAll",
             request,
             PostCancelAllResponse,
         )
 
-    async def post_settle(self, *, symbol: str = "") -> PostSettleResponse:
+    async def post_settle(
+        self,
+        *,
+        owner_address: str = "",
+        market: str = "",
+        base_token_wallet: str = "",
+        quote_token_wallet: str = "",
+        open_orders_address: str = "",
+    ) -> PostSettleResponse:
         request = PostSettleRequest()
-        request.symbol = symbol
+        request.owner_address = owner_address
+        request.market = market
+        request.base_token_wallet = base_token_wallet
+        request.quote_token_wallet = quote_token_wallet
+        request.open_orders_address = open_orders_address
 
         return await self._unary_unary(
-            "/api.Api/PostSettle",
+            "/.Api/PostSettle",
             request,
             PostSettleResponse,
         )
@@ -617,44 +618,34 @@ class ApiStub(betterproto.ServiceStub):
         request.address = address
 
         return await self._unary_unary(
-            "/api.Api/GetOrders",
+            "/.Api/GetOrders",
             request,
             GetOrdersResponse,
         )
 
     async def get_open_orders(
-        self,
-        *,
-        market: str = "",
-        side: "Side" = 0,
-        types: List["OrderType"] = [],
-        from_: Optional[datetime] = None,
-        limit: int = 0,
-        direction: "Direction" = 0,
-        address: str = "",
+        self, *, market: str = "", limit: int = 0, address: str = ""
     ) -> GetOpenOrdersResponse:
         request = GetOpenOrdersRequest()
         request.market = market
-        request.side = side
-        request.types = types
-        if from_ is not None:
-            request.from_ = from_
         request.limit = limit
-        request.direction = direction
         request.address = address
 
         return await self._unary_unary(
-            "/api.Api/GetOpenOrders",
+            "/.Api/GetOpenOrders",
             request,
             GetOpenOrdersResponse,
         )
 
-    async def get_order_by_i_d(self, *, order_i_d: str = "") -> GetOrderByIDResponse:
+    async def get_order_by_i_d(
+        self, *, order_i_d: str = "", market: str = ""
+    ) -> GetOrderByIDResponse:
         request = GetOrderByIDRequest()
         request.order_i_d = order_i_d
+        request.market = market
 
         return await self._unary_unary(
-            "/api.Api/GetOrderByID",
+            "/.Api/GetOrderByID",
             request,
             GetOrderByIDResponse,
         )
@@ -667,14 +658,14 @@ class ApiStub(betterproto.ServiceStub):
         request.owner = owner
 
         return await self._unary_unary(
-            "/api.Api/GetUnsettled",
+            "/.Api/GetUnsettled",
             request,
             GetUnsettledResponse,
         )
 
-    async def get_orderbook_stream(
+    async def get_orderbooks_stream(
         self, *, market: str = "", limit: int = 0
-    ) -> AsyncGenerator[GetOrderbookStreamResponse, None]:
+    ) -> AsyncGenerator[GetOrderbooksStreamResponse, None]:
         """streaming endpoints"""
 
         request = GetOrderBookRequest()
@@ -682,22 +673,22 @@ class ApiStub(betterproto.ServiceStub):
         request.limit = limit
 
         async for response in self._unary_stream(
-            "/api.Api/GetOrderbookStream",
+            "/.Api/GetOrderbooksStream",
             request,
-            GetOrderbookStreamResponse,
+            GetOrderbooksStreamResponse,
         ):
             yield response
 
     async def get_tickers_stream(
         self, *, market: str = ""
-    ) -> AsyncGenerator[GetTickerStreamResponse, None]:
+    ) -> AsyncGenerator[GetTickersStreamResponse, None]:
         request = GetTickersRequest()
         request.market = market
 
         async for response in self._unary_stream(
-            "/api.Api/GetTickersStream",
+            "/.Api/GetTickersStream",
             request,
-            GetTickerStreamResponse,
+            GetTickersStreamResponse,
         ):
             yield response
 
@@ -707,23 +698,21 @@ class ApiStub(betterproto.ServiceStub):
         request = GetMarketsRequest()
 
         async for response in self._unary_stream(
-            "/api.Api/GetMarketDepthStream",
+            "/.Api/GetMarketDepthStream",
             request,
             GetMarketDepthStreamResponse,
         ):
             yield response
 
-    async def get_trade_stream(
-        self, *, market: str = "", from_: Optional[datetime] = None, limit: int = 0
+    async def get_trades_stream(
+        self, *, market: str = "", limit: int = 0
     ) -> AsyncGenerator[GetTradesStreamResponse, None]:
         request = GetTradesRequest()
         request.market = market
-        if from_ is not None:
-            request.from_ = from_
         request.limit = limit
 
         async for response in self._unary_stream(
-            "/api.Api/GetTradeStream",
+            "/.Api/GetTradesStream",
             request,
             GetTradesStreamResponse,
         ):
