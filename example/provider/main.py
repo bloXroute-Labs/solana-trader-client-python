@@ -163,7 +163,7 @@ async def do_stream(api: bxserum.Provider):
     item_count = 0
 
     print("streaming orderbook updates...")
-    async for response in api.get_orderbook_stream(market="SOLUSDC"):
+    async for response in api.get_orderbooks_stream(market="SOLUSDC"):
         print(response.to_json())
 
         if item_count == 5:
@@ -179,7 +179,7 @@ async def do_stream(api: bxserum.Provider):
             break
 
     print("streaming trade updates...")
-    async for response in api.get_trade_stream(market="SOLUSDC"):
+    async for response in api.get_trades_stream(market="SOLUSDC"):
         print(response.to_json())
 
         if item_count == 5:
