@@ -1,21 +1,26 @@
 import os
 import base58
 import base64
-from solana.keypair import Keypair
+
+from solana import keypair as kp
 
 from bxserum.transaction.deserializer import PartialTransaction
 
 
-def load_private_key() -> Keypair:
+def load_private_key(pkey_str: str) -> kp.Keypair:
+    # convert base58 private key string to a keypair
+    pkey_bytes = bytes(pkey_str, encoding="utf-8")
+    pkey_bytes_base58 = base58.b58decode(pkey_bytes)
+    return kp.Keypair.from_secret_key(pkey_bytes_base58)
+
+
+def load_private_key_from_env() -> kp.Keypair:
     # get base58 encoded private key
     pkey_str = os.getenv("PRIVATE_KEY")
     if pkey_str is None:
         raise EnvironmentError("env variable `PRIVATE_KEY` not set")
 
-    # convert base58 private key string to a keypair
-    pkey_bytes = bytes(pkey_str, encoding="utf-8")
-    pkey_bytes_base58 = base58.b58decode(pkey_bytes)
-    return Keypair.from_secret_key(pkey_bytes_base58)
+    return load_private_key(pkey_str)
 
 
 def load_open_orders() -> str:
@@ -33,11 +38,11 @@ def sign_tx(unsigned_tx_base64: str) -> str:
     :param unsigned_tx_base64: transaction bytes in base64
     :return: signed transaction
     """
-    keypair = load_private_key()
+    keypair = load_private_key_from_env()
     return sign_tx_with_private_key(unsigned_tx_base64, keypair)
 
 
-def sign_tx_with_private_key(unsigned_tx_base64: str, keypair: Keypair) -> str:
+def sign_tx_with_private_key(unsigned_tx_base64: str, keypair: kp.Keypair) -> str:
     """
     Signs message content and replaces placeholder zero signature with signature.
 
