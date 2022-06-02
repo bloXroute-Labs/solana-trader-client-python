@@ -11,7 +11,7 @@ from bxserum.provider.http_error import HttpError
 from bxserum.provider.wsrpc_error import RpcError
 
 async def test_submit_cancel_order(t: unittest.TestCase, p: provider.Provider):
-    private_key = transaction.load_private_key()
+    private_key = transaction.load_private_key_from_env()
     public_key = str(private_key.public_key)
     open_orders_address = transaction.load_open_orders()
 
