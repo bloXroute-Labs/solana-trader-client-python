@@ -85,7 +85,7 @@ class HttpProvider(Provider):
     async def post_cancel_order(
         self,
         *,
-        order_i_d: string = "",
+        order_i_d: str = "",
         side: "proto.Side" = 0,
         market_address: str = "",
         owner_address: str = "",
@@ -104,14 +104,14 @@ class HttpProvider(Provider):
         ) as res:
             return await map_response(res, proto.PostCancelOrderResponse())
 
-    async def post_cancel_order_by_client_i_d(
+    async def post_cancel_by_client_order_i_d(
         self,
         *,
         client_order_i_d: int = 0,
         market_address: str = "",
         owner_address: str = "",
         open_orders_address: str = "",
-    ) -> proto.PostCancelOrderByClientIDResponse:
+    ) -> proto.PostCancelOrderResponse:
         request = proto.PostCancelByClientOrderIDRequest(
             client_order_i_d,
             market_address,

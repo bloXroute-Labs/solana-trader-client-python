@@ -55,15 +55,15 @@ class Provider(proto.ApiStub, ABC):
 
     async def submit_cancel_order(
         self,
-        order_i_d: string = "",
-        side: "proto.Side",
+        order_i_d: str = "",
+        side: "proto.Side" = 0,
         market_address: str = "",
         owner_address: str = "",
         open_orders_address: str = "",
     ) -> str:
         order = await self.post_cancel_order(
             order_i_d=order_i_d,
-            side=side,a
+            side=side,
             market_address=market_address,
             owner_address=owner_address,
             open_orders_address=open_orders_address,
@@ -72,14 +72,14 @@ class Provider(proto.ApiStub, ABC):
         result = await self.post_submit(transaction=signed_tx, skip_pre_flight=True)
         return result.signature
 
-    async def submit_cancel_order_by_client_order_i_d(
+    async def submit_cancel_by_client_order_i_d(
         self,
-        client_i_d: int = 0,
+        client_order_i_d: int = 0,
         market_address: str = "",
         owner_address: str = "",
         open_orders_address: str = "",
     ) -> str:
-        order = await self.post_cancel_order_by_client_order_i_d(
+        order = await self.post_cancel_by_client_order_i_d(
             client_order_i_d=client_order_i_d,
             market_address=market_address,
             owner_address=owner_address,
@@ -88,7 +88,7 @@ class Provider(proto.ApiStub, ABC):
         signed_tx = transaction.sign_tx_with_private_key(order.transaction, self.private_key())
         result = await self.post_submit(transaction=signed_tx, skip_pre_flight=True)
         return result.signature
-)
+
 
 class NotConnectedException(Exception):
     pass
