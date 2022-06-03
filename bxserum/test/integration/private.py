@@ -30,9 +30,8 @@ async def test_submit_cancel_order(t: unittest.TestCase, p: provider.Provider):
     )
     await verify_tx(t, tx_hash)
 
-    tx_cancel_hash = await p.submit_cancel_order(
+    tx_cancel_hash = await p.submit_cancel_by_client_order_i_d(
         client_order_id,
-        proto.Side.S_ASK,
         "9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT",
         public_key,
         open_orders_address,
@@ -128,8 +127,8 @@ async def verify_tx(t: unittest.TestCase, tx_hash: str):
             pass
 
         attempts += 1
-        await asyncio.sleep(5)
-    t.fail("could not find transaction hash in timeout")
+        await asyncio.sleep(10)
+    t.fail("could not find transaction hash in timeout", tx_hash)
 
 
 async def check_solscan(tx_hash: str) -> str:

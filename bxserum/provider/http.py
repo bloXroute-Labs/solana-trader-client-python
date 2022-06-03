@@ -183,8 +183,8 @@ class HttpProvider(Provider):
         ) as res:
             return await map_response(res, proto.PostCancelOrderResponse())
 
-    async def post_submit(self, *, transaction: str = "") -> proto.PostSubmitResponse:
-        request = proto.PostSubmitRequest(transaction)
+    async def post_submit(self, *, transaction: str = "", skip_pre_flight: bool = False) -> proto.PostSubmitResponse:
+        request = proto.PostSubmitRequest(transaction, skip_pre_flight)
         async with self._session.post(
             f"{self._endpoint}/trade/submit", json=request.to_dict()
         ) as res:
