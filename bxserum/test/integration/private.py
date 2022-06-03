@@ -118,7 +118,8 @@ async def test_submit_cancel_order(t: unittest.TestCase, p: provider.Provider):
 
 async def verify_tx(t: unittest.TestCase, tx_hash: str):
     attempts = 0
-    while attempts < 3:
+
+    while attempts < 5:
         try:
             result_hash = await check_solscan(tx_hash)
             t.assertEqual(tx_hash, result_hash)
@@ -136,4 +137,4 @@ async def check_solscan(tx_hash: str) -> str:
         async with session.get(
             f"https://public-api.solscan.io/transaction/{tx_hash}"
         ) as resp:
-            return (await resp.json())["TxHash"]
+            return (await resp.json())["txHash"]
