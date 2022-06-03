@@ -15,7 +15,7 @@ async def test_submit_cancel_order(t: unittest.TestCase, p: provider.Provider):
     public_key = str(private_key.public_key)
     open_orders_address = transaction.load_open_orders()
 
-    client_order_id = x = random.randint(1000000000,9999999999)
+    client_order_id = random.randint(1000000000,9999999999)
 
     tx_hash = await p.submit_order(
         public_key,
