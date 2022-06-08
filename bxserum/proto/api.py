@@ -386,7 +386,7 @@ class ApiStub(betterproto.ServiceStub):
         request = GetMarketsRequest()
 
         return await self._unary_unary(
-            "/.Api/GetMarkets",
+            "/api.Api/GetMarkets",
             request,
             GetMarketsResponse,
         )
@@ -396,7 +396,7 @@ class ApiStub(betterproto.ServiceStub):
         request.market = market
 
         return await self._unary_unary(
-            "/.Api/GetTickers",
+            "/api.Api/GetTickers",
             request,
             GetTickersResponse,
         )
@@ -420,7 +420,7 @@ class ApiStub(betterproto.ServiceStub):
         request.limit = limit
 
         return await self._unary_unary(
-            "/.Api/GetKline",
+            "/api.Api/GetKline",
             request,
             GetKlineResponse,
         )
@@ -433,7 +433,7 @@ class ApiStub(betterproto.ServiceStub):
         request.limit = limit
 
         return await self._unary_unary(
-            "/.Api/GetOrderbook",
+            "/api.Api/GetOrderbook",
             request,
             GetOrderbookResponse,
         )
@@ -446,7 +446,7 @@ class ApiStub(betterproto.ServiceStub):
         request.limit = limit
 
         return await self._unary_unary(
-            "/.Api/GetTrades",
+            "/api.Api/GetTrades",
             request,
             GetTradesResponse,
         )
@@ -455,7 +455,7 @@ class ApiStub(betterproto.ServiceStub):
         request = GetServerTimeRequest()
 
         return await self._unary_unary(
-            "/.Api/GetServerTime",
+            "/api.Api/GetServerTime",
             request,
             GetServerTimeResponse,
         )
@@ -466,7 +466,7 @@ class ApiStub(betterproto.ServiceStub):
         request = GetAccountBalanceRequest()
 
         return await self._unary_unary(
-            "/.Api/GetAccountBalance",
+            "/api.Api/GetAccountBalance",
             request,
             GetAccountBalanceResponse,
         )
@@ -498,7 +498,7 @@ class ApiStub(betterproto.ServiceStub):
         request.client_order_i_d = client_order_i_d
 
         return await self._unary_unary(
-            "/.Api/PostOrder",
+            "/api.Api/PostOrder",
             request,
             PostOrderResponse,
         )
@@ -511,7 +511,7 @@ class ApiStub(betterproto.ServiceStub):
         request.skip_pre_flight = skip_pre_flight
 
         return await self._unary_unary(
-            "/.Api/PostSubmit",
+            "/api.Api/PostSubmit",
             request,
             PostSubmitResponse,
         )
@@ -533,7 +533,7 @@ class ApiStub(betterproto.ServiceStub):
         request.open_orders_address = open_orders_address
 
         return await self._unary_unary(
-            "/.Api/PostCancelOrder",
+            "/api.Api/PostCancelOrder",
             request,
             PostCancelOrderResponse,
         )
@@ -553,7 +553,7 @@ class ApiStub(betterproto.ServiceStub):
         request.open_orders_address = open_orders_address
 
         return await self._unary_unary(
-            "/.Api/PostCancelByClientOrderID",
+            "/api.Api/PostCancelByClientOrderID",
             request,
             PostCancelOrderResponse,
         )
@@ -567,7 +567,7 @@ class ApiStub(betterproto.ServiceStub):
         request.open_order_address = open_order_address
 
         return await self._unary_unary(
-            "/.Api/PostCancelAll",
+            "/api.Api/PostCancelAll",
             request,
             PostCancelAllResponse,
         )
@@ -589,7 +589,7 @@ class ApiStub(betterproto.ServiceStub):
         request.open_orders_address = open_orders_address
 
         return await self._unary_unary(
-            "/.Api/PostSettle",
+            "/api.Api/PostSettle",
             request,
             PostSettleResponse,
         )
@@ -618,7 +618,7 @@ class ApiStub(betterproto.ServiceStub):
         request.address = address
 
         return await self._unary_unary(
-            "/.Api/GetOrders",
+            "/api.Api/GetOrders",
             request,
             GetOrdersResponse,
         )
@@ -632,7 +632,7 @@ class ApiStub(betterproto.ServiceStub):
         request.address = address
 
         return await self._unary_unary(
-            "/.Api/GetOpenOrders",
+            "/api.Api/GetOpenOrders",
             request,
             GetOpenOrdersResponse,
         )
@@ -645,7 +645,7 @@ class ApiStub(betterproto.ServiceStub):
         request.market = market
 
         return await self._unary_unary(
-            "/.Api/GetOrderByID",
+            "/api.Api/GetOrderByID",
             request,
             GetOrderByIDResponse,
         )
@@ -658,7 +658,7 @@ class ApiStub(betterproto.ServiceStub):
         request.owner = owner
 
         return await self._unary_unary(
-            "/.Api/GetUnsettled",
+            "/api.Api/GetUnsettled",
             request,
             GetUnsettledResponse,
         )
@@ -673,7 +673,7 @@ class ApiStub(betterproto.ServiceStub):
         request.limit = limit
 
         async for response in self._unary_stream(
-            "/.Api/GetOrderbooksStream",
+            "/api.Api/GetOrderbooksStream",
             request,
             GetOrderbooksStreamResponse,
         ):
@@ -686,7 +686,7 @@ class ApiStub(betterproto.ServiceStub):
         request.market = market
 
         async for response in self._unary_stream(
-            "/.Api/GetTickersStream",
+            "/api.Api/GetTickersStream",
             request,
             GetTickersStreamResponse,
         ):
@@ -698,7 +698,7 @@ class ApiStub(betterproto.ServiceStub):
         request = GetMarketsRequest()
 
         async for response in self._unary_stream(
-            "/.Api/GetMarketDepthStream",
+            "/api.Api/GetMarketDepthStream",
             request,
             GetMarketDepthStreamResponse,
         ):
@@ -712,7 +712,7 @@ class ApiStub(betterproto.ServiceStub):
         request.limit = limit
 
         async for response in self._unary_stream(
-            "/.Api/GetTradesStream",
+            "/api.Api/GetTradesStream",
             request,
             GetTradesStreamResponse,
         ):
