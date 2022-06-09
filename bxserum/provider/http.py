@@ -5,6 +5,7 @@ import aiohttp
 from solana import keypair
 
 from bxserum import proto, transaction
+from bxserum.provider import constants
 from bxserum.provider.base import Provider
 from bxserum.provider.http_error import map_response
 
@@ -23,9 +24,11 @@ class HttpProvider(Provider):
 
     # noinspection PyMissingConstructor
     def __init__(
-        self, host: str, port: int, private_key: Optional[str] = None,
+        self,
+        endpoint: str = constants.MAINNET_API_HTTP,
+        private_key: Optional[str] = None,
     ):
-        self._endpoint = f"http://{host}:{port}/api/v1"
+        self._endpoint = f"{endpoint}/api/v1"
         self._session = aiohttp.ClientSession()
 
         if private_key is None:
@@ -195,3 +198,15 @@ class HttpProvider(Provider):
         # seems to require yield some result otherwise this isn't an async generator?
         yield NotImplementedError("streams not supported for HTTP")
         raise NotImplementedError("streams not supported for HTTP")
+
+
+def http() -> Provider:
+    return HttpProvider()
+
+
+def http_testnet() -> Provider:
+    return HttpProvider(constants.TESTNET_API_HTTP)
+
+
+def http_local() -> Provider:
+    return HttpProvider(constants.LOCAL_API_HTTP)

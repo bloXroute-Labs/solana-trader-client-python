@@ -6,7 +6,7 @@ import aiohttp
 from solana import keypair
 
 from bxserum import transaction
-from bxserum.provider import Provider
+from bxserum.provider import Provider, constants
 from bxserum.provider.base import NotConnectedException
 from bxserum.provider.wsrpc import JsonRpcRequest, JsonRpcResponse
 
@@ -30,11 +30,10 @@ class WsProvider(Provider):
     # noinspection PyMissingConstructor
     def __init__(
         self,
-        host: str,
-        port: int,
+        endpoint: str = constants.MAINNET_API_WS,
         private_key: Optional[str] = None,
     ):
-        self._endpoint = f"ws://{host}:{port}/ws"
+        self._endpoint = endpoint
         self._session = aiohttp.ClientSession()
         self._request_id = 1
         self._request_lock = asyncio.Lock()
@@ -127,3 +126,15 @@ def _deserialize_result(rpc_response: JsonRpcResponse, response_type: Type["T"])
         return response_type().from_dict(rpc_response.result)
 
     raise rpc_response.error
+
+
+def ws() -> Provider:
+    return WsProvider()
+
+
+def ws_testnet() -> Provider:
+    return WsProvider(constants.TESTNET_API_WS)
+
+
+def ws_local() -> Provider:
+    return WsProvider(constants.LOCAL_API_WS)
