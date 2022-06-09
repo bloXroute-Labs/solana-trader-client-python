@@ -6,7 +6,6 @@ from solana import keypair
 
 from bxserum import proto, transaction
 from bxserum.provider.base import Provider
-from bxserum.provider.constants import DEFAULT_HOST, DEFAULT_HTTP_PORT
 from bxserum.provider.http_error import map_response
 
 if TYPE_CHECKING:
@@ -24,10 +23,7 @@ class HttpProvider(Provider):
 
     # noinspection PyMissingConstructor
     def __init__(
-        self,
-        host: str = DEFAULT_HOST,
-        port: int = DEFAULT_HTTP_PORT,
-        private_key: Optional[str] = None,
+        self, host: str, port: int, private_key: Optional[str] = None,
     ):
         self._endpoint = f"http://{host}:{port}/api/v1"
         self._session = aiohttp.ClientSession()
@@ -98,7 +94,9 @@ class HttpProvider(Provider):
         ) as res:
             return await map_response(res, proto.GetOpenOrdersResponse())
 
-    async def get_order_by_i_d(self, *, order_i_d: str = "") -> proto.GetOrderByIDResponse:
+    async def get_order_by_i_d(
+        self, *, order_i_d: str = ""
+    ) -> proto.GetOrderByIDResponse:
         # TODO
         raise NotImplementedError()
 
@@ -106,8 +104,7 @@ class HttpProvider(Provider):
         self, *, market: str = "", owner: str = ""
     ) -> proto.GetUnsettledResponse:
         async with self._session.get(
-            f"{self._endpoint}/trade/unsettled/{market}"
-            f"?owner={owner}"
+            f"{self._endpoint}/trade/unsettled/{market}" f"?owner={owner}"
         ) as res:
             return await map_response(res, proto.GetUnsettledResponse())
 
@@ -151,11 +148,7 @@ class HttpProvider(Provider):
         open_orders_address: str = "",
     ) -> proto.PostCancelOrderResponse:
         request = proto.PostCancelOrderRequest(
-            order_i_d,
-            side,
-            market_address,
-            owner_address,
-            open_orders_address,
+            order_i_d, side, market_address, owner_address, open_orders_address,
         )
 
         async with self._session.post(
@@ -172,10 +165,7 @@ class HttpProvider(Provider):
         open_orders_address: str = "",
     ) -> proto.PostCancelOrderResponse:
         request = proto.PostCancelByClientOrderIDRequest(
-            client_order_i_d,
-            market_address,
-            owner_address,
-            open_orders_address,
+            client_order_i_d, market_address, owner_address, open_orders_address,
         )
 
         async with self._session.post(
@@ -183,7 +173,9 @@ class HttpProvider(Provider):
         ) as res:
             return await map_response(res, proto.PostCancelOrderResponse())
 
-    async def post_submit(self, *, transaction: str = "", skip_pre_flight: bool = False) -> proto.PostSubmitResponse:
+    async def post_submit(
+        self, *, transaction: str = "", skip_pre_flight: bool = False
+    ) -> proto.PostSubmitResponse:
         request = proto.PostSubmitRequest(transaction, skip_pre_flight)
         async with self._session.post(
             f"{self._endpoint}/trade/submit", json=request.to_dict()

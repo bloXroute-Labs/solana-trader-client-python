@@ -8,7 +8,6 @@ from solana import keypair
 from bxserum import transaction
 from bxserum.provider import Provider
 from bxserum.provider.base import NotConnectedException
-from bxserum.provider.constants import DEFAULT_HOST, DEFAULT_WS_PORT
 from bxserum.provider.wsrpc import JsonRpcRequest, JsonRpcResponse
 
 if TYPE_CHECKING:
@@ -31,8 +30,8 @@ class WsProvider(Provider):
     # noinspection PyMissingConstructor
     def __init__(
         self,
-        host: str = DEFAULT_HOST,
-        port: int = DEFAULT_WS_PORT,
+        host: str,
+        port: int,
         private_key: Optional[str] = None,
     ):
         self._endpoint = f"ws://{host}:{port}/ws"

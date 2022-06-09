@@ -5,7 +5,6 @@ from solana import keypair
 
 from bxserum import transaction
 from bxserum.provider.base import Provider
-from bxserum.provider.constants import DEFAULT_HOST, DEFAULT_GRPC_PORT
 
 if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences,PyProtectedMember
@@ -24,8 +23,8 @@ class GrpcProvider(Provider):
 
     def __init__(
         self,
-        host: str = DEFAULT_HOST,
-        port: int = DEFAULT_GRPC_PORT,
+        host: str,
+        port: int,
         private_key: Optional[str] = None,
         *,
         timeout: Optional[float] = None,
