@@ -10,12 +10,13 @@ from bxserum import provider, transaction, proto
 from bxserum.provider.http_error import HttpError
 from bxserum.provider.wsrpc_error import RpcError
 
+
 async def test_submit_cancel_order(t: unittest.TestCase, p: provider.Provider):
     private_key = transaction.load_private_key_from_env()
     public_key = str(private_key.public_key)
     open_orders_address = transaction.load_open_orders()
 
-    client_order_id = random.randint(1000000000,9999999999)
+    client_order_id = random.randint(1000000000, 9999999999)
 
     tx_hash = await p.submit_order(
         public_key,
@@ -35,7 +36,7 @@ async def test_submit_cancel_order(t: unittest.TestCase, p: provider.Provider):
         "9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT",
         public_key,
         open_orders_address,
-        )
+    )
     await verify_tx(t, tx_cancel_hash)
 
     try:
@@ -60,7 +61,6 @@ async def test_submit_cancel_order(t: unittest.TestCase, p: provider.Provider):
             "invalid payer specified: owner cannot match payer unless selling SOL",
             e.data,
         )
-
 
     try:
         # quantity too low
@@ -98,7 +98,7 @@ async def test_submit_cancel_order(t: unittest.TestCase, p: provider.Provider):
             [proto.OrderType.OT_LIMIT],
             0.1,
             10_000,
-            str(kp.public_key)
+            str(kp.public_key),
         )
         t.fail("unexpectedly received no error from bad open orders address")
     except (GRPCError, HttpError) as e:

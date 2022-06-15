@@ -22,10 +22,10 @@ Context manager:
 ```python
 from bxserum import provider
 
-async with provider.HttpProvider() as api:
+async with provider.http() as api:
     print(await api.get_orderbook(market="ETHUSDT"))
     
-async with provider.WsProvider() as api:
+async with provider.ws() as api:
     async for update in api.get_orderbooks_stream(market="ETHUSDT"):
         print(update)
 ```
@@ -36,7 +36,7 @@ import bxserum
 
 from bxserum import provider
 
-p = provider.GrpcProvider()
+p = provider.grpc()
 api = await bxserum.serum(p)
 
 try:

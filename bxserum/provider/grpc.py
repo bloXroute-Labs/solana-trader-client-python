@@ -4,8 +4,8 @@ from grpclib import client
 from solana import keypair
 
 from bxserum import transaction
+from bxserum.provider import constants
 from bxserum.provider.base import Provider
-from bxserum.provider.constants import DEFAULT_HOST, DEFAULT_GRPC_PORT
 
 if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences,PyProtectedMember
@@ -24,8 +24,8 @@ class GrpcProvider(Provider):
 
     def __init__(
         self,
-        host: str = DEFAULT_HOST,
-        port: int = DEFAULT_GRPC_PORT,
+        host: str = constants.MAINNET_API_GRPC_HOST,
+        port: int = constants.MAINNET_API_GRPC_PORT,
         private_key: Optional[str] = None,
         *,
         timeout: Optional[float] = None,
@@ -53,3 +53,17 @@ class GrpcProvider(Provider):
         channel = self.channel
         if channel is not None:
             self.channel.close()
+
+
+def grpc() -> Provider:
+    return GrpcProvider()
+
+
+def grpc_testnet() -> Provider:
+    return GrpcProvider(
+        constants.TESTNET_API_GRPC_HOST, constants.TESTNET_API_GRPC_PORT
+    )
+
+
+def grpc_local() -> Provider:
+    return GrpcProvider(constants.LOCAL_API_GRPC_HOST, constants.LOCAL_API_GRPC_PORT)
