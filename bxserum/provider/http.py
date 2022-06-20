@@ -179,6 +179,23 @@ class HttpProvider(Provider):
         ) as res:
             return await map_response(res, proto.PostCancelOrderResponse())
 
+    async def post_settle(
+        self,
+        *,
+        owner_address: str = "",
+        market: str = "",
+        base_token_wallet: str = "",
+        quote_token_wallet: str = "",
+        open_orders_address: str = "",
+    ) -> proto.PostSettleResponse:
+        request = proto.PostSettleRequest(
+            owner_address, market, base_token_wallet, quote_token_wallet, open_orders_address,
+        )
+        async with self._session.post(
+            f"{self._endpoint}/trade/settle", json=request.to_dict()
+        ) as res:
+            return await map_response(res, proto.PostSettleResponse())
+
     async def post_submit(
         self, *, transaction: str = "", skip_pre_flight: bool = False
     ) -> proto.PostSubmitResponse:

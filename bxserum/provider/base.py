@@ -43,6 +43,7 @@ class Provider(proto.ApiStub, ABC):
         price: float,
         open_orders_address: str = "",
         client_order_id: int = 0,
+        skip_pre_flight: bool = False,
     ) -> str:
         pk = self.require_private_key()
         order = await self.post_order(
@@ -57,7 +58,7 @@ class Provider(proto.ApiStub, ABC):
             client_order_i_d=client_order_id,
         )
         signed_tx = transaction.sign_tx_with_private_key(order.transaction, pk)
-        result = await self.post_submit(transaction=signed_tx)
+        result = await self.post_submit(transaction=signed_tx, skip_pre_flight=skip_pre_flight)
         return result.signature
 
     async def submit_cancel_order(
@@ -67,6 +68,7 @@ class Provider(proto.ApiStub, ABC):
         market_address: str = "",
         owner_address: str = "",
         open_orders_address: str = "",
+        skip_pre_flight: bool = True,
     ) -> str:
         pk = self.require_private_key()
         order = await self.post_cancel_order(
@@ -77,7 +79,7 @@ class Provider(proto.ApiStub, ABC):
             open_orders_address=open_orders_address,
         )
         signed_tx = transaction.sign_tx_with_private_key(order.transaction, pk)
-        result = await self.post_submit(transaction=signed_tx, skip_pre_flight=True)
+        result = await self.post_submit(transaction=signed_tx, skip_pre_flight=skip_pre_flight)
         return result.signature
 
     async def submit_cancel_by_client_order_i_d(
@@ -86,6 +88,7 @@ class Provider(proto.ApiStub, ABC):
         market_address: str = "",
         owner_address: str = "",
         open_orders_address: str = "",
+        skip_pre_flight: bool = True,
     ) -> str:
         pk = self.require_private_key()
         order = await self.post_cancel_by_client_order_i_d(
@@ -95,7 +98,28 @@ class Provider(proto.ApiStub, ABC):
             open_orders_address=open_orders_address,
         )
         signed_tx = transaction.sign_tx_with_private_key(order.transaction, pk)
-        result = await self.post_submit(transaction=signed_tx, skip_pre_flight=True)
+        result = await self.post_submit(transaction=signed_tx, skip_pre_flight=skip_pre_flight)
+        return result.signature
+
+    async def submit_settle(
+        self,
+        owner_address: str = "",
+        market: str = "",
+        base_token_wallet: str = "",
+        quote_token_wallet: str = "",
+        open_orders_address: str = "",
+        skip_pre_flight: bool = False,
+    ) -> str:
+        pk = self.require_private_key()
+        response = await self.post_settle(
+            owner_address=owner_address,
+            market=market,
+            base_token_wallet=base_token_wallet,
+            quote_token_wallet=quote_token_wallet,
+            open_orders_address=open_orders_address
+        )
+        signed_tx = transaction.sign_tx_with_private_key(response.transaction, pk)
+        result = await self.post_submit(transaction=signed_tx, skip_pre_flight=skip_pre_flight)
         return result.signature
 
 
