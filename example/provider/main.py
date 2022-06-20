@@ -5,6 +5,7 @@ from bxserum import provider, proto
 
 # sample public key for trades API
 PUBLIC_KEY = "AFT8VayE7qr8MoQsW3wHsDS83HhEvhGWdbNSHRKeUDfQ"
+USDC_WALLET = "3wYEfi36o9fEzq4L36JN4rcwf3uDmQMcKexoQ8kwSrUR"
 
 
 async def main():
@@ -24,6 +25,8 @@ async def http():
     # either `try`/`finally` or `async with` work with each type of provider
     try:
         await do_requests(api)
+    except Exception as e:
+        print(e)
     finally:
         await p.close()
 
@@ -108,54 +111,71 @@ async def do_requests(api: bxserum.Provider):
         )
     )
 
-    # TODO
-    # print("generate cancel order")
-    # print(
-    #     (
-    #         await api.post_cancel_order(
-    #             order_i_d="",
-    #             side=proto.Side.S_ASK,
-    #             market="SOLUSDC",
-    #             owner=PUBLIC_KEY,
-    #             open_orders="",  # optional
-    #         )
-    #     ).to_json()
-    # )
-    #
-    # print("submit cancel order")
-    # print(
-    #     await api.post_cancel_order(
-    #         order_i_d="",
-    #         side=proto.Side.S_ASK,
-    #         market="SOLUSDC",
-    #         owner=PUBLIC_KEY,
-    #         open_orders="",  # optional
-    #     )
-    # )
-    #
-    # print("generate cancel order by client ID")
-    # print(
-    #     (
-    #         await api.post_cancel_order_by_client_i_d(
-    #             client_i_d=123,
-    #             market="SOLUSDC",
-    #             owner=PUBLIC_KEY,
-    #             open_orders="",  # optional
-    #         )
-    #     ).to_json()
-    # )
-    #
-    # print("submit cancel order by client ID")
-    #
-    # print(
-    #     await api.post_cancel_order(
-    #         order_i_d="",
-    #         side=proto.Side.S_ASK,
-    #         market="SOLUSDC",
-    #         owner=PUBLIC_KEY,
-    #         open_orders="",  # optional
-    #     )
-    # )
+    print("generate cancel order")
+    print(
+        (
+            await api.post_cancel_order(
+                order_i_d="",
+                side=proto.Side.S_ASK,
+                market_address="SOLUSDC",
+                owner_address=PUBLIC_KEY,
+                open_orders_address="",  # optional
+            )
+        ).to_json()
+    )
+
+    print("submit cancel order")
+    print(
+        await api.submit_cancel_order(
+            order_i_d="",
+            side=proto.Side.S_ASK,
+            market_address="SOLUSDC",
+            owner_address=PUBLIC_KEY,
+            open_orders_address="",  # optional
+        )
+    )
+
+    print("generate cancel order by client ID")
+    print(
+        await api.post_cancel_by_client_order_i_d(
+            client_order_i_d=123,
+            market_address="9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT",
+            owner_address=PUBLIC_KEY,
+            open_orders_address="",  # optional
+        )
+    )
+
+    print("submit cancel order by client ID")
+    print(
+        await api.submit_cancel_by_client_order_i_d(
+            client_order_i_d=123,
+            market_address="9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT",
+            owner_address=PUBLIC_KEY,
+            open_orders_address="",  # optional
+        )
+    )
+
+    print("generate settle order")
+    print(
+        await api.post_settle(
+            owner_address=PUBLIC_KEY,
+            market="SOLUSDC",
+            base_token_wallet=PUBLIC_KEY,
+            quote_token_wallet=USDC_WALLET,
+            open_orders_address="",  # optional
+        )
+    )
+
+    print("submit settle order")
+    print(
+        await api.submit_settle(
+            owner_address=PUBLIC_KEY,
+            market="SOLUSDC",
+            base_token_wallet=PUBLIC_KEY,
+            quote_token_wallet=USDC_WALLET,
+            open_orders_address="",  # optional
+        )
+    )
 
 
 # websockets / GRPC only

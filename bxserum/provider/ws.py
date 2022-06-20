@@ -25,7 +25,7 @@ class WsProvider(Provider):
     _session: aiohttp.ClientSession
     _request_id: int
     _request_lock: asyncio.Lock
-    _private_key: keypair.Keypair
+    _private_key: Optional[keypair.Keypair]
 
     # noinspection PyMissingConstructor
     def __init__(
@@ -39,7 +39,10 @@ class WsProvider(Provider):
         self._request_lock = asyncio.Lock()
 
         if private_key is None:
-            self._private_key = transaction.load_private_key_from_env()
+            try:
+                self._private_key = transaction.load_private_key_from_env()
+            except EnvironmentError:
+                self._private_key = None
         else:
             self._private_key = transaction.load_private_key(private_key)
 
@@ -47,7 +50,7 @@ class WsProvider(Provider):
         if self._ws is None:
             self._ws = await self._session.ws_connect(self._endpoint)
 
-    def private_key(self) -> keypair.Keypair:
+    def private_key(self) -> Optional[keypair.Keypair]:
         return self._private_key
 
     async def close(self):

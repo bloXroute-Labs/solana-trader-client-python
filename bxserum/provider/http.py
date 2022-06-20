@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 class HttpProvider(Provider):
     _endpoint: str
     _session: aiohttp.ClientSession
-    _private_key: keypair.Keypair
+    _private_key: Optional[keypair.Keypair]
 
     # noinspection PyMissingConstructor
     def __init__(
@@ -32,14 +32,17 @@ class HttpProvider(Provider):
         self._session = aiohttp.ClientSession()
 
         if private_key is None:
-            self._private_key = transaction.load_private_key_from_env()
+            try:
+                self._private_key = transaction.load_private_key_from_env()
+            except EnvironmentError:
+                self._private_key = None
         else:
             self._private_key = transaction.load_private_key(private_key)
 
     async def connect(self):
         pass
 
-    def private_key(self) -> keypair.Keypair:
+    def private_key(self) -> Optional[keypair.Keypair]:
         return self._private_key
 
     async def close(self):
@@ -175,6 +178,23 @@ class HttpProvider(Provider):
             f"{self._endpoint}/trade/cancelbyid", json=request.to_dict()
         ) as res:
             return await map_response(res, proto.PostCancelOrderResponse())
+
+    async def post_settle(
+        self,
+        *,
+        owner_address: str = "",
+        market: str = "",
+        base_token_wallet: str = "",
+        quote_token_wallet: str = "",
+        open_orders_address: str = "",
+    ) -> proto.PostSettleResponse:
+        request = proto.PostSettleRequest(
+            owner_address, market, base_token_wallet, quote_token_wallet, open_orders_address,
+        )
+        async with self._session.post(
+            f"{self._endpoint}/trade/settle", json=request.to_dict()
+        ) as res:
+            return await map_response(res, proto.PostSettleResponse())
 
     async def post_submit(
         self, *, transaction: str = "", skip_pre_flight: bool = False
