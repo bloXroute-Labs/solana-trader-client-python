@@ -20,7 +20,7 @@ class GrpcProvider(Provider):
 
     _host: str
     _port: int
-    _private_key: keypair.Keypair
+    _private_key: Optional[keypair.Keypair]
 
     def __init__(
         self,
@@ -36,7 +36,10 @@ class GrpcProvider(Provider):
         self._port = port
 
         if private_key is None:
-            self._private_key = transaction.load_private_key_from_env()
+            try:
+                self._private_key = transaction.load_private_key_from_env()
+            except EnvironmentError:
+                self._private_key = None
         else:
             self._private_key = transaction.load_private_key(private_key)
 
@@ -46,7 +49,7 @@ class GrpcProvider(Provider):
         if self.channel is None:
             self.channel = client.Channel(self._host, self._port)
 
-    def private_key(self) -> keypair.Keypair:
+    def private_key(self) -> Optional[keypair.Keypair]:
         return self._private_key
 
     async def close(self):

@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 class HttpProvider(Provider):
     _endpoint: str
     _session: aiohttp.ClientSession
-    _private_key: keypair.Keypair
+    _private_key: Optional[keypair.Keypair]
 
     # noinspection PyMissingConstructor
     def __init__(
@@ -32,14 +32,17 @@ class HttpProvider(Provider):
         self._session = aiohttp.ClientSession()
 
         if private_key is None:
-            self._private_key = transaction.load_private_key_from_env()
+            try:
+                self._private_key = transaction.load_private_key_from_env()
+            except EnvironmentError:
+                self._private_key = None
         else:
             self._private_key = transaction.load_private_key(private_key)
 
     async def connect(self):
         pass
 
-    def private_key(self) -> keypair.Keypair:
+    def private_key(self) -> Optional[keypair.Keypair]:
         return self._private_key
 
     async def close(self):
