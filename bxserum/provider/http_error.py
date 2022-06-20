@@ -16,6 +16,9 @@ class HttpError(Exception):
         self.message = message
         self.details = details
 
+    def __str__(self):
+        return f"HttpError[{self.code}]: {self.message} ({self.details})"
+
     @classmethod
     def from_json(cls, payload: Dict[str, Any]) -> "HttpError":
         return cls(
