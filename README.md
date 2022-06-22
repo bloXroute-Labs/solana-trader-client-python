@@ -17,6 +17,17 @@ Installation via `pip` is expected to be supported soon.
 This library supports HTTP, websockets, and GRPC interfaces. You can use it with
 a context manager or handle open/closing yourself.
 
+For any methods involving transaction creation you will need to provide your 
+Solana private key. You can provide this via the environment variable 
+`PRIVATE_KEY`, or specify it via the provider configuration if you want to load 
+it with some other mechanism. See samples for more information. 
+As a general note on this: methods named `post_*` (e.g. `post_order`) typically 
+do not sign/submit the transaction, only return the raw unsigned transaction. 
+This isn't very useful to most users (unless you want to write a signer in a 
+different language), and you'll typically want the similarly named `submit_*` 
+methods (e.g. `submit_order`). These methods generate, sign, and submit the
+transaction all at once.
+
 Context manager:
 
 ```python
