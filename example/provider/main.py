@@ -66,14 +66,13 @@ async def do_requests(api: bxserum.Provider):
     print("fetching open orders for account")
     print((await api.get_open_orders(market="SOLUSDC", address=PUBLIC_KEY)).to_json())
 
-    # TODO
-    # print("fetching order by id")
-    # print((await api.get_order_by_i_d(market="SOLUSDC", address=PUBLIC_KEY)).to_json())
-
     print("fetching unsettled amounts")
     print((await api.get_unsettled(market="SOLUSDC", owner=PUBLIC_KEY)).to_json())
 
-    print("generating unsigned order to sell 0.1 SOL for USDC at 150_000 USD/SOL")
+    print(
+        "generating unsigned order (no sign or submission) to sell 0.1 SOL for USDC at "
+        "150_000 USD/SOL"
+    )
     print(
         (
             await api.post_order(
