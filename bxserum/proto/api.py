@@ -31,9 +31,8 @@ class OrderStatus(betterproto.Enum):
     OS_UNKNOWN = 0
     OS_OPEN = 1
     OS_PARTIAL_FILL = 2
-    OS_FILLED = 3
-    OS_CANCELLED = 4
-    OS_PENDING = 5
+    OS_CANCELLED = 3
+    OS_FILLED = 4
 
 
 class Direction(betterproto.Enum):
@@ -123,6 +122,12 @@ class GetOrderBookRequest(betterproto.Message):
 
 
 @dataclass
+class GetFilteredOrderbooksRequest(betterproto.Message):
+    markets: List[str] = betterproto.string_field(1)
+    limit: int = betterproto.uint32_field(2)
+
+
+@dataclass
 class GetOrderbookResponse(betterproto.Message):
     market: str = betterproto.string_field(1)
     market_address: str = betterproto.string_field(2)
@@ -152,6 +157,8 @@ class Trade(betterproto.Message):
     side: "Side" = betterproto.enum_field(1)
     size: float = betterproto.double_field(2)
     price: float = betterproto.double_field(3)
+    order_i_d: str = betterproto.string_field(4)
+    is_maker: bool = betterproto.bool_field(5)
 
 
 @dataclass
@@ -166,7 +173,7 @@ class GetServerTimeResponse(betterproto.Message):
 
 @dataclass
 class GetAccountBalanceRequest(betterproto.Message):
-    pass
+    owner_address: str = betterproto.string_field(1)
 
 
 @dataclass
@@ -177,7 +184,10 @@ class GetAccountBalanceResponse(betterproto.Message):
 @dataclass
 class TokenBalance(betterproto.Message):
     symbol: str = betterproto.string_field(1)
-    amount: float = betterproto.double_field(2)
+    address: str = betterproto.string_field(2)
+    wallet_amount: float = betterproto.double_field(3)
+    unsettled_amount: float = betterproto.double_field(4)
+    open_orders_amount: float = betterproto.double_field(5)
 
 
 @dataclass
@@ -282,6 +292,27 @@ class Order(betterproto.Message):
     created_at: datetime = betterproto.message_field(7)
     client_order_i_d: str = betterproto.string_field(8)
     open_order_account: str = betterproto.string_field(9)
+
+
+@dataclass
+class GetOrderStatusStreamRequest(betterproto.Message):
+    market: str = betterproto.string_field(1)
+    owner_address: str = betterproto.string_field(2)
+
+
+@dataclass
+class GetOrderStatusStreamResponse(betterproto.Message):
+    block_height: int = betterproto.int64_field(1)
+    order_info: "GetOrderStatusResponse" = betterproto.message_field(2)
+
+
+@dataclass
+class GetOrderStatusResponse(betterproto.Message):
+    market: str = betterproto.string_field(1)
+    open_order_address: str = betterproto.string_field(2)
+    order_i_d: str = betterproto.string_field(3)
+    client_order_i_d: int = betterproto.uint64_field(4)
+    order_status: "OrderStatus" = betterproto.enum_field(5)
 
 
 @dataclass
@@ -460,10 +491,13 @@ class ApiStub(betterproto.ServiceStub):
             GetServerTimeResponse,
         )
 
-    async def get_account_balance(self) -> GetAccountBalanceResponse:
+    async def get_account_balance(
+        self, *, owner_address: str = ""
+    ) -> GetAccountBalanceResponse:
         """account endpoints"""
 
         request = GetAccountBalanceRequest()
+        request.owner_address = owner_address
 
         return await self._unary_unary(
             "/api.Api/GetAccountBalance",
@@ -679,6 +713,20 @@ class ApiStub(betterproto.ServiceStub):
         ):
             yield response
 
+    async def get_filtered_orderbooks_stream(
+        self, *, markets: List[str] = [], limit: int = 0
+    ) -> AsyncGenerator[GetOrderbooksStreamResponse, None]:
+        request = GetFilteredOrderbooksRequest()
+        request.markets = markets
+        request.limit = limit
+
+        async for response in self._unary_stream(
+            "/api.Api/GetFilteredOrderbooksStream",
+            request,
+            GetOrderbooksStreamResponse,
+        ):
+            yield response
+
     async def get_tickers_stream(
         self, *, market: str = ""
     ) -> AsyncGenerator[GetTickersStreamResponse, None]:
@@ -715,5 +763,19 @@ class ApiStub(betterproto.ServiceStub):
             "/api.Api/GetTradesStream",
             request,
             GetTradesStreamResponse,
+        ):
+            yield response
+
+    async def get_order_status_stream(
+        self, *, market: str = "", owner_address: str = ""
+    ) -> AsyncGenerator[GetOrderStatusStreamResponse, None]:
+        request = GetOrderStatusStreamRequest()
+        request.market = market
+        request.owner_address = owner_address
+
+        async for response in self._unary_stream(
+            "/api.Api/GetOrderStatusStream",
+            request,
+            GetOrderStatusStreamResponse,
         ):
             yield response

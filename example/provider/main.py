@@ -9,8 +9,8 @@ USDC_WALLET = "3wYEfi36o9fEzq4L36JN4rcwf3uDmQMcKexoQ8kwSrUR"
 
 
 async def main():
-    await http()
-    await ws()
+    #await http()
+    #await ws()
     await grpc()
 
 
@@ -33,7 +33,7 @@ async def http():
 
 async def ws():
     async with provider.ws() as api:
-        await do_requests(api)
+        #await do_requests(api)
         await do_stream(api)
 
 
@@ -42,7 +42,7 @@ async def grpc():
     api = await bxserum.serum(p)
 
     try:
-        await do_requests(api)
+        #await do_requests(api)
         await do_stream(api)
     finally:
         await p.close()
@@ -68,6 +68,9 @@ async def do_requests(api: bxserum.Provider):
 
     print("fetching unsettled amounts")
     print((await api.get_unsettled(market="SOLUSDC", owner=PUBLIC_KEY)).to_json())
+
+    print("fetching account balance amounts")
+    print((await api.get_account_balance(owner_address=PUBLIC_KEY)).to_json())
 
     print(
         "generating unsigned order (no sign or submission) to sell 0.1 SOL for USDC at "
@@ -184,7 +187,15 @@ async def do_stream(api: bxserum.Provider):
     print("streaming orderbook updates...")
     async for response in api.get_orderbooks_stream(market="SOLUSDC"):
         print(response.to_json())
+        item_count += 1
+        if item_count == 5:
+            item_count = 0
+            break
 
+    print("streaming filtered orderbook updates...")
+    async for response in api.get_filtered_orderbooks_stream(markets=["SOL/USDC"]):
+        print(response.to_json())
+        item_count += 1
         if item_count == 5:
             item_count = 0
             break
@@ -192,7 +203,7 @@ async def do_stream(api: bxserum.Provider):
     print("streaming ticker updates...")
     async for response in api.get_tickers_stream(market="SOLUSDC"):
         print(response.to_json())
-
+        item_count += 1
         if item_count == 5:
             item_count = 0
             break
@@ -200,7 +211,7 @@ async def do_stream(api: bxserum.Provider):
     print("streaming trade updates...")
     async for response in api.get_trades_stream(market="SOLUSDC"):
         print(response.to_json())
-
+        item_count += 1
         if item_count == 5:
             item_count = 0
             break
