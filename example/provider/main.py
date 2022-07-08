@@ -69,6 +69,9 @@ async def do_requests(api: bxserum.Provider):
     print("fetching unsettled amounts")
     print((await api.get_unsettled(market="SOLUSDC", owner=PUBLIC_KEY)).to_json())
 
+    print("fetching account balance amounts")
+    print((await api.get_account_balance(owner_address=PUBLIC_KEY)).to_json())
+
     print(
         "generating unsigned order (no sign or submission) to sell 0.1 SOL for USDC at "
         "150_000 USD/SOL"
@@ -184,7 +187,15 @@ async def do_stream(api: bxserum.Provider):
     print("streaming orderbook updates...")
     async for response in api.get_orderbooks_stream(market="SOLUSDC"):
         print(response.to_json())
+        item_count += 1
+        if item_count == 5:
+            item_count = 0
+            break
 
+    print("streaming filtered orderbook updates...")
+    async for response in api.get_filtered_orderbooks_stream(markets=["SOL/USDC"]):
+        print(response.to_json())
+        item_count += 1
         if item_count == 5:
             item_count = 0
             break
@@ -192,7 +203,7 @@ async def do_stream(api: bxserum.Provider):
     print("streaming ticker updates...")
     async for response in api.get_tickers_stream(market="SOLUSDC"):
         print(response.to_json())
-
+        item_count += 1
         if item_count == 5:
             item_count = 0
             break
@@ -200,7 +211,7 @@ async def do_stream(api: bxserum.Provider):
     print("streaming trade updates...")
     async for response in api.get_trades_stream(market="SOLUSDC"):
         print(response.to_json())
-
+        item_count += 1
         if item_count == 5:
             item_count = 0
             break
