@@ -9,8 +9,8 @@ USDC_WALLET = "3wYEfi36o9fEzq4L36JN4rcwf3uDmQMcKexoQ8kwSrUR"
 
 
 async def main():
-    #await http()
-    #await ws()
+    await http()
+    await ws()
     await grpc()
 
 
@@ -33,7 +33,7 @@ async def http():
 
 async def ws():
     async with provider.ws() as api:
-        #await do_requests(api)
+        await do_requests(api)
         await do_stream(api)
 
 
@@ -42,7 +42,7 @@ async def grpc():
     api = await bxserum.serum(p)
 
     try:
-        #await do_requests(api)
+        await do_requests(api)
         await do_stream(api)
     finally:
         await p.close()
