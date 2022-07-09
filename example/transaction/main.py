@@ -11,17 +11,16 @@ public_key=os.getenv("PUBLIC_KEY")
 private_key=os.getenv("PRIVATE_KEY")
 open_orders=os.getenv("OPEN_ORDERS")
 
-market="SOL/USDC"
 stream_expect_timeout = 60
 
-marketAddr = "9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT"
-orderSide   = proto.Side.S_ASK
-orderType   = proto.OrderType.OT_LIMIT
-orderPrice  = 170200
-orderAmount = 0.1
+market_addr = "9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT"
+order_side   = proto.Side.S_ASK
+order_type   = proto.OrderType.OT_LIMIT
+order_price  = 170200
+order_amount = 0.1
 
-baseTokenWallet = "F75gCEckFAyeeCWA9FQMkmLCmke7ehvBnZeVZ3QgvJR7"
-quoteTokenWallet = "4raJjCwLLqw8TciQXYruDEF4YhDkGwoEnwnAdwJSjcgv"
+base_token_wallet = "F75gCEckFAyeeCWA9FQMkmLCmke7ehvBnZeVZ3QgvJR7"
+quote_token_wallet = "4raJjCwLLqw8TciQXYruDEF4YhDkGwoEnwnAdwJSjcgv"
 
 
 async def main():
@@ -38,7 +37,7 @@ async def grpc():
         await order_lifecycle(api, api)
 
 async def order_lifecycle(p1: provider.Provider, p2: provider.Provider):
-    oss = p2.get_order_status_stream(market=marketAddr, owner_address=public_key)
+    oss = p2.get_order_status_stream(market=market_addr, owner_address=public_key)
     task = asyncio.create_task(oss.__anext__())
 
     await asyncio.sleep(10)
@@ -79,9 +78,9 @@ async def place_order(p: provider.Provider) -> int:
     print("starting place order")
 
     client_order_id = random.randint(0, 1000000)
-    post_order_response = await p.post_order(owner_address=public_key, payer_address=public_key, market=marketAddr, side=orderSide,
-                       type=[orderType], amount=orderAmount, price=orderPrice, open_orders_address=open_orders,
-                       client_order_i_d=client_order_id)
+    post_order_response = await p.post_order(owner_address=public_key, payer_address=public_key, market=market_addr, side=order_side,
+                                             type=[order_type], amount=order_amount, price=order_price, open_orders_address=open_orders,
+                                             client_order_i_d=client_order_id)
     print("unsigned place order transaction " + post_order_response.transaction.__str__())
 
     signed_tx = signing.sign_tx(post_order_response.transaction)
@@ -94,8 +93,8 @@ async def place_order(p: provider.Provider) -> int:
 async def cancel_order(p: provider.Provider, client_order_id: int):
     print("starting cancel order")
 
-    cancel_order_response = await p.post_cancel_by_client_order_i_d(client_order_i_d=client_order_id, market_address=marketAddr,
-                                            owner_address=public_key, open_orders_address=open_orders)
+    cancel_order_response = await p.post_cancel_by_client_order_i_d(client_order_i_d=client_order_id, market_address=market_addr,
+                                                                    owner_address=public_key, open_orders_address=open_orders)
 
     signed_tx = signing.sign_tx(cancel_order_response.transaction)
 
@@ -105,7 +104,7 @@ async def cancel_order(p: provider.Provider, client_order_id: int):
 async def settle_funds(p: provider.Provider):
     print("starting settle funds")
 
-    post_settle_response = await p.post_settle(owner_address=public_key, market=marketAddr, base_token_wallet=baseTokenWallet, quote_token_wallet=quoteTokenWallet, open_orders_address=open_orders)
+    post_settle_response = await p.post_settle(owner_address=public_key, market=market_addr, base_token_wallet=base_token_wallet, quote_token_wallet=quote_token_wallet, open_orders_address=open_orders)
     print("settle transaction created successfully")
 
     signed_settle_tx = signing.sign_tx(post_settle_response.transaction)
