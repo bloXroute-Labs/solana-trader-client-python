@@ -1,19 +1,18 @@
 import asyncio
 import os
 import random
-import time
-import typing
-from bxserum.transaction import signing
+
 import async_timeout
 
-from bxserum import provider, proto
+from bxserum import proto, provider
+from bxserum.transaction import signing
 
 public_key=os.getenv("PUBLIC_KEY")
 private_key=os.getenv("PRIVATE_KEY")
 open_orders=os.getenv("OPEN_ORDERS")
 
 market="SOL/USDC"
-stream_expect_timeout = 120
+stream_expect_timeout = 60
 
 marketAddr = "9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT"
 orderSide   = proto.Side.S_ASK
@@ -40,24 +39,26 @@ async def grpc():
 
 async def order_lifecycle(p1: provider.Provider, p2: provider.Provider):
     oss = p2.get_order_status_stream(market=marketAddr, owner_address=public_key)
-    task1 = asyncio.create_task(oss.__anext__())
+    task = asyncio.create_task(oss.__anext__())
 
     await asyncio.sleep(10)
 
+    # Place Order
     client_order_id = await place_order(p1)
     try:
         async with async_timeout.timeout(stream_expect_timeout):
-            response = await task1
+            response = await task
             if response.order_info.order_status == proto.OrderStatus.OS_OPEN:
                 print("order went to orderbook (`OPEN`) successfully")
             else:
                 print("order should be `OPEN` but is " + response.order_info.order_status.__str__())
     except asyncio.TimeoutError:
         raise Exception("no updates after placing order")
-
     print()
+
     await asyncio.sleep(10)
 
+    # Cancel Order
     await cancel_order(p1, client_order_id)
     try:
         async with async_timeout.timeout(stream_expect_timeout):
@@ -68,8 +69,9 @@ async def order_lifecycle(p1: provider.Provider, p2: provider.Provider):
                 print("order should be `CANCELLED` but is " + response.order_info.order_status.__str__())
     except asyncio.TimeoutError:
         raise Exception("no updates after cancelling order")
-
     print()
+
+    #Settle Funds
     await settle_funds(p1)
 
 async def place_order(p: provider.Provider) -> int:
@@ -82,8 +84,8 @@ async def place_order(p: provider.Provider) -> int:
     print("unsigned place order transaction " + post_order_response.transaction.__str__())
 
     signed_tx = signing.sign_tx(post_order_response.transaction)
-
     post_submit_response = await p.post_submit(transaction=signed_tx, skip_pre_flight=True)
+
     print("placed order " + post_submit_response.signature + " with clientOrderID " + client_order_id.__str__())
 
     return client_order_id
@@ -101,19 +103,13 @@ async def cancel_order(p: provider.Provider, client_order_id: int):
 async def settle_funds(p: provider.Provider):
     print("starting settle funds")
     post_settle_response = await p.post_settle(owner_address=public_key, market=marketAddr, base_token_wallet=baseTokenWallet, quote_token_wallet=quoteTokenWallet, open_orders_address=open_orders)
+
     print("settle transaction created successfully")
 
     signed_settle_tx = signing.sign_tx(post_settle_response.transaction)
-
     post_submit_response = await p.post_submit(transaction=signed_settle_tx, skip_pre_flight=True)
+
     print("response signature for settle received: " + post_submit_response.signature)
-
-async def just_seeing():
-    async with provider.ws() as api:
-        g = api.get_order_status_stream(market=marketAddr, owner_address=public_key)
-        async for resp in g:
-            print(resp.order_info.order_i_d.__str__(), resp.order_info.order_status.__str__())
-
 
 if __name__ == "__main__":
     asyncio.get_event_loop().run_until_complete(main())
