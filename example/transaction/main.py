@@ -73,6 +73,7 @@ async def order_lifecycle(p1: provider.Provider, p2: provider.Provider):
 
     # Settle Funds
     await settle_funds(p1)
+    print()
 
 async def place_order(p: provider.Provider) -> int:
     print("starting place order")
@@ -81,12 +82,11 @@ async def place_order(p: provider.Provider) -> int:
     post_order_response = await p.post_order(owner_address=public_key, payer_address=public_key, market=marketAddr, side=orderSide,
                        type=[orderType], amount=orderAmount, price=orderPrice, open_orders_address=open_orders,
                        client_order_i_d=client_order_id)
-
     print("unsigned place order transaction " + post_order_response.transaction.__str__())
 
     signed_tx = signing.sign_tx(post_order_response.transaction)
-    post_submit_response = await p.post_submit(transaction=signed_tx, skip_pre_flight=True)
 
+    post_submit_response = await p.post_submit(transaction=signed_tx, skip_pre_flight=True)
     print("placed order " + post_submit_response.signature + " with clientOrderID " + client_order_id.__str__())
 
     return client_order_id
@@ -96,21 +96,21 @@ async def cancel_order(p: provider.Provider, client_order_id: int):
 
     cancel_order_response = await p.post_cancel_by_client_order_i_d(client_order_i_d=client_order_id, market_address=marketAddr,
                                             owner_address=public_key, open_orders_address=open_orders)
-    signed_cancel_tx = signing.sign_tx(cancel_order_response.transaction)
-    await p.post_submit(transaction=signed_cancel_tx, skip_pre_flight=True)
 
-    print("cancelled order for clientID " + client_order_id.__str__())
+    signed_tx = signing.sign_tx(cancel_order_response.transaction)
+
+    await p.post_submit(transaction=signed_tx, skip_pre_flight=True)
+    print("cancelled order with clientID " + client_order_id.__str__())
 
 async def settle_funds(p: provider.Provider):
     print("starting settle funds")
 
     post_settle_response = await p.post_settle(owner_address=public_key, market=marketAddr, base_token_wallet=baseTokenWallet, quote_token_wallet=quoteTokenWallet, open_orders_address=open_orders)
-
     print("settle transaction created successfully")
 
     signed_settle_tx = signing.sign_tx(post_settle_response.transaction)
-    post_submit_response = await p.post_submit(transaction=signed_settle_tx, skip_pre_flight=True)
 
+    post_submit_response = await p.post_submit(transaction=signed_settle_tx, skip_pre_flight=True)
     print("response signature for settle received: " + post_submit_response.signature)
 
 if __name__ == "__main__":
