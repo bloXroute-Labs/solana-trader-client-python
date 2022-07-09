@@ -10,22 +10,21 @@ from bxserum.transaction import signing
 public_key=os.getenv("PUBLIC_KEY")
 private_key=os.getenv("PRIVATE_KEY")
 open_orders=os.getenv("OPEN_ORDERS")
+base_token_wallet = os.getenv("BASE_TOKEN_WALLET")
+quote_token_wallet = os.getenv("QUOTE_TOKEN_WALLET")
 
 stream_expect_timeout = 60
 
-market_addr = "9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT"
+market_addr = "9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT" # SOL/USDC
 order_side   = proto.Side.S_ASK
 order_type   = proto.OrderType.OT_LIMIT
 order_price  = 170200
 order_amount = 0.1
 
-base_token_wallet = "F75gCEckFAyeeCWA9FQMkmLCmke7ehvBnZeVZ3QgvJR7"
-quote_token_wallet = "4raJjCwLLqw8TciQXYruDEF4YhDkGwoEnwnAdwJSjcgv"
-
 
 async def main():
-    await ws()
-    #await grpc()
+    #await ws()
+    await grpc()
 
 async def ws():
     async with provider.ws() as api:
@@ -55,7 +54,7 @@ async def order_lifecycle(p1: provider.Provider, p2: provider.Provider):
         raise Exception("no updates after placing order")
     print()
 
-    await asyncio.sleep(10)
+    await asyncio.sleep(5)
 
     # Cancel Order => `Cancelled`
     await cancel_order(p1, client_order_id)
@@ -81,12 +80,12 @@ async def place_order(p: provider.Provider) -> int:
     post_order_response = await p.post_order(owner_address=public_key, payer_address=public_key, market=market_addr, side=order_side,
                                              type=[order_type], amount=order_amount, price=order_price, open_orders_address=open_orders,
                                              client_order_i_d=client_order_id)
-    print("unsigned place order transaction " + post_order_response.transaction.__str__())
+    print("place order transaction created successfully")
 
     signed_tx = signing.sign_tx(post_order_response.transaction)
 
     post_submit_response = await p.post_submit(transaction=signed_tx, skip_pre_flight=True)
-    print("placed order " + post_submit_response.signature + " with clientOrderID " + client_order_id.__str__())
+    print(f"placing order with clientOrderID {client_order_id.__str__()}, response signature: {post_submit_response.signature}")
 
     return client_order_id
 
@@ -95,11 +94,12 @@ async def cancel_order(p: provider.Provider, client_order_id: int):
 
     cancel_order_response = await p.post_cancel_by_client_order_i_d(client_order_i_d=client_order_id, market_address=market_addr,
                                                                     owner_address=public_key, open_orders_address=open_orders)
+    print("cancel order transaction created successfully")
 
     signed_tx = signing.sign_tx(cancel_order_response.transaction)
 
-    await p.post_submit(transaction=signed_tx, skip_pre_flight=True)
-    print("cancelled order with clientID " + client_order_id.__str__())
+    post_submit_response = await p.post_submit(transaction=signed_tx, skip_pre_flight=True)
+    print(f"cancelling order with clientOrderID {client_order_id.__str__()}, response signature: {post_submit_response.signature}")
 
 async def settle_funds(p: provider.Provider):
     print("starting settle funds")
@@ -110,7 +110,7 @@ async def settle_funds(p: provider.Provider):
     signed_settle_tx = signing.sign_tx(post_settle_response.transaction)
 
     post_submit_response = await p.post_submit(transaction=signed_settle_tx, skip_pre_flight=True)
-    print("response signature for settle received: " + post_submit_response.signature)
+    print("settling funds, response signature: " + post_submit_response.signature)
 
 if __name__ == "__main__":
     asyncio.get_event_loop().run_until_complete(main())
