@@ -23,15 +23,17 @@ order_amount = 0.1
 
 
 async def main():
-    #await ws()
+    await ws()
     await grpc()
 
 async def ws():
+    print("*** WS Test ***\n")
     async with provider.ws() as api:
-        async with provider.ws() as api2:
+        async with provider.ws() as api2: # TODO use same provider when WS streams are separated
             await order_lifecycle(api, api2)
 
 async def grpc():
+    print("*** GRPC Test ***\n")
     async with provider.grpc() as api:
         await order_lifecycle(api, api)
 
