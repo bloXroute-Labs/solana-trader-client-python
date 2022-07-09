@@ -43,7 +43,7 @@ async def order_lifecycle(p1: provider.Provider, p2: provider.Provider):
 
     await asyncio.sleep(10)
 
-    # Place Order
+    # Place Order => `Open`
     client_order_id = await place_order(p1)
     try:
         async with async_timeout.timeout(stream_expect_timeout):
@@ -58,7 +58,7 @@ async def order_lifecycle(p1: provider.Provider, p2: provider.Provider):
 
     await asyncio.sleep(10)
 
-    # Cancel Order
+    # Cancel Order => `Cancelled`
     await cancel_order(p1, client_order_id)
     try:
         async with async_timeout.timeout(stream_expect_timeout):
@@ -71,16 +71,17 @@ async def order_lifecycle(p1: provider.Provider, p2: provider.Provider):
         raise Exception("no updates after cancelling order")
     print()
 
-    #Settle Funds
+    # Settle Funds
     await settle_funds(p1)
 
 async def place_order(p: provider.Provider) -> int:
     print("starting place order")
-    client_order_id = random.randint(0, 1000000)
 
+    client_order_id = random.randint(0, 1000000)
     post_order_response = await p.post_order(owner_address=public_key, payer_address=public_key, market=marketAddr, side=orderSide,
                        type=[orderType], amount=orderAmount, price=orderPrice, open_orders_address=open_orders,
                        client_order_i_d=client_order_id)
+
     print("unsigned place order transaction " + post_order_response.transaction.__str__())
 
     signed_tx = signing.sign_tx(post_order_response.transaction)
@@ -92,9 +93,9 @@ async def place_order(p: provider.Provider) -> int:
 
 async def cancel_order(p: provider.Provider, client_order_id: int):
     print("starting cancel order")
+
     cancel_order_response = await p.post_cancel_by_client_order_i_d(client_order_i_d=client_order_id, market_address=marketAddr,
                                             owner_address=public_key, open_orders_address=open_orders)
-
     signed_cancel_tx = signing.sign_tx(cancel_order_response.transaction)
     await p.post_submit(transaction=signed_cancel_tx, skip_pre_flight=True)
 
@@ -102,6 +103,7 @@ async def cancel_order(p: provider.Provider, client_order_id: int):
 
 async def settle_funds(p: provider.Provider):
     print("starting settle funds")
+
     post_settle_response = await p.post_settle(owner_address=public_key, market=marketAddr, base_token_wallet=baseTokenWallet, quote_token_wallet=quoteTokenWallet, open_orders_address=open_orders)
 
     print("settle transaction created successfully")
