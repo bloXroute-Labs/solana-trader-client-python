@@ -115,10 +115,10 @@ class HttpProvider(Provider):
             return await map_response(res, proto.GetUnsettledResponse())
 
     async def get_account_balance(
-            self, owner: str = ""
+            self, owner_address: str = ""
     ) -> proto.GetAccountBalanceResponse:
         async with self._session.get(
-            f"{self._endpoint}/account/balance/?ownerAddress={owner}"
+            f"{self._endpoint}/account/balance?ownerAddress={owner_address}"
         ) as res:
             return await map_response(res, proto.GetAccountBalanceResponse())
 

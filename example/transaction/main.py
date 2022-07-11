@@ -56,7 +56,7 @@ async def order_lifecycle(p1: provider.Provider, p2: provider.Provider):
         raise Exception("no updates after placing order")
     print()
 
-    await asyncio.sleep(5)
+    await asyncio.sleep(10)
 
     # Cancel Order => `Cancelled`
     await cancel_order(p1, client_order_id)
