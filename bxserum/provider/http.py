@@ -187,6 +187,21 @@ class HttpProvider(Provider):
         ) as res:
             return await map_response(res, proto.PostCancelOrderResponse())
 
+    async def post_cancel_all(
+        self,
+        *,
+        market: str = "",
+        owner_address: str = "",
+        open_order_address: str = "",
+    ) -> proto.PostCancelAllResponse:
+        request = proto.PostCancelAllRequest(
+            market, owner_address, open_order_address
+        )
+        async with self._session.post(
+            f"{self._endpoint}/trade/cancelall", json=request.to_dict()
+        ) as res:
+            return await map_response(res, proto.PostCancelAllResponse())
+
     async def post_settle(
         self,
         *,
@@ -212,6 +227,7 @@ class HttpProvider(Provider):
             f"{self._endpoint}/trade/submit", json=request.to_dict()
         ) as res:
             return await map_response(res, proto.PostSubmitResponse())
+
 
     async def _unary_stream(
         self,
