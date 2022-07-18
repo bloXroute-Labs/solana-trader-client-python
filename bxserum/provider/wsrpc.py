@@ -31,6 +31,30 @@ class JsonRpcRequest:
             "params": self.params.to_dict(include_default_values=False),
         }
 
+class JsonRpcStreamingRequest:
+    id: Optional[str]
+    method_name: str
+    params: betterproto.Message
+
+    def __init__(
+        self,
+        request_id: int,
+        method: str,
+        params: betterproto.Message,
+    ) -> None:
+        self.id = str(request_id)
+        self.method_name = method
+        self.params = params
+        self.json_rpc_version = _rpc_version
+
+    def to_json(self) -> Dict[str, Any]:
+        return {
+            "jsonrpc": self.json_rpc_version,
+            "id": self.id,
+            "method": "subscribe",
+            "params": [self.method_name, self.params.to_dict(include_default_values=False)],
+        }
+
 
 class JsonRpcResponse:
     id: Optional[str]

@@ -8,7 +8,7 @@ from solana import keypair
 from bxserum import transaction
 from bxserum.provider import Provider, constants
 from bxserum.provider.base import NotConnectedException
-from bxserum.provider.wsrpc import JsonRpcRequest, JsonRpcResponse
+from bxserum.provider.wsrpc import JsonRpcRequest, JsonRpcStreamingRequest, JsonRpcResponse
 
 if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences,PyProtectedMember
@@ -75,6 +75,13 @@ class WsProvider(Provider):
             await self._next_request_id(), _ws_endpoint(route), request
         )
 
+    async def _create_streaming_request(
+        self, route: str, request: "IProtoMessage"
+    ) -> JsonRpcStreamingRequest:
+        return JsonRpcStreamingRequest(
+            await self._next_request_id(), _ws_endpoint(route), request
+        )
+
     async def _unary_unary(
         self,
         route: str,
@@ -110,7 +117,7 @@ class WsProvider(Provider):
         if ws is None:
             raise NotConnectedException()
 
-        request = await self._create_request(route, request)
+        request = await self._create_streaming_request(route, request)
         await ws.send_json(request.to_json())
 
         # https://bloxroute.atlassian.net/browse/BX-4123 this doesn't really work since it'll intercept all kinds of message
@@ -130,6 +137,11 @@ def _deserialize_result(rpc_response: JsonRpcResponse, response_type: Type["T"])
 
     raise rpc_response.error
 
+def _deserialize_stream_result(rpc_response: JsonRpcResponse, response_type: Type["T"]) -> "T":
+    if rpc_response.error is None:
+        return response_type().from_dict(rpc_response.result)
+
+    raise rpc_response.error
 
 def ws() -> Provider:
     return WsProvider()
