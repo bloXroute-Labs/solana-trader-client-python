@@ -24,9 +24,9 @@ order_amount = 0.1
 
 
 async def main():
-    await ws()
-    #await grpc()
-    #await http()
+    #await ws()
+    await grpc()
+    await http()
 
 
 async def ws():
@@ -201,7 +201,7 @@ async def cancel_all(p: provider.Provider):
 
     signatures_string = ", ".join(signatures)
     print(
-        f"cancelling all orders, response signatures: {signatures_string}"
+        f"cancelling all orders, response signature(s): {signatures_string}"
     )
 
 async def settle_funds(p: provider.Provider):
