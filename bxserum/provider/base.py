@@ -101,6 +101,28 @@ class Provider(proto.ApiStub, ABC):
         result = await self.post_submit(transaction=signed_tx, skip_pre_flight=skip_pre_flight)
         return result.signature
 
+    async def submit_cancel_all(
+        self,
+        market_address: str = "",
+        owner_address: str = "",
+        open_orders_address: str = "",
+        skip_pre_flight: bool = True,
+    ) -> [str]:
+        pk = self.require_private_key()
+        response = await self.post_cancel_all(
+            market=market_address,
+            owner_address=owner_address,
+            open_order_address=open_orders_address,
+        )
+
+        signatures = []
+        for tx in response.transactions:
+            signed_tx = transaction.sign_tx_with_private_key(tx, pk)
+            result = await self.post_submit(transaction=signed_tx, skip_pre_flight=skip_pre_flight)
+            signatures.append(result.signature)
+
+        return signatures
+
     async def submit_settle(
         self,
         owner_address: str = "",

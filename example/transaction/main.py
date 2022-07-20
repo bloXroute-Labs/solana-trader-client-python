@@ -129,7 +129,7 @@ async def cancel_all_orders(p: provider.Provider):
     if len(o.orders) != 0:
         print(f"{len(o.orders)} orders in orderbook not cancelled")
     else:
-        print("all orders in orderbook cancelled")
+        print("orders in orderbook cancelled")
     print()
 
 async def place_order(p: provider.Provider) -> int:
