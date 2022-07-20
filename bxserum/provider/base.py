@@ -103,14 +103,14 @@ class Provider(proto.ApiStub, ABC):
 
     async def submit_cancel_all(
         self,
-        market_address: str = "",
+        market: str = "",
         owner_address: str = "",
         open_orders_address: str = "",
         skip_pre_flight: bool = True,
     ) -> [str]:
         pk = self.require_private_key()
         response = await self.post_cancel_all(
-            market=market_address,
+            market=market,
             owner_address=owner_address,
             open_order_address=open_orders_address,
         )
