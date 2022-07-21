@@ -1,6 +1,7 @@
 import asyncio
 import os
 import random
+import time
 
 import async_timeout
 
@@ -13,7 +14,7 @@ open_orders = os.getenv("OPEN_ORDERS")
 base_token_wallet = os.getenv("BASE_TOKEN_WALLET")
 quote_token_wallet = os.getenv("QUOTE_TOKEN_WALLET")
 
-stream_expect_timeout = 60
+crank_timeout = 60
 
 market_addr = "9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT"  # SOL/USDC
 order_side = proto.Side.S_ASK
@@ -23,24 +24,32 @@ order_amount = 0.1
 
 
 async def main():
-    await ws()
+    #await ws()
     await grpc()
+    await http()
 
 
 async def ws():
-    print("*** WS Test ***\n")
+    print("\n*** WS Test ***\n")
     async with provider.ws() as api:
         async with provider.ws() as api2:  # TODO use same provider when WS streams are separated
-            await order_lifecycle(api, api2)
-
+            #await order_lifecycle(api, api2)
+            await cancel_all_orders(api)
 
 async def grpc():
-    print("*** GRPC Test ***\n")
+    print("\n*** GRPC Test ***\n")
     async with provider.grpc() as api:
-        await order_lifecycle(api, api)
+        #await order_lifecycle(api, api)
+        await cancel_all_orders(api)
 
+async def http():
+    print("\n*** HTTP Test ***\n")
+    async with provider.http() as api:
+        await cancel_all_orders(api)
 
 async def order_lifecycle(p1: provider.Provider, p2: provider.Provider):
+    print("order lifecycle test\n")
+
     oss = p2.get_order_status_stream(market=market_addr, owner_address=public_key)
     task = asyncio.create_task(oss.__anext__())
 
@@ -49,7 +58,8 @@ async def order_lifecycle(p1: provider.Provider, p2: provider.Provider):
     # Place Order => `Open`
     client_order_id = await place_order(p1)
     try:
-        async with async_timeout.timeout(stream_expect_timeout):
+        print(f"waiting {crank_timeout}s for place order to be cranked")
+        async with async_timeout.timeout(crank_timeout):
             response = await task
             if response.order_info.order_status == proto.OrderStatus.OS_OPEN:
                 print("order went to orderbook (`OPEN`) successfully")
@@ -67,7 +77,8 @@ async def order_lifecycle(p1: provider.Provider, p2: provider.Provider):
     # Cancel Order => `Cancelled`
     await cancel_order(p1, client_order_id)
     try:
-        async with async_timeout.timeout(stream_expect_timeout):
+        print(f"waiting {crank_timeout}s for cancel order to be cranked")
+        async with async_timeout.timeout(crank_timeout):
             response = await oss.__anext__()
             if response.order_info.order_status == proto.OrderStatus.OS_CANCELLED:
                 print("order cancelled (`CANCELLED`) successfully")
@@ -84,6 +95,45 @@ async def order_lifecycle(p1: provider.Provider, p2: provider.Provider):
     await settle_funds(p1)
     print()
 
+async def cancel_all_orders(p: provider.Provider):
+    print("cancel all test\n")
+
+    print(f"placing order #1")
+    client_order_id_1 = await place_order(p)
+    print()
+
+    print(f"placing order #2")
+    client_order_id_2 = await place_order(p)
+    print()
+
+    print(f"waiting {crank_timeout}s for place orders to be cranked")
+    time.sleep(crank_timeout)
+
+    o = await p.get_open_orders(market=market_addr, address=public_key)
+    found1 = False
+    found2 = False
+
+    for order in o.orders:
+        if order.client_order_i_d == str(client_order_id_1):
+            found1 = True
+        elif order.client_order_i_d == str(client_order_id_2):
+            found2 = True
+
+    if not found1 or not found2:
+        raise Exception("one/both orders not found in orderbook")
+    print("2 orders placed successfully\n")
+
+    await cancel_all(p)
+
+    print(f"\nwaiting {crank_timeout}s for cancel order(s) to be cranked")
+    time.sleep(crank_timeout)
+
+    o = await p.get_open_orders(market=market_addr, address=public_key)
+    if len(o.orders) != 0:
+        print(f"{len(o.orders)} orders in orderbook not cancelled")
+    else:
+        print("orders in orderbook cancelled")
+    print()
 
 async def place_order(p: provider.Provider) -> int:
     print("starting place order")
@@ -134,6 +184,32 @@ async def cancel_order(p: provider.Provider, client_order_id: int):
         f"cancelling order with clientOrderID {client_order_id.__str__()}, response signature: {post_submit_response.signature}"
     )
 
+async def cancel_all(p: provider.Provider):
+    print("starting cancel all")
+
+    open_orders_addresses: [str] = []
+    if open_orders != None:
+        open_orders_addresses.append(open_orders)
+
+    cancel_all_response = await p.post_cancel_all(
+        market=market_addr,
+        owner_address=public_key,
+        open_orders_addresses=open_orders_addresses,
+    )
+    print("cancel all transaction created successfully")
+
+    signatures = []
+    for transaction in cancel_all_response.transactions:
+        signed_tx = signing.sign_tx(transaction)
+        post_submit_response = await p.post_submit(
+            transaction=signed_tx, skip_pre_flight=True
+        )
+        signatures.append(post_submit_response.signature)
+
+    signatures_string = ", ".join(signatures)
+    print(
+        f"cancelling all orders, response signature(s): {signatures_string}"
+    )
 
 async def settle_funds(p: provider.Provider):
     print("starting settle funds")

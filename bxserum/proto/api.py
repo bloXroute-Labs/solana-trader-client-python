@@ -116,7 +116,7 @@ class Candle(betterproto.Message):
 
 
 @dataclass
-class GetOrderBookRequest(betterproto.Message):
+class GetOrderbookRequest(betterproto.Message):
     market: str = betterproto.string_field(1)
     limit: int = betterproto.uint32_field(2)
 
@@ -235,7 +235,7 @@ class PostCancelOrderResponse(betterproto.Message):
 class PostCancelAllRequest(betterproto.Message):
     market: str = betterproto.string_field(1)
     owner_address: str = betterproto.string_field(2)
-    open_order_address: str = betterproto.string_field(3)
+    open_orders_addresses: List[str] = betterproto.string_field(3)
 
 
 @dataclass
@@ -462,7 +462,7 @@ class ApiStub(betterproto.ServiceStub):
     async def get_orderbook(
         self, *, market: str = "", limit: int = 0
     ) -> GetOrderbookResponse:
-        request = GetOrderBookRequest()
+        request = GetOrderbookRequest()
         request.market = market
         request.limit = limit
 
@@ -596,12 +596,16 @@ class ApiStub(betterproto.ServiceStub):
         )
 
     async def post_cancel_all(
-        self, *, market: str = "", owner_address: str = "", open_order_address: str = ""
+        self,
+        *,
+        market: str = "",
+        owner_address: str = "",
+        open_orders_addresses: List[str] = [],
     ) -> PostCancelAllResponse:
         request = PostCancelAllRequest()
         request.market = market
         request.owner_address = owner_address
-        request.open_order_address = open_order_address
+        request.open_orders_addresses = open_orders_addresses
 
         return await self._unary_unary(
             "/api.Api/PostCancelAll",
@@ -705,7 +709,7 @@ class ApiStub(betterproto.ServiceStub):
     ) -> AsyncGenerator[GetOrderbooksStreamResponse, None]:
         """streaming endpoints"""
 
-        request = GetOrderBookRequest()
+        request = GetOrderbookRequest()
         request.market = market
         request.limit = limit
 
