@@ -192,10 +192,10 @@ class HttpProvider(Provider):
         *,
         market: str = "",
         owner_address: str = "",
-        open_order_address: str = "",
+        open_orders_addresses: List[str] = "",
     ) -> proto.PostCancelAllResponse:
         request = proto.PostCancelAllRequest(
-            market, owner_address, open_order_address
+            market, owner_address, open_orders_addresses
         )
         async with self._session.post(
             f"{self._endpoint}/trade/cancelall", json=request.to_dict()

@@ -98,8 +98,11 @@ async def order_lifecycle(p1: provider.Provider, p2: provider.Provider):
 async def cancel_all_orders(p: provider.Provider):
     print("cancel all test\n")
 
+    print(f"placing order #1")
     client_order_id_1 = await place_order(p)
     print()
+
+    print(f"placing order #2")
     client_order_id_2 = await place_order(p)
     print()
 
@@ -184,10 +187,14 @@ async def cancel_order(p: provider.Provider, client_order_id: int):
 async def cancel_all(p: provider.Provider):
     print("starting cancel all")
 
+    open_orders_addresses: [str] = []
+    if open_orders != None:
+        open_orders_addresses.append(open_orders)
+
     cancel_all_response = await p.post_cancel_all(
         market=market_addr,
         owner_address=public_key,
-        open_order_address=open_orders,
+        open_orders_addresses=open_orders_addresses,
     )
     print("cancel all transaction created successfully")
 
