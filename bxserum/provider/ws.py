@@ -3,12 +3,13 @@ import json
 from typing import TYPE_CHECKING, Type, Optional, AsyncGenerator
 
 import aiohttp
+from jsonrpc import JsonRpcRequest, JsonRpcResponse
 from solana import keypair
 
 from bxserum import transaction
 from bxserum.provider import Provider, constants
 from bxserum.provider.base import NotConnectedException
-from bxserum.provider.wsrpc import JsonRpcRequest, JsonRpcResponse
+from bxserum.provider.wsrpc import ProtoJsonRpcResponse
 
 if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences,PyProtectedMember
@@ -62,11 +63,11 @@ class WsProvider(Provider):
         if session is not None:
             await session.close()
 
-    async def _next_request_id(self) -> int:
+    async def _next_request_id(self) -> str:
         async with self._request_lock:
             previous = self._request_id
             self._request_id += 1
-            return previous
+            return str(previous)
 
     async def _create_request(
         self, route: str, request: "IProtoMessage"
@@ -93,8 +94,7 @@ class WsProvider(Provider):
         await ws.send_json(request.to_json())
 
         raw_result = await ws.receive_json()
-        rpc_result = JsonRpcResponse.from_json(raw_result)
-        return _deserialize_result(rpc_result, response_type)
+        return ProtoJsonRpcResponse(response_type).from_json(raw_result)
 
     async def _unary_stream(
         self,
