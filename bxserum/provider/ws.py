@@ -1,15 +1,11 @@
-import asyncio
-import json
 from typing import TYPE_CHECKING, Type, Optional, AsyncGenerator
 
 import aiohttp
-from jsonrpc import JsonRpcRequest, JsonRpcResponse
+import jsonrpc
 from solana import keypair
 
 from bxserum import transaction
 from bxserum.provider import Provider, constants
-from bxserum.provider.base import NotConnectedException
-from bxserum.provider.wsrpc import ProtoJsonRpcResponse
 
 if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences,PyProtectedMember
@@ -20,12 +16,10 @@ if TYPE_CHECKING:
 
 
 class WsProvider(Provider):
-    _ws: Optional[aiohttp.ClientWebSocketResponse] = None
+    _ws: jsonrpc.WsRpcConnection
 
     _endpoint: str
     _session: aiohttp.ClientSession
-    _request_id: int
-    _request_lock: asyncio.Lock
     _private_key: Optional[keypair.Keypair]
 
     # noinspection PyMissingConstructor
@@ -35,9 +29,7 @@ class WsProvider(Provider):
         private_key: Optional[str] = None,
     ):
         self._endpoint = endpoint
-        self._session = aiohttp.ClientSession()
-        self._request_id = 1
-        self._request_lock = asyncio.Lock()
+        self._ws = jsonrpc.WsRpcConnection(endpoint)
 
         if private_key is None:
             try:
@@ -48,33 +40,13 @@ class WsProvider(Provider):
             self._private_key = transaction.load_private_key(private_key)
 
     async def connect(self):
-        if self._ws is None:
-            self._ws = await self._session.ws_connect(self._endpoint)
+        await self._ws.connect()
 
     def private_key(self) -> Optional[keypair.Keypair]:
         return self._private_key
 
     async def close(self):
-        ws = self._ws
-        if ws is not None:
-            await ws.close()
-
-        session = self._session
-        if session is not None:
-            await session.close()
-
-    async def _next_request_id(self) -> str:
-        async with self._request_lock:
-            previous = self._request_id
-            self._request_id += 1
-            return str(previous)
-
-    async def _create_request(
-        self, route: str, request: "IProtoMessage"
-    ) -> JsonRpcRequest:
-        return JsonRpcRequest(
-            await self._next_request_id(), _ws_endpoint(route), request
-        )
+        await self._ws.close()
 
     async def _unary_unary(
         self,
@@ -86,15 +58,10 @@ class WsProvider(Provider):
         deadline: Optional["Deadline"] = None,
         metadata: Optional["_MetadataLike"] = None,
     ) -> "T":
-        ws = self._ws
-        if ws is None:
-            raise NotConnectedException()
-
-        request = await self._create_request(route, request)
-        await ws.send_json(request.to_json())
-
-        raw_result = await ws.receive_json()
-        return ProtoJsonRpcResponse(response_type).from_json(raw_result)
+        result = await self._ws.call(
+            _ws_endpoint(route), request.to_dict(include_default_values=False)
+        )
+        return response_type().from_dict(result)
 
     async def _unary_stream(
         self,
@@ -106,29 +73,15 @@ class WsProvider(Provider):
         deadline: Optional["Deadline"] = None,
         metadata: Optional["_MetadataLike"] = None,
     ) -> AsyncGenerator["T", None]:
-        ws = self._ws
-        if ws is None:
-            raise NotConnectedException()
-
-        request = await self._create_request(route, request)
-        await ws.send_json(request.to_json())
-
-        # https://bloxroute.atlassian.net/browse/BX-4123 this doesn't really work since it'll intercept all kinds of message
-        msg: aiohttp.WSMessage
-        async for msg in ws:
-            rpc_result = JsonRpcResponse.from_json(json.loads(msg.data))
-            yield _deserialize_result(rpc_result, response_type)
+        subscription_id = await self._ws.subscribe(
+            _ws_endpoint(route), request.to_dict()
+        )
+        async for update in self._ws.notifications_for_id(subscription_id):
+            yield response_type().from_dict(update)
 
 
 def _ws_endpoint(route: str) -> str:
     return route.split("/")[-1]
-
-
-def _deserialize_result(rpc_response: JsonRpcResponse, response_type: Type["T"]) -> "T":
-    if rpc_response.error is None:
-        return response_type().from_dict(rpc_response.result)
-
-    raise rpc_response.error
 
 
 def ws() -> Provider:
