@@ -24,7 +24,7 @@ order_amount = 0.1
 
 
 async def main():
-    #await ws()
+    await ws()
     await grpc()
     await http()
 
@@ -33,19 +33,25 @@ async def ws():
     print("\n*** WS Test ***\n")
     async with provider.ws() as api:
         async with provider.ws() as api2:  # TODO use same provider when WS streams are separated
-            #await order_lifecycle(api, api2)
+            await order_lifecycle(api, api2)
             await cancel_all_orders(api)
+            await replace_order_by_client_order_i_d(api)
+
 
 async def grpc():
     print("\n*** GRPC Test ***\n")
     async with provider.grpc() as api:
-        #await order_lifecycle(api, api)
+        await order_lifecycle(api, api)
         await cancel_all_orders(api)
+        await replace_order_by_client_order_i_d(api)
+
 
 async def http():
     print("\n*** HTTP Test ***\n")
     async with provider.http() as api:
         await cancel_all_orders(api)
+        await replace_order_by_client_order_i_d(api)
+
 
 async def order_lifecycle(p1: provider.Provider, p2: provider.Provider):
     print("order lifecycle test\n")
@@ -95,6 +101,7 @@ async def order_lifecycle(p1: provider.Provider, p2: provider.Provider):
     await settle_funds(p1)
     print()
 
+
 async def cancel_all_orders(p: provider.Provider):
     print("cancel all test\n")
 
@@ -134,6 +141,7 @@ async def cancel_all_orders(p: provider.Provider):
     else:
         print("orders in orderbook cancelled")
     print()
+
 
 async def place_order(p: provider.Provider) -> int:
     print("starting place order")
@@ -184,6 +192,7 @@ async def cancel_order(p: provider.Provider, client_order_id: int):
         f"cancelling order with clientOrderID {client_order_id.__str__()}, response signature: {post_submit_response.signature}"
     )
 
+
 async def cancel_all(p: provider.Provider):
     print("starting cancel all")
 
@@ -211,6 +220,7 @@ async def cancel_all(p: provider.Provider):
         f"cancelling all orders, response signature(s): {signatures_string}"
     )
 
+
 async def settle_funds(p: provider.Provider):
     print("starting settle funds")
 
@@ -229,6 +239,35 @@ async def settle_funds(p: provider.Provider):
         transaction=signed_settle_tx, skip_pre_flight=True
     )
     print("settling funds, response signature: " + post_submit_response.signature)
+
+
+async def replace_order_by_client_order_i_d(p: provider.Provider) -> int:
+    print("starting replace order by client order ID")
+
+    client_order_id = random.randint(0, 1000000)
+    post_order_response = await p.post_replace_by_client_order_i_d(
+        owner_address=public_key,
+        payer_address=public_key,
+        market=market_addr,
+        side=order_side,
+        type=[order_type],
+        amount=order_amount,
+        price=order_price,
+        open_orders_address=open_orders,
+        client_order_i_d=client_order_id,
+    )
+    print("replace order transaction created successfully")
+
+    signed_tx = signing.sign_tx(post_order_response.transaction)
+
+    post_submit_response = await p.post_submit(
+        transaction=signed_tx, skip_pre_flight=True
+    )
+    print(
+        f"replacing order with clientOrderID {client_order_id.__str__()}, response signature: {post_submit_response.signature}"
+    )
+
+    return client_order_id
 
 
 if __name__ == "__main__":
