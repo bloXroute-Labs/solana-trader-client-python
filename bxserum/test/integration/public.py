@@ -7,15 +7,15 @@ async def test_orderbook_equivalent_input_formats(
 ):
     orderbook1 = await p.get_orderbook(market="ETHUSDT")
     t.assertIsNotNone(orderbook1)
-    t.assertEqual(orderbook1.market, "ETHUSDT")
+    t.assertEqual(orderbook1.market, "ETH/USDT")
 
     orderbook2 = await p.get_orderbook(market="ETH-USDT")
     t.assertIsNotNone(orderbook2)
-    t.assertEqual(orderbook2.market, "ETH-USDT")
+    t.assertEqual(orderbook2.market, "ETH/USDT")
 
     orderbook3 = await p.get_orderbook(market="ETH:USDT")
     t.assertIsNotNone(orderbook3)
-    t.assertEqual(orderbook3.market, "ETH:USDT")
+    t.assertEqual(orderbook3.market, "ETH/USDT")
 
     t.assertEqual(orderbook1.asks, orderbook2.asks)
     t.assertEqual(orderbook2.asks, orderbook3.asks)
@@ -35,19 +35,19 @@ async def test_orderbook_equivalent_input_formats(
 async def test_orderbook_different_markets(t: unittest.TestCase, p: provider.Provider):
     orderbook1 = await p.get_orderbook(market="ETHUSDT")
     t.assertIsNotNone(orderbook1)
-    t.assertEqual(orderbook1.market, "ETHUSDT")
+    t.assertEqual(orderbook1.market, "ETH/USDT")
 
     orderbook2 = await p.get_orderbook(market="BTCUSDC")
     t.assertIsNotNone(orderbook2)
-    t.assertEqual(orderbook2.market, "BTCUSDC")
+    t.assertEqual(orderbook2.market, "BTC/USDC")
 
     orderbook3 = await p.get_orderbook(market="MSRMUSDC")
     t.assertIsNotNone(orderbook3)
-    t.assertEqual(orderbook3.market, "MSRMUSDC")
+    t.assertEqual(orderbook3.market, "MSRM/USDC")
 
     orderbook4 = await p.get_orderbook(market="xCOPEUSDC")
     t.assertIsNotNone(orderbook4)
-    t.assertEqual(orderbook4.market, "xCOPEUSDC")
+    t.assertEqual(orderbook4.market, "xCOPE/USDC")
 
 
 async def test_markets(t: unittest.TestCase, p: provider.Provider):

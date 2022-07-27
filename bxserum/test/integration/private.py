@@ -3,12 +3,12 @@ import unittest
 import random
 
 import aiohttp
+import jsonrpc
 from grpclib import GRPCError
 from solana import keypair
 
 from bxserum import provider, transaction, proto
 from bxserum.provider.http_error import HttpError
-from bxserum.provider.wsrpc_error import RpcError
 
 
 async def test_submit_cancel_order(t: unittest.TestCase, p: provider.Provider):
@@ -56,7 +56,7 @@ async def test_submit_cancel_order(t: unittest.TestCase, p: provider.Provider):
             "invalid payer specified: owner cannot match payer unless selling SOL",
             e.message,
         )
-    except RpcError as e:
+    except jsonrpc.RpcError as e:
         t.assertEqual(
             "invalid payer specified: owner cannot match payer unless selling SOL",
             e.data,
@@ -80,7 +80,7 @@ async def test_submit_cancel_order(t: unittest.TestCase, p: provider.Provider):
             "invalid program argument",
             e.message,
         )
-    except RpcError as e:
+    except jsonrpc.RpcError as e:
         t.assertEqual(
             "Transaction simulation failed: Error processing Instruction 2: "
             "invalid program argument",
@@ -107,7 +107,7 @@ async def test_submit_cancel_order(t: unittest.TestCase, p: provider.Provider):
             "custom program error: 0x10000a4",
             e.message,
         )
-    except RpcError as e:
+    except jsonrpc.RpcError as e:
         t.assertEqual(
             "Transaction simulation failed: Error processing Instruction 2: "
             "custom program error: 0x10000a4",
