@@ -228,6 +228,68 @@ class HttpProvider(Provider):
         ) as res:
             return await map_response(res, proto.PostSubmitResponse())
 
+    async def post_replace_by_client_order_i_d(
+        self,
+        *,
+        owner_address: str = "",
+        payer_address: str = "",
+        market: str = "",
+        side: "proto.Side" = 0,
+        type: List["proto.OrderType"] = [],
+        amount: float = 0,
+        price: float = 0,
+        open_orders_address: str = "",
+        client_order_i_d: int = 0,
+    ) -> proto.PostOrderResponse:
+        request = proto.PostOrderRequest(
+            owner_address,
+            payer_address,
+            market,
+            side,
+            type,
+            amount,
+            price,
+            open_orders_address,
+            client_order_i_d,
+        )
+
+        async with self._session.post(
+            f"{self._endpoint}/trade/replacebyclientid", json=request.to_dict()
+        ) as res:
+            return await map_response(res, proto.PostOrderResponse())
+
+    async def post_replace_order(
+        self,
+        *,
+        owner_address: str = "",
+        payer_address: str = "",
+        market: str = "",
+        side: "proto.Side" = 0,
+        type: List["proto.OrderType"] = [],
+        amount: float = 0,
+        price: float = 0,
+        open_orders_address: str = "",
+        client_order_i_d: int = 0,
+        order_id: str
+    ) -> proto.PostOrderResponse:
+        request = proto.PostReplaceOrderRequest(
+            owner_address,
+            payer_address,
+            market,
+            side,
+            type,
+            amount,
+            price,
+            open_orders_address,
+            client_order_i_d,
+            order_id
+        )
+
+        async with self._session.post(
+            f"{self._endpoint}/trade/replace", json=request.to_dict()
+        ) as res:
+            return await map_response(res, proto.PostOrderResponse())
+
 
     async def _unary_stream(
         self,

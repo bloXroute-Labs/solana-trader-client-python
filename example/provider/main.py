@@ -179,26 +179,95 @@ async def do_requests(api: bxserum.Provider):
         )
     )
 
+    print(
+        (
+            await api.post_replace_by_client_order_i_d(
+                owner_address=PUBLIC_KEY,
+                payer_address=PUBLIC_KEY,
+                market="SOLUSDC",
+                side=proto.Side.S_ASK,
+                type=[proto.OrderType.OT_LIMIT],
+                amount=0.1,
+                price=150_000,
+                # optional, but much faster if known
+                open_orders_address="5yyh4mzzycmjfR6arY736d1mB6vNSLiUaFWfepKLf8kZ",
+                # optional, for identification
+                client_order_i_d=123,
+            )
+        ).to_json()
+    )
+
+    print(
+        "submitting order (generate + sign) to sell 0.1 SOL for USDC at 150_000 USD/SOL"
+    )
+    print(
+        await api.submit_replace_by_client_order_i_d(
+            owner_address=PUBLIC_KEY,
+            payer_address=PUBLIC_KEY,
+            market="SOLUSDC",
+            side=proto.Side.S_ASK,
+            types=[proto.OrderType.OT_LIMIT],
+            amount=0.1,
+            price=150_000,
+            # optional, but much faster if known
+            open_orders_address="5yyh4mzzycmjfR6arY736d1mB6vNSLiUaFWfepKLf8kZ",
+            # optional, for identification
+            client_order_id=123,
+        )
+    )
+
+    print(
+        (
+            await api.post_replace_order(
+                owner_address=PUBLIC_KEY,
+                payer_address=PUBLIC_KEY,
+                market="SOLUSDC",
+                side=proto.Side.S_ASK,
+                type=[proto.OrderType.OT_LIMIT],
+                amount=0.1,
+                price=150_000,
+                # optional, but much faster if known
+                open_orders_address="5yyh4mzzycmjfR6arY736d1mB6vNSLiUaFWfepKLf8kZ",
+                # optional, for identification
+                client_order_i_d=0,
+                order_i_d=""
+            )
+        ).to_json()
+    )
+
+    print(
+        "submitting order (generate + sign) to sell 0.1 SOL for USDC at 150_000 USD/SOL"
+    )
+    print(
+        await api.submit_replace_order(
+            owner_address=PUBLIC_KEY,
+            payer_address=PUBLIC_KEY,
+            market="SOLUSDC",
+            side=proto.Side.S_ASK,
+            types=[proto.OrderType.OT_LIMIT],
+            amount=0.1,
+            price=150_000,
+            # optional, but much faster if known
+            open_orders_address="5yyh4mzzycmjfR6arY736d1mB6vNSLiUaFWfepKLf8kZ",
+            # optional, for identification
+            client_order_id=0,
+            order_id=""
+        )
+    )
+
 
 # websockets / GRPC only
 async def do_stream(api: bxserum.Provider):
     item_count = 0
 
     print("streaming orderbook updates...")
-    async for response in api.get_orderbooks_stream(market="SOLUSDC"):
+    async for response in api.get_orderbooks_stream(markets=["SOLUSDC"]):
         print(response.to_json())
         item_count += 1
         if item_count == 5:
             item_count = 0
             break
 
-    print("streaming filtered orderbook updates...")
-    async for response in api.get_filtered_orderbooks_stream(markets=["SOL/USDC"]):
-        print(response.to_json())
-        item_count += 1
-        if item_count == 5:
-            item_count = 0
-            break
 
     print("streaming ticker updates...")
     async for response in api.get_tickers_stream(market="SOLUSDC"):

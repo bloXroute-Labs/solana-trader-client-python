@@ -144,6 +144,66 @@ class Provider(proto.ApiStub, ABC):
         result = await self.post_submit(transaction=signed_tx, skip_pre_flight=skip_pre_flight)
         return result.signature
 
+    async def submit_replace_by_client_order_i_d(
+         self,
+         owner_address: str,
+         payer_address: str,
+         market: str,
+         side: "proto.Side",
+         types: List["proto.OrderType"],
+         amount: float,
+         price: float,
+         open_orders_address: str = "",
+         client_order_id: int = 0,
+         skip_pre_flight: bool = False,
+    ) -> [str]:
+        pk = self.require_private_key()
+        order = await self.post_replace_by_client_order_i_d(
+            owner_address=owner_address,
+            payer_address=payer_address,
+            market=market,
+            side=side,
+            type=types,
+            amount=amount,
+            price=price,
+            open_orders_address=open_orders_address,
+            client_order_i_d=client_order_id,
+        )
+        signed_tx = transaction.sign_tx_with_private_key(order.transaction, pk)
+        result = await self.post_submit(transaction=signed_tx, skip_pre_flight=skip_pre_flight)
+        return result.signature
+
+    async def submit_replace_order(
+        self,
+        order_id: str,
+        owner_address: str,
+        payer_address: str,
+        market: str,
+        side: "proto.Side",
+        types: List["proto.OrderType"],
+        amount: float,
+        price: float,
+        open_orders_address: str = "",
+        client_order_id: int = 0,
+        skip_pre_flight: bool = False,
+    ) -> [str]:
+        pk = self.require_private_key()
+        order = await self.post_replace_order(
+            owner_address=owner_address,
+            payer_address=payer_address,
+            market=market,
+            side=side,
+            type=types,
+            amount=amount,
+            price=price,
+            open_orders_address=open_orders_address,
+            client_order_i_d=client_order_id,
+            order_i_d=order_id
+        )
+        signed_tx = transaction.sign_tx_with_private_key(order.transaction, pk)
+        result = await self.post_submit(transaction=signed_tx, skip_pre_flight=skip_pre_flight)
+        return result.signature
+
 
 class NotConnectedException(Exception):
     pass

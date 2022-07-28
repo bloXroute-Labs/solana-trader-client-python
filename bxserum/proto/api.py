@@ -122,7 +122,7 @@ class GetOrderbookRequest(betterproto.Message):
 
 
 @dataclass
-class GetFilteredOrderbooksRequest(betterproto.Message):
+class GetOrderbooksRequest(betterproto.Message):
     markets: List[str] = betterproto.string_field(1)
     limit: int = betterproto.uint32_field(2)
 
@@ -201,6 +201,20 @@ class PostOrderRequest(betterproto.Message):
     price: float = betterproto.double_field(7)
     open_orders_address: str = betterproto.string_field(8)
     client_order_i_d: int = betterproto.uint64_field(9)
+
+
+@dataclass
+class PostReplaceOrderRequest(betterproto.Message):
+    owner_address: str = betterproto.string_field(1)
+    payer_address: str = betterproto.string_field(2)
+    market: str = betterproto.string_field(3)
+    side: "Side" = betterproto.enum_field(4)
+    type: List["OrderType"] = betterproto.enum_field(5)
+    amount: float = betterproto.double_field(6)
+    price: float = betterproto.double_field(7)
+    open_orders_address: str = betterproto.string_field(8)
+    client_order_i_d: int = betterproto.uint64_field(9)
+    order_i_d: str = betterproto.string_field(10)
 
 
 @dataclass
@@ -613,6 +627,68 @@ class ApiStub(betterproto.ServiceStub):
             PostCancelAllResponse,
         )
 
+    async def post_replace_by_client_order_i_d(
+        self,
+        *,
+        owner_address: str = "",
+        payer_address: str = "",
+        market: str = "",
+        side: "Side" = 0,
+        type: List["OrderType"] = [],
+        amount: float = 0,
+        price: float = 0,
+        open_orders_address: str = "",
+        client_order_i_d: int = 0,
+    ) -> PostOrderResponse:
+        request = PostOrderRequest()
+        request.owner_address = owner_address
+        request.payer_address = payer_address
+        request.market = market
+        request.side = side
+        request.type = type
+        request.amount = amount
+        request.price = price
+        request.open_orders_address = open_orders_address
+        request.client_order_i_d = client_order_i_d
+
+        return await self._unary_unary(
+            "/api.Api/PostReplaceByClientOrderID",
+            request,
+            PostOrderResponse,
+        )
+
+    async def post_replace_order(
+        self,
+        *,
+        owner_address: str = "",
+        payer_address: str = "",
+        market: str = "",
+        side: "Side" = 0,
+        type: List["OrderType"] = [],
+        amount: float = 0,
+        price: float = 0,
+        open_orders_address: str = "",
+        client_order_i_d: int = 0,
+        order_i_d: str = "",
+    ) -> PostOrderResponse:
+        request = PostReplaceOrderRequest()
+        request.owner_address = owner_address
+        request.payer_address = payer_address
+        request.market = market
+        request.side = side
+        request.type = type
+        request.amount = amount
+        request.price = price
+        request.open_orders_address = open_orders_address
+        request.client_order_i_d = client_order_i_d
+        request.order_i_d = order_i_d
+
+        return await self._unary_unary(
+            "/api.Api/PostReplaceOrder",
+            request,
+            PostOrderResponse,
+        )
+
     async def post_settle(
         self,
         *,
@@ -705,30 +781,16 @@ class ApiStub(betterproto.ServiceStub):
         )
 
     async def get_orderbooks_stream(
-        self, *, market: str = "", limit: int = 0
+        self, *, markets: List[str] = [], limit: int = 0
     ) -> AsyncGenerator[GetOrderbooksStreamResponse, None]:
         """streaming endpoints"""
 
-        request = GetOrderbookRequest()
-        request.market = market
-        request.limit = limit
-
-        async for response in self._unary_stream(
-            "/api.Api/GetOrderbooksStream",
-            request,
-            GetOrderbooksStreamResponse,
-        ):
-            yield response
-
-    async def get_filtered_orderbooks_stream(
-        self, *, markets: List[str] = [], limit: int = 0
-    ) -> AsyncGenerator[GetOrderbooksStreamResponse, None]:
-        request = GetFilteredOrderbooksRequest()
+        request = GetOrderbooksRequest()
         request.markets = markets
         request.limit = limit
 
         async for response in self._unary_stream(
-            "/api.Api/GetFilteredOrderbooksStream",
+            "/api.Api/GetOrderbooksStream",
             request,
             GetOrderbooksStreamResponse,
         ):
