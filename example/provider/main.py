@@ -10,9 +10,9 @@ USDC_WALLET = "3wYEfi36o9fEzq4L36JN4rcwf3uDmQMcKexoQ8kwSrUR"
 
 
 async def main():
-    # await http()
+    await http()
     await ws()
-    # await grpc()
+    await grpc()
 
 
 async def http():
@@ -20,7 +20,7 @@ async def http():
     # alternatively, can specify the key manually in base58 str if loaded from other source
     # p = provider.HttpProvider("127.0.0.1", 9000, private_key="...")
 
-    p = provider.http_local(constants.AUTH_HEADER)
+    p = provider.http(constants.AUTH_HEADER)
     api = await bxserum.serum(p)
 
     # either `try`/`finally` or `async with` work with each type of provider
@@ -33,13 +33,13 @@ async def http():
 
 
 async def ws():
-    async with provider.ws_local(constants.AUTH_HEADER) as api:
+    async with provider.ws(constants.AUTH_HEADER) as api:
         await do_requests(api)
         await do_stream(api)
 
 
 async def grpc():
-    p = provider.grpc_local(constants.AUTH_HEADER)
+    p = provider.grpc(constants.AUTH_HEADER)
     api = await bxserum.serum(p)
 
     try:
