@@ -25,11 +25,13 @@ class HttpProvider(Provider):
     # noinspection PyMissingConstructor
     def __init__(
         self,
+        auth_header: str = None,
         endpoint: str = constants.MAINNET_API_HTTP,
         private_key: Optional[str] = None,
     ):
         self._endpoint = f"{endpoint}/api/v1"
         self._session = aiohttp.ClientSession()
+        self._session.headers.__setitem__("authorization", auth_header)
 
         if private_key is None:
             try:
@@ -306,13 +308,13 @@ class HttpProvider(Provider):
         raise NotImplementedError("streams not supported for HTTP")
 
 
-def http() -> Provider:
-    return HttpProvider()
+def http(auth_header: str) -> Provider:
+    return HttpProvider(auth_header=auth_header)
 
 
-def http_testnet() -> Provider:
-    return HttpProvider(constants.TESTNET_API_HTTP)
+def http_testnet(auth_header: str) -> Provider:
+    return HttpProvider(auth_header=auth_header, endpoint=constants.TESTNET_API_HTTP)
 
 
-def http_local() -> Provider:
-    return HttpProvider(constants.LOCAL_API_HTTP)
+def http_local(auth_header: str) -> Provider:
+    return HttpProvider(auth_header=auth_header, endpoint=constants.LOCAL_API_HTTP)

@@ -2,6 +2,7 @@ from typing import List, Dict, Any, TypeVar, Type
 
 import aiohttp
 import betterproto
+from aiohttp import ContentTypeError
 
 
 class HttpError(Exception):

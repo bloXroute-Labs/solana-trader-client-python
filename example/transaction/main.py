@@ -7,6 +7,7 @@ import async_timeout
 
 from bxserum import proto, provider
 from bxserum.transaction import signing
+from bxserum.provider import constants
 
 public_key = os.getenv("PUBLIC_KEY")
 private_key = os.getenv("PRIVATE_KEY")
@@ -31,8 +32,8 @@ async def main():
 
 async def ws():
     print("\n*** WS Test ***\n")
-    async with provider.ws() as api:
-        async with provider.ws() as api2:  # TODO use same provider when WS streams are separated
+    async with provider.ws(constants.AUTH_HEADER) as api:
+        async with provider.ws(constants.AUTH_HEADER) as api2:  # TODO use same provider when WS streams are separated
             await order_lifecycle(api, api2)
             await cancel_all_orders(api)
             await replace_order_by_client_order_i_d(api)
@@ -40,7 +41,7 @@ async def ws():
 
 async def grpc():
     print("\n*** GRPC Test ***\n")
-    async with provider.grpc() as api:
+    async with provider.grpc(constants.AUTH_HEADER) as api:
         await order_lifecycle(api, api)
         await cancel_all_orders(api)
         await replace_order_by_client_order_i_d(api)
@@ -48,7 +49,7 @@ async def grpc():
 
 async def http():
     print("\n*** HTTP Test ***\n")
-    async with provider.http() as api:
+    async with provider.http(constants.AUTH_HEADER) as api:
         await cancel_all_orders(api)
         await replace_order_by_client_order_i_d(api)
 

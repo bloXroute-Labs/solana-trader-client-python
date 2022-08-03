@@ -27,9 +27,12 @@ class WsProvider(Provider):
         self,
         endpoint: str = constants.MAINNET_API_WS,
         private_key: Optional[str] = None,
+        auth_header: str = None,
     ):
         self._endpoint = endpoint
-        self._ws = jsonrpc.WsRpcConnection(endpoint)
+        opts = jsonrpc.WsRpcOpts(("authorization", auth_header))
+        self._ws = jsonrpc.WsRpcConnection(endpoint, opts)
+        self.auth_header = auth_header
 
         if private_key is None:
             try:
@@ -84,13 +87,13 @@ def _ws_endpoint(route: str) -> str:
     return route.split("/")[-1]
 
 
-def ws() -> Provider:
-    return WsProvider()
+def ws(auth_header: str) -> Provider:
+    return WsProvider(auth_header=auth_header)
 
 
-def ws_testnet() -> Provider:
-    return WsProvider(constants.TESTNET_API_WS)
+def ws_testnet(auth_header: str) -> Provider:
+    return WsProvider(auth_header=auth_header, endpoint=constants.TESTNET_API_WS)
 
 
-def ws_local() -> Provider:
-    return WsProvider(constants.LOCAL_API_WS)
+def ws_local(auth_header: str) -> Provider:
+    return WsProvider(auth_header=auth_header, endpoint=constants.LOCAL_API_WS)
