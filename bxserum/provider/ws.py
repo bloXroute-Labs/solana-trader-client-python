@@ -30,8 +30,7 @@ class WsProvider(Provider):
         auth_header: str = None,
     ):
         self._endpoint = endpoint
-        opts = jsonrpc.WsRpcOpts(("authorization", auth_header))
-        self._ws = jsonrpc.WsRpcConnection(endpoint, opts)
+        self._ws = jsonrpc.WsRpcConnection(endpoint)
         self.auth_header = auth_header
 
         if private_key is None:
