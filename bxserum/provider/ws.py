@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING, Type, Optional, AsyncGenerator
 
 import aiohttp
 import jsonrpc
+import websockets.datastructures
 from solana import keypair
 
 from bxserum import transaction
@@ -30,7 +31,9 @@ class WsProvider(Provider):
         auth_header: str = None,
     ):
         self._endpoint = endpoint
-        self._ws = jsonrpc.WsRpcConnection(endpoint)
+
+        opts = jsonrpc.WsRpcOpts(headers={"authorization": auth_header})
+        self._ws = jsonrpc.WsRpcConnection(endpoint, opts)
         self.auth_header = auth_header
 
         if private_key is None:
