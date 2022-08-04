@@ -1,7 +1,6 @@
 import os
 from typing import TYPE_CHECKING, Optional
 
-import importlib_metadata
 from grpclib import client
 from solana import keypair
 

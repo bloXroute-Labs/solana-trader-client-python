@@ -32,7 +32,7 @@ class HttpProvider(Provider):
     ):
         self._endpoint = f"{endpoint}/api/v1"
         self._session = aiohttp.ClientSession()
-        self._session.headers.__setitem__("authorization", auth_header)
+        self._session.headers["authorization"] = auth_header
 
         if private_key is None:
             try:
