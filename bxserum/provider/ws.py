@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Type, Optional, AsyncGenerator
 
 import aiohttp
 import jsonrpc
-import websockets.datastructures
+
 from solana import keypair
 
 from bxserum import transaction
