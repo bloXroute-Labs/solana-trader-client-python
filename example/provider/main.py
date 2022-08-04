@@ -1,9 +1,6 @@
 import asyncio
-import os
-
 import bxserum
 from bxserum import provider, proto
-from bxserum.provider import constants
 
 # sample public key for trades API
 PUBLIC_KEY = "AFT8VayE7qr8MoQsW3wHsDS83HhEvhGWdbNSHRKeUDfQ"
