@@ -1,4 +1,5 @@
 import datetime
+import os
 from typing import Type, AsyncGenerator, Optional, TYPE_CHECKING, List
 
 import aiohttp
@@ -308,13 +309,13 @@ class HttpProvider(Provider):
         raise NotImplementedError("streams not supported for HTTP")
 
 
-def http(auth_header: str) -> Provider:
-    return HttpProvider(auth_header=auth_header)
+def http() -> Provider:
+    return HttpProvider(auth_header=os.environ["AUTH_HEADER"])
 
 
-def http_testnet(auth_header: str) -> Provider:
-    return HttpProvider(auth_header=auth_header, endpoint=constants.TESTNET_API_HTTP)
+def http_testnet() -> Provider:
+    return HttpProvider(auth_header=os.environ["AUTH_HEADER"], endpoint=constants.TESTNET_API_HTTP)
 
 
-def http_local(auth_header: str) -> Provider:
-    return HttpProvider(auth_header=auth_header, endpoint=constants.LOCAL_API_HTTP)
+def http_local() -> Provider:
+    return HttpProvider(auth_header=os.environ["AUTH_HEADER"], endpoint=constants.LOCAL_API_HTTP)

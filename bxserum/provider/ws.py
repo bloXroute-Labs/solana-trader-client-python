@@ -1,3 +1,4 @@
+import os
 from typing import TYPE_CHECKING, Type, Optional, AsyncGenerator
 
 import aiohttp
@@ -88,13 +89,13 @@ def _ws_endpoint(route: str) -> str:
     return route.split("/")[-1]
 
 
-def ws(auth_header: str) -> Provider:
-    return WsProvider(auth_header=auth_header)
+def ws() -> Provider:
+    return WsProvider(auth_header=os.environ["AUTH_HEADER"])
 
 
-def ws_testnet(auth_header: str) -> Provider:
-    return WsProvider(auth_header=auth_header, endpoint=constants.TESTNET_API_WS)
+def ws_testnet() -> Provider:
+    return WsProvider(auth_header=os.environ["AUTH_HEADER"], endpoint=constants.TESTNET_API_WS)
 
 
-def ws_local(auth_header: str) -> Provider:
-    return WsProvider(auth_header=auth_header, endpoint=constants.LOCAL_API_WS)
+def ws_local() -> Provider:
+    return WsProvider(auth_header=os.environ["AUTH_HEADER"], endpoint=constants.LOCAL_API_WS)

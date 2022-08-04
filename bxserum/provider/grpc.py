@@ -1,3 +1,4 @@
+import os
 from typing import TYPE_CHECKING, Optional
 
 import importlib_metadata
@@ -62,21 +63,21 @@ class GrpcProvider(Provider):
             self.channel.close()
 
 
-def grpc(auth_header: str) -> Provider:
-    return GrpcProvider(auth_header)
+def grpc() -> Provider:
+    return GrpcProvider(os.environ["AUTH_HEADER"])
 
 
-def grpc_testnet(auth_header: str) -> Provider:
+def grpc_testnet() -> Provider:
     return GrpcProvider(
-        auth_header=auth_header,
+        auth_header=os.environ["AUTH_HEADER"],
         host=constants.TESTNET_API_GRPC_HOST,
         port=constants.TESTNET_API_GRPC_PORT
     )
 
 
-def grpc_local(auth_header: str) -> Provider:
+def grpc_local() -> Provider:
     return GrpcProvider(
-        auth_header=auth_header,
+        auth_header=os.environ["AUTH_HEADER"],
         host=constants.LOCAL_API_GRPC_HOST,
         port=constants.LOCAL_API_GRPC_PORT
     )

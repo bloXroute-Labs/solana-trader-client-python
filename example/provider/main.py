@@ -1,4 +1,5 @@
 import asyncio
+import os
 
 import bxserum
 from bxserum import provider, proto
@@ -20,7 +21,7 @@ async def http():
     # alternatively, can specify the key manually in base58 str if loaded from other source
     # p = provider.HttpProvider("127.0.0.1", 9000, private_key="...")
 
-    p = provider.http(constants.AUTH_HEADER)
+    p = provider.http()
     api = await bxserum.serum(p)
 
     # either `try`/`finally` or `async with` work with each type of provider
@@ -33,13 +34,13 @@ async def http():
 
 
 async def ws():
-    async with provider.ws(constants.AUTH_HEADER) as api:
+    async with provider.ws() as api:
         await do_requests(api)
         await do_stream(api)
 
 
 async def grpc():
-    p = provider.grpc(constants.AUTH_HEADER)
+    p = provider.grpc()
     api = await bxserum.serum(p)
 
     try:
