@@ -1,4 +1,5 @@
 import datetime
+import os
 from typing import Type, AsyncGenerator, Optional, TYPE_CHECKING, List
 
 import aiohttp
@@ -25,11 +26,13 @@ class HttpProvider(Provider):
     # noinspection PyMissingConstructor
     def __init__(
         self,
+        auth_header: str = None,
         endpoint: str = constants.MAINNET_API_HTTP,
         private_key: Optional[str] = None,
     ):
         self._endpoint = f"{endpoint}/api/v1"
         self._session = aiohttp.ClientSession()
+        self._session.headers["authorization"] = auth_header
 
         if private_key is None:
             try:
@@ -307,12 +310,12 @@ class HttpProvider(Provider):
 
 
 def http() -> Provider:
-    return HttpProvider()
+    return HttpProvider(auth_header=os.environ["AUTH_HEADER"])
 
 
 def http_testnet() -> Provider:
-    return HttpProvider(constants.TESTNET_API_HTTP)
+    return HttpProvider(auth_header=os.environ["AUTH_HEADER"], endpoint=constants.TESTNET_API_HTTP)
 
 
 def http_local() -> Provider:
-    return HttpProvider(constants.LOCAL_API_HTTP)
+    return HttpProvider(auth_header=os.environ["AUTH_HEADER"], endpoint=constants.LOCAL_API_HTTP)

@@ -1,5 +1,4 @@
 import asyncio
-
 import bxserum
 from bxserum import provider, proto
 

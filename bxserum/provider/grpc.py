@@ -1,3 +1,4 @@
+import os
 from typing import TYPE_CHECKING, Optional
 
 from grpclib import client
@@ -31,9 +32,11 @@ class GrpcProvider(Provider):
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["_MetadataLike"] = None,
+        auth_header: str = None,
     ):
         self._host = host
         self._port = port
+        self._auth_header = auth_header
 
         if private_key is None:
             try:
@@ -48,6 +51,7 @@ class GrpcProvider(Provider):
     async def connect(self):
         if self.channel is None:
             self.channel = client.Channel(self._host, self._port)
+            self.metadata = {"authorization": self._auth_header}
 
     def private_key(self) -> Optional[keypair.Keypair]:
         return self._private_key
@@ -59,14 +63,20 @@ class GrpcProvider(Provider):
 
 
 def grpc() -> Provider:
-    return GrpcProvider()
+    return GrpcProvider(os.environ["AUTH_HEADER"])
 
 
 def grpc_testnet() -> Provider:
     return GrpcProvider(
-        constants.TESTNET_API_GRPC_HOST, constants.TESTNET_API_GRPC_PORT
+        auth_header=os.environ["AUTH_HEADER"],
+        host=constants.TESTNET_API_GRPC_HOST,
+        port=constants.TESTNET_API_GRPC_PORT
     )
 
 
 def grpc_local() -> Provider:
-    return GrpcProvider(constants.LOCAL_API_GRPC_HOST, constants.LOCAL_API_GRPC_PORT)
+    return GrpcProvider(
+        auth_header=os.environ["AUTH_HEADER"],
+        host=constants.LOCAL_API_GRPC_HOST,
+        port=constants.LOCAL_API_GRPC_PORT
+    )

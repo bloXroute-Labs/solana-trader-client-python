@@ -1,7 +1,9 @@
+import os
 from typing import TYPE_CHECKING, Type, Optional, AsyncGenerator
 
 import aiohttp
 import jsonrpc
+
 from solana import keypair
 
 from bxserum import transaction
@@ -27,9 +29,12 @@ class WsProvider(Provider):
         self,
         endpoint: str = constants.MAINNET_API_WS,
         private_key: Optional[str] = None,
+        auth_header: str = None,
     ):
         self._endpoint = endpoint
-        self._ws = jsonrpc.WsRpcConnection(endpoint)
+
+        opts = jsonrpc.WsRpcOpts(headers={"authorization": auth_header})
+        self._ws = jsonrpc.WsRpcConnection(endpoint, opts)
 
         if private_key is None:
             try:
@@ -85,12 +90,12 @@ def _ws_endpoint(route: str) -> str:
 
 
 def ws() -> Provider:
-    return WsProvider()
+    return WsProvider(auth_header=os.environ["AUTH_HEADER"])
 
 
 def ws_testnet() -> Provider:
-    return WsProvider(constants.TESTNET_API_WS)
+    return WsProvider(auth_header=os.environ["AUTH_HEADER"], endpoint=constants.TESTNET_API_WS)
 
 
 def ws_local() -> Provider:
-    return WsProvider(constants.LOCAL_API_WS)
+    return WsProvider(auth_header=os.environ["AUTH_HEADER"], endpoint=constants.LOCAL_API_WS)
