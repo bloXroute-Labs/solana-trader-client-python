@@ -64,6 +64,10 @@ class Market(betterproto.Message):
     market: str = betterproto.string_field(1)
     status: "MarketStatus" = betterproto.enum_field(2)
     address: str = betterproto.string_field(3)
+    base_mint: str = betterproto.string_field(4)
+    quoted_mint: str = betterproto.string_field(5)
+    base_decimals: int = betterproto.int64_field(6)
+    quote_decimals: int = betterproto.int64_field(7)
 
 
 @dataclass
@@ -288,6 +292,7 @@ class GetOrdersRequest(betterproto.Message):
     limit: int = betterproto.uint32_field(6)
     direction: "Direction" = betterproto.enum_field(7)
     address: str = betterproto.string_field(8)
+    open_orders_address: str = betterproto.string_field(9)
 
 
 @dataclass
@@ -348,6 +353,7 @@ class GetOpenOrdersRequest(betterproto.Message):
     market: str = betterproto.string_field(1)
     limit: int = betterproto.uint32_field(2)
     address: str = betterproto.string_field(3)
+    open_orders_address: str = betterproto.string_field(4)
 
 
 @dataclass
@@ -722,6 +728,7 @@ class ApiStub(betterproto.ServiceStub):
         limit: int = 0,
         direction: "Direction" = 0,
         address: str = "",
+        open_orders_address: str = "",
     ) -> GetOrdersResponse:
         request = GetOrdersRequest()
         request.market = market
@@ -733,6 +740,7 @@ class ApiStub(betterproto.ServiceStub):
         request.limit = limit
         request.direction = direction
         request.address = address
+        request.open_orders_address = open_orders_address
 
         return await self._unary_unary(
             "/api.Api/GetOrders",
@@ -741,12 +749,18 @@ class ApiStub(betterproto.ServiceStub):
         )
 
     async def get_open_orders(
-        self, *, market: str = "", limit: int = 0, address: str = ""
+        self,
+        *,
+        market: str = "",
+        limit: int = 0,
+        address: str = "",
+        open_orders_address: str = "",
     ) -> GetOpenOrdersResponse:
         request = GetOpenOrdersRequest()
         request.market = market
         request.limit = limit
         request.address = address
+        request.open_orders_address = open_orders_address
 
         return await self._unary_unary(
             "/api.Api/GetOpenOrders",
