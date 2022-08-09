@@ -93,10 +93,12 @@ class HttpProvider(Provider):
         limit: int = 0,
         direction: proto.Direction = proto.Direction.D_ASCENDING,
         address: str = "",
+        open_orders_address: str = "",
     ) -> proto.GetOpenOrdersResponse:
         async with self._session.get(
             f"{self._endpoint}/trade/orders/{market}"
             f"?address={address}"
+            f"?openOrdersAddress={open_orders_address}"
             f"&side={side}"
             f"&types=OT_LIMIT"
             f"&direction={direction.name}"
