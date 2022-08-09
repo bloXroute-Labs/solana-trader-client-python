@@ -94,8 +94,18 @@ def ws() -> Provider:
 
 
 def ws_testnet() -> Provider:
-    return WsProvider(auth_header=os.environ["AUTH_HEADER"], endpoint=constants.TESTNET_API_WS)
+    return WsProvider(
+        auth_header=os.environ["AUTH_HEADER"], endpoint=constants.TESTNET_API_WS
+    )
+
+
+def ws_devnet() -> Provider:
+    return WsProvider(
+        auth_header=os.environ["AUTH_HEADER"], endpoint=constants.DEVNET_API_WS
+    )
 
 
 def ws_local() -> Provider:
-    return WsProvider(auth_header=os.environ["AUTH_HEADER"], endpoint=constants.LOCAL_API_WS)
+    return WsProvider(
+        auth_header=os.environ["AUTH_HEADER"], endpoint=constants.LOCAL_API_WS
+    )

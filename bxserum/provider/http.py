@@ -120,7 +120,7 @@ class HttpProvider(Provider):
             return await map_response(res, proto.GetUnsettledResponse())
 
     async def get_account_balance(
-            self, owner_address: str = ""
+        self, owner_address: str = ""
     ) -> proto.GetAccountBalanceResponse:
         async with self._session.get(
             f"{self._endpoint}/account/balance?ownerAddress={owner_address}"
@@ -167,7 +167,11 @@ class HttpProvider(Provider):
         open_orders_address: str = "",
     ) -> proto.PostCancelOrderResponse:
         request = proto.PostCancelOrderRequest(
-            order_i_d, side, market_address, owner_address, open_orders_address,
+            order_i_d,
+            side,
+            market_address,
+            owner_address,
+            open_orders_address,
         )
 
         async with self._session.post(
@@ -184,7 +188,10 @@ class HttpProvider(Provider):
         open_orders_address: str = "",
     ) -> proto.PostCancelOrderResponse:
         request = proto.PostCancelByClientOrderIDRequest(
-            client_order_i_d, market_address, owner_address, open_orders_address,
+            client_order_i_d,
+            market_address,
+            owner_address,
+            open_orders_address,
         )
 
         async with self._session.post(
@@ -217,7 +224,11 @@ class HttpProvider(Provider):
         open_orders_address: str = "",
     ) -> proto.PostSettleResponse:
         request = proto.PostSettleRequest(
-            owner_address, market, base_token_wallet, quote_token_wallet, open_orders_address,
+            owner_address,
+            market,
+            base_token_wallet,
+            quote_token_wallet,
+            open_orders_address,
         )
         async with self._session.post(
             f"{self._endpoint}/trade/settle", json=request.to_dict()
@@ -275,7 +286,7 @@ class HttpProvider(Provider):
         price: float = 0,
         open_orders_address: str = "",
         client_order_i_d: int = 0,
-        order_id: str
+        order_id: str,
     ) -> proto.PostOrderResponse:
         request = proto.PostReplaceOrderRequest(
             owner_address,
@@ -287,14 +298,13 @@ class HttpProvider(Provider):
             price,
             open_orders_address,
             client_order_i_d,
-            order_id
+            order_id,
         )
 
         async with self._session.post(
             f"{self._endpoint}/trade/replace", json=request.to_dict()
         ) as res:
             return await map_response(res, proto.PostOrderResponse())
-
 
     async def _unary_stream(
         self,
@@ -316,8 +326,18 @@ def http() -> Provider:
 
 
 def http_testnet() -> Provider:
-    return HttpProvider(auth_header=os.environ["AUTH_HEADER"], endpoint=constants.TESTNET_API_HTTP)
+    return HttpProvider(
+        auth_header=os.environ["AUTH_HEADER"], endpoint=constants.TESTNET_API_HTTP
+    )
+
+
+def http_devnet() -> Provider:
+    return HttpProvider(
+        auth_header=os.environ["AUTH_HEADER"], endpoint=constants.DEVNET_API_HTTP
+    )
 
 
 def http_local() -> Provider:
-    return HttpProvider(auth_header=os.environ["AUTH_HEADER"], endpoint=constants.LOCAL_API_HTTP)
+    return HttpProvider(
+        auth_header=os.environ["AUTH_HEADER"], endpoint=constants.LOCAL_API_HTTP
+    )
