@@ -1,20 +1,23 @@
 from .base import Provider
-from .grpc import GrpcProvider, grpc, grpc_local, grpc_testnet
-from .http import HttpProvider, http, http_local, http_testnet
-from .ws import WsProvider, ws, ws_local, ws_testnet
+from .grpc import GrpcProvider, grpc, grpc_local, grpc_testnet, grpc_devnet
+from .http import HttpProvider, http, http_local, http_testnet, http_devnet
+from .ws import WsProvider, ws, ws_local, ws_testnet, ws_devnet
 
 __all__ = [
     "Provider",
     "GrpcProvider",
     "grpc",
+    "grpc_devnet",
     "grpc_local",
     "grpc_testnet",
     "HttpProvider",
     "http",
+    "http_devnet",
     "http_local",
     "http_testnet",
     "WsProvider",
     "ws",
+    "ws_devnet",
     "ws_local",
     "ws_testnet",
 ]

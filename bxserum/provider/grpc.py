@@ -74,6 +74,14 @@ def grpc_testnet() -> Provider:
     )
 
 
+def grpc_devnet() -> Provider:
+    return GrpcProvider(
+        auth_header=os.environ["AUTH_HEADER"],
+        host=constants.DEVNET_API_GRPC_HOST,
+        port=constants.DEVNET_API_GRPC_PORT
+    )
+
+
 def grpc_local() -> Provider:
     return GrpcProvider(
         auth_header=os.environ["AUTH_HEADER"],
