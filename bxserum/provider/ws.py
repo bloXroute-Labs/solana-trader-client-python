@@ -21,7 +21,6 @@ class WsProvider(Provider):
     _ws: jsonrpc.WsRpcConnection
 
     _endpoint: str
-    _session: aiohttp.ClientSession
     _private_key: Optional[keypair.Keypair]
 
     # noinspection PyMissingConstructor

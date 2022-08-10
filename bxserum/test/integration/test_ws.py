@@ -1,7 +1,7 @@
 import aiounittest
-from bxserum import provider
-import public, stream
-from bxserum.test.integration import private
+
+from . import private, public, stream
+from ... import provider
 
 
 class TestWS(aiounittest.AsyncTestCase):

@@ -1,6 +1,6 @@
 import asyncio
 import async_timeout
-from bxserum import provider
+from ... import provider
 import unittest
 import typing
 

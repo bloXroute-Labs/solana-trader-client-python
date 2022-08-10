@@ -1,5 +1,5 @@
 import unittest
-from bxserum import provider
+from ... import provider
 
 
 async def test_orderbook_equivalent_input_formats(

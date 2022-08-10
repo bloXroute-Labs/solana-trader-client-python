@@ -7,8 +7,7 @@ import jsonrpc
 from grpclib import GRPCError
 from solana import keypair
 
-from bxserum import provider, transaction, proto
-from bxserum.provider.http_error import HttpError
+from ... import provider, transaction, proto
 
 
 async def test_submit_cancel_order(t: unittest.TestCase, p: provider.Provider):
@@ -51,7 +50,7 @@ async def test_submit_cancel_order(t: unittest.TestCase, p: provider.Provider):
             10_000,
         )
         t.fail("unexpectedly received no error from payer mismatch")
-    except (GRPCError, HttpError) as e:
+    except (GRPCError, provider.HttpError) as e:
         t.assertEqual(
             "invalid payer specified: owner cannot match payer unless selling SOL",
             e.message,
@@ -74,7 +73,7 @@ async def test_submit_cancel_order(t: unittest.TestCase, p: provider.Provider):
             10_000,
         )
         t.fail("unexpectedly received no error from quantity too low")
-    except (GRPCError, HttpError) as e:
+    except (GRPCError, provider.HttpError) as e:
         t.assertEqual(
             "Transaction simulation failed: Error processing Instruction 2: "
             "invalid program argument",
@@ -101,7 +100,7 @@ async def test_submit_cancel_order(t: unittest.TestCase, p: provider.Provider):
             str(kp.public_key),
         )
         t.fail("unexpectedly received no error from bad open orders address")
-    except (GRPCError, HttpError) as e:
+    except (GRPCError, provider.HttpError) as e:
         t.assertEqual(
             "Transaction simulation failed: Error processing Instruction 2: "
             "custom program error: 0x10000a4",
@@ -128,7 +127,7 @@ async def verify_tx(t: unittest.TestCase, tx_hash: str):
 
         attempts += 1
         await asyncio.sleep(10)
-    t.fail("could not find transaction hash in timeout", tx_hash)
+    t.fail(f"could not find transaction hash in timeout: {tx_hash}")
 
 
 async def check_solscan(tx_hash: str) -> str:

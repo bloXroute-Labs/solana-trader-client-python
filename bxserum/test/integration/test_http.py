@@ -1,7 +1,7 @@
 import aiounittest
-from bxserum import provider
-import public
-from bxserum.test.integration import private
+
+from . import private, public
+from ... import provider
 
 
 class TestHTTP(aiounittest.AsyncTestCase):
