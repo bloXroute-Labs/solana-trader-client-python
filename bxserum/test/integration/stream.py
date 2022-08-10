@@ -23,5 +23,5 @@ async def test_stream(t: unittest.TestCase, stream: typing.AsyncGenerator):
 
 # Works if the market gets updated when running the test
 async def test_orderbook_stream(t: unittest.TestCase, p: provider.Provider):
-    stream = p.get_orderbooks_stream(market="SOL/USDC")
+    stream = p.get_orderbooks_stream(markets=["SOL/USDC"])
     await test_stream(t, stream)

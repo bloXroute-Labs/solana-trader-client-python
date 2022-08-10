@@ -12,6 +12,7 @@ from .http_error import map_response
 
 if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences,PyProtectedMember
+    # pyre-ignore[21]: module is too hard to find
     from grpclib._protocols import IProtoMessage
 
     # noinspection PyProtectedMember
@@ -316,6 +317,7 @@ class HttpProvider(Provider):
     async def _unary_stream(
         self,
         route: str,
+        # pyre-ignore[11]: type is too hard to find
         request: "IProtoMessage",
         response_type: Type["T"],
         *,

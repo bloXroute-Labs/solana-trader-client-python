@@ -11,6 +11,7 @@ from . import Provider, constants
 
 if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences,PyProtectedMember
+    # pyre-ignore[21]: module is too hard to find
     from grpclib._protocols import IProtoMessage
 
     # noinspection PyProtectedMember
@@ -58,6 +59,7 @@ class WsProvider(Provider):
     async def _unary_unary(
         self,
         route: str,
+        # pyre-ignore[11]: type is too hard to find
         request: "IProtoMessage",
         response_type: Type["T"],
         *,
