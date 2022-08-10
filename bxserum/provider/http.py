@@ -5,10 +5,10 @@ from typing import Type, AsyncGenerator, Optional, TYPE_CHECKING, List
 import aiohttp
 from solana import keypair
 
-from bxserum import proto, transaction
-from bxserum.provider import constants
-from bxserum.provider.base import Provider
-from bxserum.provider.http_error import map_response
+from .. import proto, transaction
+from . import constants
+from .base import Provider
+from .http_error import map_response
 
 if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences,PyProtectedMember
@@ -26,11 +26,15 @@ class HttpProvider(Provider):
     # noinspection PyMissingConstructor
     def __init__(
         self,
-        auth_header: str = None,
         endpoint: str = constants.MAINNET_API_HTTP,
+        auth_header: Optional[str] = None,
         private_key: Optional[str] = None,
     ):
         self._endpoint = f"{endpoint}/api/v1"
+
+        if auth_header is None:
+            auth_header = os.environ["AUTH_HEADER"]
+
         self._session = aiohttp.ClientSession()
         self._session.headers["authorization"] = auth_header
 
@@ -63,7 +67,9 @@ class HttpProvider(Provider):
         ) as res:
             return await map_response(res, proto.GetOrderbookResponse())
 
-    async def get_tickers(self, *, market: str = "") -> proto.GetTickersResponse:
+    async def get_tickers(
+        self, *, market: str = ""
+    ) -> proto.GetTickersResponse:
         async with self._session.get(
             f"{self._endpoint}/market/tickers/{market}"
         ) as res:
@@ -80,6 +86,7 @@ class HttpProvider(Provider):
         limit: int = 0,
         direction: proto.Direction = 0,
         address: str = "",
+        **kwargs,
     ) -> proto.GetOrdersResponse:
         raise NotImplementedError()
 
@@ -100,7 +107,7 @@ class HttpProvider(Provider):
             f"?address={address}"
             f"?openOrdersAddress={open_orders_address}"
             f"&side={side}"
-            f"&types=OT_LIMIT"
+            "&types=OT_LIMIT"
             f"&direction={direction.name}"
         ) as res:
             return await map_response(res, proto.GetOpenOrdersResponse())
@@ -115,7 +122,7 @@ class HttpProvider(Provider):
         self, *, market: str = "", owner: str = ""
     ) -> proto.GetUnsettledResponse:
         async with self._session.get(
-            f"{self._endpoint}/trade/unsettled/{market}" f"?owner={owner}"
+            f"{self._endpoint}/trade/unsettled/{market}?owner={owner}"
         ) as res:
             return await map_response(res, proto.GetUnsettledResponse())
 
@@ -322,22 +329,16 @@ class HttpProvider(Provider):
 
 
 def http() -> Provider:
-    return HttpProvider(auth_header=os.environ["AUTH_HEADER"])
+    return HttpProvider()
 
 
 def http_testnet() -> Provider:
-    return HttpProvider(
-        auth_header=os.environ["AUTH_HEADER"], endpoint=constants.TESTNET_API_HTTP
-    )
+    return HttpProvider(endpoint=constants.TESTNET_API_HTTP)
 
 
 def http_devnet() -> Provider:
-    return HttpProvider(
-        auth_header=os.environ["AUTH_HEADER"], endpoint=constants.DEVNET_API_HTTP
-    )
+    return HttpProvider(endpoint=constants.DEVNET_API_HTTP)
 
 
 def http_local() -> Provider:
-    return HttpProvider(
-        auth_header=os.environ["AUTH_HEADER"], endpoint=constants.LOCAL_API_HTTP
-    )
+    return HttpProvider(endpoint=constants.LOCAL_API_HTTP)

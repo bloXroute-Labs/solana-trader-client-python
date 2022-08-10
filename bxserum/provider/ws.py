@@ -6,8 +6,8 @@ import jsonrpc
 
 from solana import keypair
 
-from bxserum import transaction
-from bxserum.provider import Provider, constants
+from .. import transaction
+from . import Provider, constants
 
 if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences,PyProtectedMember
@@ -28,10 +28,13 @@ class WsProvider(Provider):
     def __init__(
         self,
         endpoint: str = constants.MAINNET_API_WS,
+        auth_header: Optional[str] = None,
         private_key: Optional[str] = None,
-        auth_header: str = None,
     ):
         self._endpoint = endpoint
+
+        if auth_header is None:
+            auth_header = os.environ["AUTH_HEADER"]
 
         opts = jsonrpc.WsRpcOpts(headers={"authorization": auth_header})
         self._ws = jsonrpc.WsRpcConnection(endpoint, opts)
@@ -90,22 +93,16 @@ def _ws_endpoint(route: str) -> str:
 
 
 def ws() -> Provider:
-    return WsProvider(auth_header=os.environ["AUTH_HEADER"])
+    return WsProvider()
 
 
 def ws_testnet() -> Provider:
-    return WsProvider(
-        auth_header=os.environ["AUTH_HEADER"], endpoint=constants.TESTNET_API_WS
-    )
+    return WsProvider(endpoint=constants.TESTNET_API_WS)
 
 
 def ws_devnet() -> Provider:
-    return WsProvider(
-        auth_header=os.environ["AUTH_HEADER"], endpoint=constants.DEVNET_API_WS
-    )
+    return WsProvider(endpoint=constants.DEVNET_API_WS)
 
 
 def ws_local() -> Provider:
-    return WsProvider(
-        auth_header=os.environ["AUTH_HEADER"], endpoint=constants.LOCAL_API_WS
-    )
+    return WsProvider(endpoint=constants.LOCAL_API_WS)

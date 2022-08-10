@@ -3,7 +3,7 @@ from typing import List, Optional
 
 from solana import keypair
 
-from bxserum import proto, transaction
+from .. import proto, transaction
 
 
 class Provider(proto.ApiStub, ABC):
@@ -64,7 +64,7 @@ class Provider(proto.ApiStub, ABC):
     async def submit_cancel_order(
         self,
         order_i_d: str = "",
-        side: "proto.Side" = 0,
+        side: proto.Side = proto.Side.S_UNKNOWN,
         market_address: str = "",
         owner_address: str = "",
         open_orders_address: str = "",
@@ -105,9 +105,12 @@ class Provider(proto.ApiStub, ABC):
         self,
         market: str = "",
         owner_address: str = "",
-        open_orders_addresses: List[str] = "",
+        open_orders_addresses: Optional[List[str]] = None,
         skip_pre_flight: bool = True,
-    ) -> [str]:
+    ) -> List[str]:
+        if open_orders_addresses is None:
+            open_orders_addresses = []
+
         pk = self.require_private_key()
         response = await self.post_cancel_all(
             market=market,
@@ -156,7 +159,7 @@ class Provider(proto.ApiStub, ABC):
          open_orders_address: str = "",
          client_order_id: int = 0,
          skip_pre_flight: bool = False,
-    ) -> [str]:
+    ) -> str:
         pk = self.require_private_key()
         order = await self.post_replace_by_client_order_i_d(
             owner_address=owner_address,
@@ -186,7 +189,7 @@ class Provider(proto.ApiStub, ABC):
         open_orders_address: str = "",
         client_order_id: int = 0,
         skip_pre_flight: bool = False,
-    ) -> [str]:
+    ) -> str:
         pk = self.require_private_key()
         order = await self.post_replace_order(
             owner_address=owner_address,
