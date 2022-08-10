@@ -1,7 +1,1 @@
-aiohttp==3.8.1
-betterproto[compiler]==1.2.5
-grpclib==0.4.2
-aiounittest==1.4.1
-base58==2.1.1
-solana==0.23.3
-git+ssh://git@github.com/bloXroute-Labs/bx-jsonrpc-py.git@798fb0563e6712cc8c41c2a626cba70b48a7e406#egg=bx-jsonrpc-py
+.
