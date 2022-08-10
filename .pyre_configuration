@@ -5,6 +5,5 @@
   ],
   "ignore_all_errors": [
     "bxserum/proto/"
-  ],
-  "taint_models_path": "/Users/aspin/virtualenv/serum/lib/pyre_check/taint"
+  ]
 }

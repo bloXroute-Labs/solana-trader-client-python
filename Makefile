@@ -5,5 +5,8 @@ proto:
 		$(CURDIR)/solana-trader-proto/proto/api.proto \
 		&& echo 'from .api import *' > $(CURDIR)/bxserum/proto/__init__.py
 
+lint:
+	pyre check
+
 test:
 	python -m unittest discover

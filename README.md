@@ -83,4 +83,7 @@ Regenerate protobuf files:
 $ make proto
 ```
 
-We use `pyre` for type checking and `pylint` for linting. 
+Linting:
+```
+$ make lint
+```
