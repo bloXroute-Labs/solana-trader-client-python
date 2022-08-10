@@ -58,3 +58,28 @@ finally:
 
 Refer to the `examples/` for more info.
 
+## Development
+
+bloXroute Serum API's interfaces are primarily powered by protobuf, so you will 
+need to install it for your system: https://grpc.io/docs/protoc-installation/
+
+Clone project and install dependencies:
+
+```
+$ git clone https://github.com/bloXroute-Labs/serum-client-python.git
+$ cd serum-client-python
+$ pip install -r requirements.txt
+```
+
+Run tests:
+
+```
+$ make test
+```
+
+Regenerate protobuf files:
+
+```
+$ make proto
+```
+
