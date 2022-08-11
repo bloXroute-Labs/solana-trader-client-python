@@ -1,0 +1,12 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.black]
+line-length = 80
+preview = true
+exclude = "proto"
+
+[tool.pylint.main]
+# Ignore protobuf generated files
+ignore = ["proto"]

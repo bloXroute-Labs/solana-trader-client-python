@@ -1,4 +1,4 @@
-from bxserum import proto, provider
+from bxserum import provider
 
 Provider = provider.Provider
 
@@ -8,7 +8,4 @@ async def serum(connection_provider: Provider) -> Provider:
     return connection_provider
 
 
-_all = [
-    "serum",
-    "Provider"
-]
+_all = ["serum", "Provider"]

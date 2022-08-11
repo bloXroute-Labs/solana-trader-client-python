@@ -5,13 +5,14 @@ from typing import Type, AsyncGenerator, Optional, TYPE_CHECKING, List
 import aiohttp
 from solana import keypair
 
-from bxserum import proto, transaction
-from bxserum.provider import constants
-from bxserum.provider.base import Provider
-from bxserum.provider.http_error import map_response
+from .. import proto, transaction
+from . import constants
+from .base import Provider
+from .http_error import map_response
 
 if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences,PyProtectedMember
+    # pyre-ignore[21]: module is too hard to find
     from grpclib._protocols import IProtoMessage
 
     # noinspection PyProtectedMember
@@ -26,11 +27,15 @@ class HttpProvider(Provider):
     # noinspection PyMissingConstructor
     def __init__(
         self,
-        auth_header: str = None,
         endpoint: str = constants.MAINNET_API_HTTP,
+        auth_header: Optional[str] = None,
         private_key: Optional[str] = None,
     ):
         self._endpoint = f"{endpoint}/api/v1"
+
+        if auth_header is None:
+            auth_header = os.environ["AUTH_HEADER"]
+
         self._session = aiohttp.ClientSession()
         self._session.headers["authorization"] = auth_header
 
@@ -63,7 +68,9 @@ class HttpProvider(Provider):
         ) as res:
             return await map_response(res, proto.GetOrderbookResponse())
 
-    async def get_tickers(self, *, market: str = "") -> proto.GetTickersResponse:
+    async def get_tickers(
+        self, *, market: str = ""
+    ) -> proto.GetTickersResponse:
         async with self._session.get(
             f"{self._endpoint}/market/tickers/{market}"
         ) as res:
@@ -73,13 +80,14 @@ class HttpProvider(Provider):
         self,
         *,
         market: str = "",
-        status: proto.OrderStatus = 0,
-        side: proto.Side = 0,
+        status: proto.OrderStatus = proto.OrderStatus.OS_UNKNOWN,
+        side: proto.Side = proto.Side.S_UNKNOWN,
         types: List[proto.OrderType] = [],
         from_: Optional[datetime.datetime] = None,
         limit: int = 0,
-        direction: proto.Direction = 0,
+        direction: proto.Direction = proto.Direction.D_ASCENDING,
         address: str = "",
+        open_orders_address: str = "",
     ) -> proto.GetOrdersResponse:
         raise NotImplementedError()
 
@@ -87,7 +95,7 @@ class HttpProvider(Provider):
         self,
         *,
         market: str = "",
-        side: proto.Side = 0,
+        side: proto.Side = proto.Side.S_UNKNOWN,
         types: List[proto.OrderType] = [],
         from_: Optional[datetime.datetime] = None,
         limit: int = 0,
@@ -100,13 +108,13 @@ class HttpProvider(Provider):
             f"?address={address}"
             f"?openOrdersAddress={open_orders_address}"
             f"&side={side}"
-            f"&types=OT_LIMIT"
+            "&types=OT_LIMIT"
             f"&direction={direction.name}"
         ) as res:
             return await map_response(res, proto.GetOpenOrdersResponse())
 
     async def get_order_by_i_d(
-        self, *, order_i_d: str = ""
+        self, *, order_i_d: str = "", market: str = ""
     ) -> proto.GetOrderByIDResponse:
         # TODO
         raise NotImplementedError()
@@ -115,7 +123,7 @@ class HttpProvider(Provider):
         self, *, market: str = "", owner: str = ""
     ) -> proto.GetUnsettledResponse:
         async with self._session.get(
-            f"{self._endpoint}/trade/unsettled/{market}" f"?owner={owner}"
+            f"{self._endpoint}/trade/unsettled/{market}?owner={owner}"
         ) as res:
             return await map_response(res, proto.GetUnsettledResponse())
 
@@ -133,7 +141,7 @@ class HttpProvider(Provider):
         owner_address: str = "",
         payer_address: str = "",
         market: str = "",
-        side: "proto.Side" = 0,
+        side: proto.Side = proto.Side.S_UNKNOWN,
         type: List["proto.OrderType"] = [],
         amount: float = 0,
         price: float = 0,
@@ -161,7 +169,7 @@ class HttpProvider(Provider):
         self,
         *,
         order_i_d: str = "",
-        side: "proto.Side" = 0,
+        side: proto.Side = proto.Side.S_UNKNOWN,
         market_address: str = "",
         owner_address: str = "",
         open_orders_address: str = "",
@@ -204,7 +212,7 @@ class HttpProvider(Provider):
         *,
         market: str = "",
         owner_address: str = "",
-        open_orders_addresses: List[str] = "",
+        open_orders_addresses: List[str] = [],
     ) -> proto.PostCancelAllResponse:
         request = proto.PostCancelAllRequest(
             market, owner_address, open_orders_addresses
@@ -250,7 +258,7 @@ class HttpProvider(Provider):
         owner_address: str = "",
         payer_address: str = "",
         market: str = "",
-        side: "proto.Side" = 0,
+        side: proto.Side = proto.Side.S_UNKNOWN,
         type: List["proto.OrderType"] = [],
         amount: float = 0,
         price: float = 0,
@@ -280,13 +288,13 @@ class HttpProvider(Provider):
         owner_address: str = "",
         payer_address: str = "",
         market: str = "",
-        side: "proto.Side" = 0,
+        side: proto.Side = proto.Side.S_UNKNOWN,
         type: List["proto.OrderType"] = [],
         amount: float = 0,
         price: float = 0,
         open_orders_address: str = "",
         client_order_i_d: int = 0,
-        order_id: str,
+        order_i_d: str,
     ) -> proto.PostOrderResponse:
         request = proto.PostReplaceOrderRequest(
             owner_address,
@@ -298,7 +306,7 @@ class HttpProvider(Provider):
             price,
             open_orders_address,
             client_order_i_d,
-            order_id,
+            order_i_d,
         )
 
         async with self._session.post(
@@ -309,6 +317,7 @@ class HttpProvider(Provider):
     async def _unary_stream(
         self,
         route: str,
+        # pyre-ignore[11]: type is too hard to find
         request: "IProtoMessage",
         response_type: Type["T"],
         *,
@@ -316,28 +325,25 @@ class HttpProvider(Provider):
         deadline: Optional["Deadline"] = None,
         metadata: Optional["_MetadataLike"] = None,
     ) -> AsyncGenerator["T", None]:
-        # seems to require yield some result otherwise this isn't an async generator?
-        yield NotImplementedError("streams not supported for HTTP")
-        raise NotImplementedError("streams not supported for HTTP")
+        raise NotImplementedError(
+            "streaming is not implemented in HTTP provider"
+        )
+
+        # useless line to turn function into a generator
+        yield response_type()
 
 
 def http() -> Provider:
-    return HttpProvider(auth_header=os.environ["AUTH_HEADER"])
+    return HttpProvider()
 
 
 def http_testnet() -> Provider:
-    return HttpProvider(
-        auth_header=os.environ["AUTH_HEADER"], endpoint=constants.TESTNET_API_HTTP
-    )
+    return HttpProvider(endpoint=constants.TESTNET_API_HTTP)
 
 
 def http_devnet() -> Provider:
-    return HttpProvider(
-        auth_header=os.environ["AUTH_HEADER"], endpoint=constants.DEVNET_API_HTTP
-    )
+    return HttpProvider(endpoint=constants.DEVNET_API_HTTP)
 
 
 def http_local() -> Provider:
-    return HttpProvider(
-        auth_header=os.environ["AUTH_HEADER"], endpoint=constants.LOCAL_API_HTTP
-    )
+    return HttpProvider(endpoint=constants.LOCAL_API_HTTP)

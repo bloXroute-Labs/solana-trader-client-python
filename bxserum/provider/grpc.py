@@ -4,19 +4,17 @@ from typing import TYPE_CHECKING, Optional
 from grpclib import client
 from solana import keypair
 
-from bxserum import transaction
-from bxserum.provider import constants
-from bxserum.provider.base import Provider
+from .. import transaction
+from . import constants
+from .base import Provider
 
 if TYPE_CHECKING:
-    # noinspection PyUnresolvedReferences,PyProtectedMember
-    from grpclib._protocols import IProtoMessage
-
     # noinspection PyProtectedMember
     from betterproto import _MetadataLike, Deadline
 
 
 class GrpcProvider(Provider):
+    # pyre-ignore[15]: overriding to force context manager hooks
     channel: Optional[client.Channel] = None
 
     _host: str
@@ -28,11 +26,11 @@ class GrpcProvider(Provider):
         host: str = constants.MAINNET_API_GRPC_HOST,
         port: int = constants.MAINNET_API_GRPC_PORT,
         private_key: Optional[str] = None,
+        auth_header: Optional[str] = None,
         *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["_MetadataLike"] = None,
-        auth_header: str = None,
     ):
         self._host = host
         self._port = port
@@ -46,7 +44,18 @@ class GrpcProvider(Provider):
         else:
             self._private_key = transaction.load_private_key(private_key)
 
-        super().__init__(None, timeout=timeout, deadline=deadline, metadata=metadata)
+        if auth_header is None:
+            self._auth_header = os.environ["AUTH_HEADER"]
+        else:
+            self._auth_header = auth_header
+
+        super().__init__(
+            # pyre-ignore[6]: overriding to force context manager hooks
+            None,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
 
     async def connect(self):
         if self.channel is None:
@@ -62,29 +71,29 @@ class GrpcProvider(Provider):
             self.channel.close()
 
 
-def grpc() -> Provider:
-    return GrpcProvider(os.environ["AUTH_HEADER"])
+def grpc(auth_header: Optional[str] = None) -> Provider:
+    return GrpcProvider(auth_header=auth_header)
 
 
-def grpc_testnet() -> Provider:
+def grpc_testnet(auth_header: Optional[str] = None) -> Provider:
     return GrpcProvider(
-        auth_header=os.environ["AUTH_HEADER"],
         host=constants.TESTNET_API_GRPC_HOST,
-        port=constants.TESTNET_API_GRPC_PORT
+        port=constants.TESTNET_API_GRPC_PORT,
+        auth_header=auth_header,
     )
 
 
-def grpc_devnet() -> Provider:
+def grpc_devnet(auth_header: Optional[str] = None) -> Provider:
     return GrpcProvider(
-        auth_header=os.environ["AUTH_HEADER"],
         host=constants.DEVNET_API_GRPC_HOST,
-        port=constants.DEVNET_API_GRPC_PORT
+        port=constants.DEVNET_API_GRPC_PORT,
+        auth_header=auth_header,
     )
 
 
-def grpc_local() -> Provider:
+def grpc_local(auth_header: Optional[str] = None) -> Provider:
     return GrpcProvider(
-        auth_header=os.environ["AUTH_HEADER"],
         host=constants.LOCAL_API_GRPC_HOST,
-        port=constants.LOCAL_API_GRPC_PORT
+        port=constants.LOCAL_API_GRPC_PORT,
+        auth_header=auth_header,
     )

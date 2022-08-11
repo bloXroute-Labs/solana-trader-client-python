@@ -83,3 +83,7 @@ Regenerate protobuf files:
 $ make proto
 ```
 
+Linting:
+```
+$ make lint
+```

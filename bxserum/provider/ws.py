@@ -1,16 +1,15 @@
 import os
 from typing import TYPE_CHECKING, Type, Optional, AsyncGenerator
 
-import aiohttp
 import jsonrpc
-
 from solana import keypair
 
-from bxserum import transaction
-from bxserum.provider import Provider, constants
+from . import Provider, constants
+from .. import transaction
 
 if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences,PyProtectedMember
+    # pyre-ignore[21]: module is too hard to find
     from grpclib._protocols import IProtoMessage
 
     # noinspection PyProtectedMember
@@ -21,17 +20,19 @@ class WsProvider(Provider):
     _ws: jsonrpc.WsRpcConnection
 
     _endpoint: str
-    _session: aiohttp.ClientSession
     _private_key: Optional[keypair.Keypair]
 
     # noinspection PyMissingConstructor
     def __init__(
         self,
         endpoint: str = constants.MAINNET_API_WS,
+        auth_header: Optional[str] = None,
         private_key: Optional[str] = None,
-        auth_header: str = None,
     ):
         self._endpoint = endpoint
+
+        if auth_header is None:
+            auth_header = os.environ["AUTH_HEADER"]
 
         opts = jsonrpc.WsRpcOpts(headers={"authorization": auth_header})
         self._ws = jsonrpc.WsRpcConnection(endpoint, opts)
@@ -56,6 +57,7 @@ class WsProvider(Provider):
     async def _unary_unary(
         self,
         route: str,
+        # pyre-ignore[11]: type is too hard to find
         request: "IProtoMessage",
         response_type: Type["T"],
         *,
@@ -90,22 +92,16 @@ def _ws_endpoint(route: str) -> str:
 
 
 def ws() -> Provider:
-    return WsProvider(auth_header=os.environ["AUTH_HEADER"])
+    return WsProvider()
 
 
 def ws_testnet() -> Provider:
-    return WsProvider(
-        auth_header=os.environ["AUTH_HEADER"], endpoint=constants.TESTNET_API_WS
-    )
+    return WsProvider(endpoint=constants.TESTNET_API_WS)
 
 
 def ws_devnet() -> Provider:
-    return WsProvider(
-        auth_header=os.environ["AUTH_HEADER"], endpoint=constants.DEVNET_API_WS
-    )
+    return WsProvider(endpoint=constants.DEVNET_API_WS)
 
 
 def ws_local() -> Provider:
-    return WsProvider(
-        auth_header=os.environ["AUTH_HEADER"], endpoint=constants.LOCAL_API_WS
-    )
+    return WsProvider(endpoint=constants.LOCAL_API_WS)

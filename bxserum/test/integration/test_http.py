@@ -1,7 +1,7 @@
 import aiounittest
-from bxserum import provider
-import public
-from bxserum.test.integration import private
+
+from . import private, public
+from ... import provider
 
 
 class TestHTTP(aiounittest.AsyncTestCase):
@@ -14,4 +14,3 @@ class TestHTTP(aiounittest.AsyncTestCase):
     async def test_http_private(self):
         async with provider.http() as http:
             await private.test_submit_cancel_order(self, http)
-

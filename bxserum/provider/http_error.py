@@ -1,4 +1,4 @@
-from typing import List, Dict, Any, TypeVar, Type
+from typing import List, Dict, Any
 
 import aiohttp
 import betterproto
@@ -28,7 +28,9 @@ class HttpError(Exception):
         )
 
 
-async def map_response(response: aiohttp.ClientResponse, destination: betterproto.Message):
+async def map_response(
+    response: aiohttp.ClientResponse, destination: betterproto.Message
+):
     response_json = await response.json()
     try:
         http_error = HttpError.from_json(response_json)

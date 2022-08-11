@@ -42,7 +42,9 @@ class PartialTransaction:
         signature_count, offset = shortvec.decode_length(tx_bytes_base64)
         zero_signatures = 0
         for _ in range(signature_count):
-            signature_bytes = tx_bytes_base64[offset:offset + solana_transaction.SIG_LENGTH]
+            signature_bytes = tx_bytes_base64[
+                offset : offset + solana_transaction.SIG_LENGTH
+            ]
             if is_zero(signature_bytes):
                 zero_signatures += 1
 
