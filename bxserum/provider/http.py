@@ -5,7 +5,7 @@ from typing import Type, AsyncGenerator, Optional, TYPE_CHECKING, List
 import aiohttp
 from solana import keypair
 
-from .. import proto, transaction, utils
+from .. import proto, transaction
 from . import constants
 from .base import Provider
 from .http_error import map_response
@@ -325,8 +325,10 @@ class HttpProvider(Provider):
         deadline: Optional["Deadline"] = None,
         metadata: Optional["_MetadataLike"] = None,
     ) -> AsyncGenerator["T", None]:
-        async for i in utils.ExceptionGenerator():
-            yield i
+        raise NotImplementedError("streaming is not implemented in HTTP provider")
+
+        # useless line to turn function into a generator
+        yield response_type()
 
 
 def http() -> Provider:
