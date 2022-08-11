@@ -49,9 +49,12 @@ class GrpcProvider(Provider):
         else:
             self._auth_header = auth_header
 
-        # pyre-ignore[6]: overriding to force context manager hooks
         super().__init__(
-            None, timeout=timeout, deadline=deadline, metadata=metadata
+            # pyre-ignore[6]: overriding to force context manager hooks
+            None,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
         )
 
     async def connect(self):

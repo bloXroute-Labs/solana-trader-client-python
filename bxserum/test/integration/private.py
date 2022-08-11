@@ -124,7 +124,7 @@ async def verify_tx(t: unittest.TestCase, tx_hash: str):
             result_hash = await check_solscan(tx_hash)
             t.assertEqual(tx_hash, result_hash)
             return
-        except:
+        except:  # noqa: E722
             pass
 
         attempts += 1

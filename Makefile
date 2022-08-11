@@ -5,7 +5,7 @@ proto:
 		$(CURDIR)/solana-trader-proto/proto/api.proto \
 		&& echo 'from .api import *' > $(CURDIR)/bxserum/proto/__init__.py
 
-lint: typecheck pylint
+lint: typecheck analyze fmt-check
 
 fmt:
 	black bxserum
@@ -13,10 +13,8 @@ fmt:
 fmt-check:
 	black bxserum --check
 
-flake8:
+analyze:
 	flake8 bxserum
-pylint:
-	pylint bxserum
 
 typecheck:
 	pyre check
