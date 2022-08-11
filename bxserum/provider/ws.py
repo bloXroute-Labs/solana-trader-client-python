@@ -1,13 +1,11 @@
 import os
 from typing import TYPE_CHECKING, Type, Optional, AsyncGenerator
 
-import aiohttp
 import jsonrpc
-
 from solana import keypair
 
-from .. import transaction
 from . import Provider, constants
+from .. import transaction
 
 if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences,PyProtectedMember

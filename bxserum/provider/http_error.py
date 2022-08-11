@@ -1,4 +1,4 @@
-from typing import List, Dict, Any, TypeVar, Type
+from typing import List, Dict, Any
 
 import aiohttp
 import betterproto

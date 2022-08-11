@@ -9,10 +9,6 @@ from . import constants
 from .base import Provider
 
 if TYPE_CHECKING:
-    # noinspection PyUnresolvedReferences,PyProtectedMember
-    # pyre-ignore[21]: module is too hard to find
-    from grpclib._protocols import IProtoMessage
-
     # noinspection PyProtectedMember
     from betterproto import _MetadataLike, Deadline
 
