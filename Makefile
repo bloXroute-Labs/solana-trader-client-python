@@ -5,7 +5,14 @@ proto:
 		$(CURDIR)/solana-trader-proto/proto/api.proto \
 		&& echo 'from .api import *' > $(CURDIR)/bxserum/proto/__init__.py
 
-lint:
+lint: typecheck pylint
+
+flake8:
+	flake8 bxserum
+pylint:
+	pylint bxserum
+
+typecheck:
 	pyre check
 
 test:

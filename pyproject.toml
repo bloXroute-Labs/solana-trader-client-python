@@ -5,3 +5,7 @@ build-backend = "setuptools.build_meta"
 [tool.black]
 line-length = 80
 preview = true
+
+[tool.pylint.main]
+# Ignore protobuf generated files
+ignore = ["proto"]

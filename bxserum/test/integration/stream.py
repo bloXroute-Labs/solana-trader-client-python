@@ -17,7 +17,8 @@ async def test_stream(t: unittest.TestCase, stream: typing.AsyncGenerator):
                 counter += 1
     except asyncio.TimeoutError:
         t.fail(
-            f"{counter}/{stream_expect_entries} values found with timeout of {stream_expect_timeout} seconds"
+            f"{counter}/{stream_expect_entries} values found with timeout of"
+            f" {stream_expect_timeout} seconds"
         )
 
 

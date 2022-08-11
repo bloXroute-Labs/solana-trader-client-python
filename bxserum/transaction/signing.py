@@ -42,7 +42,9 @@ def sign_tx(unsigned_tx_base64: str) -> str:
     return sign_tx_with_private_key(unsigned_tx_base64, keypair)
 
 
-def sign_tx_with_private_key(unsigned_tx_base64: str, keypair: kp.Keypair) -> str:
+def sign_tx_with_private_key(
+    unsigned_tx_base64: str, keypair: kp.Keypair
+) -> str:
     """
     Signs message content and replaces placeholder zero signature with signature.
 
