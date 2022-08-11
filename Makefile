@@ -7,6 +7,12 @@ proto:
 
 lint: typecheck pylint
 
+fmt:
+	black bxserum
+
+fmt-check:
+	black bxserum --check
+
 flake8:
 	flake8 bxserum
 pylint:
