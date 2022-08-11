@@ -9,7 +9,6 @@ from . import constants
 from .base import Provider
 
 if TYPE_CHECKING:
-
     # noinspection PyUnresolvedReferences,PyProtectedMember
     # pyre-ignore[21]: module is too hard to find
     from grpclib._protocols import IProtoMessage
@@ -55,7 +54,9 @@ class GrpcProvider(Provider):
             self._auth_header = auth_header
 
         # pyre-ignore[6]: overriding to force context manager hooks
-        super().__init__(None, timeout=timeout, deadline=deadline, metadata=metadata)
+        super().__init__(
+            None, timeout=timeout, deadline=deadline, metadata=metadata
+        )
 
     async def connect(self):
         if self.channel is None:

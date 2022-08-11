@@ -325,7 +325,9 @@ class HttpProvider(Provider):
         deadline: Optional["Deadline"] = None,
         metadata: Optional["_MetadataLike"] = None,
     ) -> AsyncGenerator["T", None]:
-        raise NotImplementedError("streaming is not implemented in HTTP provider")
+        raise NotImplementedError(
+            "streaming is not implemented in HTTP provider"
+        )
 
         # useless line to turn function into a generator
         yield response_type()

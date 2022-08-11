@@ -58,7 +58,9 @@ class Provider(proto.ApiStub, ABC):
             client_order_i_d=client_order_id,
         )
         signed_tx = transaction.sign_tx_with_private_key(order.transaction, pk)
-        result = await self.post_submit(transaction=signed_tx, skip_pre_flight=skip_pre_flight)
+        result = await self.post_submit(
+            transaction=signed_tx, skip_pre_flight=skip_pre_flight
+        )
         return result.signature
 
     async def submit_cancel_order(
@@ -79,7 +81,9 @@ class Provider(proto.ApiStub, ABC):
             open_orders_address=open_orders_address,
         )
         signed_tx = transaction.sign_tx_with_private_key(order.transaction, pk)
-        result = await self.post_submit(transaction=signed_tx, skip_pre_flight=skip_pre_flight)
+        result = await self.post_submit(
+            transaction=signed_tx, skip_pre_flight=skip_pre_flight
+        )
         return result.signature
 
     async def submit_cancel_by_client_order_i_d(
@@ -98,7 +102,9 @@ class Provider(proto.ApiStub, ABC):
             open_orders_address=open_orders_address,
         )
         signed_tx = transaction.sign_tx_with_private_key(order.transaction, pk)
-        result = await self.post_submit(transaction=signed_tx, skip_pre_flight=skip_pre_flight)
+        result = await self.post_submit(
+            transaction=signed_tx, skip_pre_flight=skip_pre_flight
+        )
         return result.signature
 
     async def submit_cancel_all(
@@ -121,7 +127,9 @@ class Provider(proto.ApiStub, ABC):
         signatures = []
         for tx in response.transactions:
             signed_tx = transaction.sign_tx_with_private_key(tx, pk)
-            result = await self.post_submit(transaction=signed_tx, skip_pre_flight=skip_pre_flight)
+            result = await self.post_submit(
+                transaction=signed_tx, skip_pre_flight=skip_pre_flight
+            )
             signatures.append(result.signature)
 
         return signatures
@@ -141,24 +149,28 @@ class Provider(proto.ApiStub, ABC):
             market=market,
             base_token_wallet=base_token_wallet,
             quote_token_wallet=quote_token_wallet,
-            open_orders_address=open_orders_address
+            open_orders_address=open_orders_address,
         )
-        signed_tx = transaction.sign_tx_with_private_key(response.transaction, pk)
-        result = await self.post_submit(transaction=signed_tx, skip_pre_flight=skip_pre_flight)
+        signed_tx = transaction.sign_tx_with_private_key(
+            response.transaction, pk
+        )
+        result = await self.post_submit(
+            transaction=signed_tx, skip_pre_flight=skip_pre_flight
+        )
         return result.signature
 
     async def submit_replace_by_client_order_i_d(
-         self,
-         owner_address: str,
-         payer_address: str,
-         market: str,
-         side: "proto.Side",
-         types: List["proto.OrderType"],
-         amount: float,
-         price: float,
-         open_orders_address: str = "",
-         client_order_id: int = 0,
-         skip_pre_flight: bool = False,
+        self,
+        owner_address: str,
+        payer_address: str,
+        market: str,
+        side: "proto.Side",
+        types: List["proto.OrderType"],
+        amount: float,
+        price: float,
+        open_orders_address: str = "",
+        client_order_id: int = 0,
+        skip_pre_flight: bool = False,
     ) -> str:
         pk = self.require_private_key()
         order = await self.post_replace_by_client_order_i_d(
@@ -173,7 +185,9 @@ class Provider(proto.ApiStub, ABC):
             client_order_i_d=client_order_id,
         )
         signed_tx = transaction.sign_tx_with_private_key(order.transaction, pk)
-        result = await self.post_submit(transaction=signed_tx, skip_pre_flight=skip_pre_flight)
+        result = await self.post_submit(
+            transaction=signed_tx, skip_pre_flight=skip_pre_flight
+        )
         return result.signature
 
     async def submit_replace_order(
@@ -201,10 +215,12 @@ class Provider(proto.ApiStub, ABC):
             price=price,
             open_orders_address=open_orders_address,
             client_order_i_d=client_order_id,
-            order_i_d=order_id
+            order_i_d=order_id,
         )
         signed_tx = transaction.sign_tx_with_private_key(order.transaction, pk)
-        result = await self.post_submit(transaction=signed_tx, skip_pre_flight=skip_pre_flight)
+        result = await self.post_submit(
+            transaction=signed_tx, skip_pre_flight=skip_pre_flight
+        )
         return result.signature
 
 

@@ -52,12 +52,14 @@ async def test_submit_cancel_order(t: unittest.TestCase, p: provider.Provider):
         t.fail("unexpectedly received no error from payer mismatch")
     except (GRPCError, provider.HttpError) as e:
         t.assertEqual(
-            "invalid payer specified: owner cannot match payer unless selling SOL",
+            "invalid payer specified: owner cannot match payer unless"
+            " selling SOL",
             e.message,
         )
     except jsonrpc.RpcError as e:
         t.assertEqual(
-            "invalid payer specified: owner cannot match payer unless selling SOL",
+            "invalid payer specified: owner cannot match payer unless"
+            " selling SOL",
             e.data,
         )
 
