@@ -321,7 +321,7 @@ class GetOrderStatusStreamRequest(betterproto.Message):
 
 @dataclass
 class GetOrderStatusStreamResponse(betterproto.Message):
-    block_height: int = betterproto.int64_field(1)
+    slot: int = betterproto.int64_field(1)
     order_info: "GetOrderStatusResponse" = betterproto.message_field(2)
 
 
@@ -399,13 +399,13 @@ class GetUnsettledResponse(betterproto.Message):
 
 @dataclass
 class GetOrderbooksStreamResponse(betterproto.Message):
-    block_height: int = betterproto.int64_field(1)
+    slot: int = betterproto.int64_field(1)
     orderbook: "GetOrderbookResponse" = betterproto.message_field(2)
 
 
 @dataclass
 class GetTickersStreamResponse(betterproto.Message):
-    block_height: int = betterproto.int64_field(1)
+    slot: int = betterproto.int64_field(1)
     ticker: "GetTickersResponse" = betterproto.message_field(2)
 
 
@@ -418,20 +418,20 @@ class GetMarketDepthRequest(betterproto.Message):
 
 @dataclass
 class GetMarketDepthStreamResponse(betterproto.Message):
-    block_height: int = betterproto.int64_field(1)
+    slot: int = betterproto.int64_field(1)
     tick: "MarketDepthTick" = betterproto.message_field(2)
 
 
 @dataclass
 class MarketDepthTick(betterproto.Message):
-    prev_block_height: int = betterproto.int64_field(1)
+    prev_slot: int = betterproto.int64_field(1)
     asks: List["OrderbookItem"] = betterproto.message_field(2)
     bids: List["OrderbookItem"] = betterproto.message_field(3)
 
 
 @dataclass
 class GetTradesStreamResponse(betterproto.Message):
-    block_height: int = betterproto.int64_field(1)
+    slot: int = betterproto.int64_field(1)
     trades: "GetTradesResponse" = betterproto.message_field(2)
 
 
