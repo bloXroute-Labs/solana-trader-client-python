@@ -332,9 +332,10 @@ class GetOrderStatusResponse(betterproto.Message):
     order_i_d: str = betterproto.string_field(3)
     client_order_i_d: int = betterproto.uint64_field(4)
     quantity_released: float = betterproto.float_field(5)
-    price: float = betterproto.float_field(6)
-    side: "Side" = betterproto.enum_field(7)
-    order_status: "OrderStatus" = betterproto.enum_field(8)
+    quantity_remaining: float = betterproto.float_field(6)
+    price: float = betterproto.float_field(7)
+    side: "Side" = betterproto.enum_field(8)
+    order_status: "OrderStatus" = betterproto.enum_field(9)
 
 
 @dataclass
