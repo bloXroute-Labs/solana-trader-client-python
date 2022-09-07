@@ -5,12 +5,8 @@ Provides a Python SDK for bloXroute's Serum API.
 ## Installation
 
 ```
-$ git clone https://github.com/bloXroute-Labs/serum-client-python.git
-$ cd serum-client-python
-$ pip install -r requirements.txt
+$ pip install bxserum
 ```
-
-Installation via `pip` is expected to be supported soon.
 
 ## Usage
 

@@ -1,3 +1,12 @@
+all:
+	python -m build
+
+clean:
+	rm -rf dist build *.egg-info
+
+release: clean all
+	python -m twine upload dist/*
+
 proto:
 	protoc \
 		-I $(CURDIR)/solana-trader-proto/proto \
