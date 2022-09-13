@@ -10,20 +10,20 @@ release: clean all
 proto:
 	protoc \
 		-I $(CURDIR)/solana-trader-proto/proto \
-		--python_betterproto_out=$(CURDIR)/bxserum/proto \
+		--python_betterproto_out=$(CURDIR)/bxsolana/proto \
 		$(CURDIR)/solana-trader-proto/proto/api.proto \
-		&& echo 'from .api import *' > $(CURDIR)/bxserum/proto/__init__.py
+		&& echo 'from .api import *' > $(CURDIR)/bxsolana/proto/__init__.py
 
 lint: typecheck analyze fmt-check
 
 fmt:
-	black bxserum
+	black bxsolana
 
 fmt-check:
-	black bxserum --check
+	black bxsolana --check
 
 analyze:
-	flake8 bxserum
+	flake8 bxsolana
 
 typecheck:
 	pyre check

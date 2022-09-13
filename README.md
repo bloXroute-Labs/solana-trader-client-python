@@ -1,11 +1,11 @@
-# Serum Python Client
+# Solana Trader Python Client
 
-Provides a Python SDK for bloXroute's Serum API.
+Provides a Python SDK for bloXroute's Solana Trader API.
 
 ## Installation
 
 ```
-$ pip install bxserum
+$ pip install bxsolana
 ```
 
 ## Usage
@@ -27,7 +27,7 @@ transaction all at once.
 Context manager:
 
 ```python
-from bxserum import provider
+from bxsolana import provider
 
 async with provider.http() as api:
     print(await api.get_orderbook(market="ETHUSDT"))
@@ -38,13 +38,14 @@ async with provider.ws() as api:
 ```
 
 Manual:
-```python
-import bxserum
 
-from bxserum import provider
+```python
+import bxsolana
+
+from bxsolana import provider
 
 p = provider.grpc()
-api = await bxserum.serum(p)
+api = await bxsolana.trader_api(p)
 
 try:
     await api.get_orderbook(market="ETHUSDT")
@@ -56,14 +57,14 @@ Refer to the `examples/` for more info.
 
 ## Development
 
-bloXroute Serum API's interfaces are primarily powered by protobuf, so you will 
+bloXroute Solana Trader API's interfaces are primarily powered by protobuf, so you will 
 need to install it for your system: https://grpc.io/docs/protoc-installation/
 
 Clone project and install dependencies:
 
 ```
-$ git clone https://github.com/bloXroute-Labs/serum-client-python.git
-$ cd serum-client-python
+$ git clone https://github.com/bloXroute-Labs/solana-trader-client-python.git
+$ cd solana-trader-client-python
 $ pip install -r requirements.txt
 ```
 

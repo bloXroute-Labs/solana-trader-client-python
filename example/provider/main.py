@@ -1,6 +1,6 @@
 import asyncio
-import bxserum
-from bxserum import provider, proto
+import bxsolana
+from bxsolana import provider, proto
 
 # sample public key for trades API
 PUBLIC_KEY = "AFT8VayE7qr8MoQsW3wHsDS83HhEvhGWdbNSHRKeUDfQ"
@@ -19,7 +19,7 @@ async def http():
     # p = provider.HttpProvider("127.0.0.1", 9000, private_key="...")
 
     p = provider.http()
-    api = await bxserum.serum(p)
+    api = await bxsolana.trader_api(p)
 
     # either `try`/`finally` or `async with` work with each type of provider
     try:
@@ -38,7 +38,7 @@ async def ws():
 
 async def grpc():
     p = provider.grpc()
-    api = await bxserum.serum(p)
+    api = await bxsolana.trader_api(p)
 
     try:
         await do_requests(api)
@@ -47,7 +47,7 @@ async def grpc():
         await p.close()
 
 
-async def do_requests(api: bxserum.Provider):
+async def do_requests(api: bxsolana.Provider):
     # markets API
     print("fetching all markets")
     print((await api.get_markets()).to_json())
@@ -256,7 +256,7 @@ async def do_requests(api: bxserum.Provider):
 
 
 # websockets / GRPC only
-async def do_stream(api: bxserum.Provider):
+async def do_stream(api: bxsolana.Provider):
     item_count = 0
 
     print("streaming orderbook updates...")
