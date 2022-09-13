@@ -5,8 +5,8 @@ import time
 
 import async_timeout
 
-from bxserum import proto, provider
-from bxserum.transaction import signing
+from bxsolana import proto, provider
+from bxsolana.transaction import signing
 
 public_key = os.getenv("PUBLIC_KEY")
 private_key = os.getenv("PRIVATE_KEY")
