@@ -26,10 +26,10 @@ class HttpProvider(Provider):
 
     # noinspection PyMissingConstructor
     def __init__(
-        self,
-        endpoint: str = constants.MAINNET_API_HTTP,
-        auth_header: Optional[str] = None,
-        private_key: Optional[str] = None,
+            self,
+            endpoint: str = constants.MAINNET_API_HTTP,
+            auth_header: Optional[str] = None,
+            private_key: Optional[str] = None,
     ):
         self._endpoint = f"{endpoint}/api/v1"
 
@@ -61,92 +61,139 @@ class HttpProvider(Provider):
             return await map_response(res, proto.GetMarketsResponse())
 
     async def get_orderbook(
-        self, *, market: str = "", limit: int = 0
+            self, *, market: str = "", limit: int = 0
     ) -> proto.GetOrderbookResponse:
         async with self._session.get(
-            f"{self._endpoint}/market/orderbooks/{market}?limit={limit}"
+                f"{self._endpoint}/market/orderbooks/{market}?limit={limit}"
         ) as res:
             return await map_response(res, proto.GetOrderbookResponse())
 
     async def get_tickers(
-        self, *, market: str = ""
+            self, *, market: str = ""
     ) -> proto.GetTickersResponse:
         async with self._session.get(
-            f"{self._endpoint}/market/tickers/{market}"
+                f"{self._endpoint}/market/tickers/{market}"
         ) as res:
             return await map_response(res, proto.GetTickersResponse())
 
     async def get_orders(
-        self,
-        *,
-        market: str = "",
-        status: proto.OrderStatus = proto.OrderStatus.OS_UNKNOWN,
-        side: proto.Side = proto.Side.S_UNKNOWN,
-        types: List[proto.OrderType] = [],
-        from_: Optional[datetime.datetime] = None,
-        limit: int = 0,
-        direction: proto.Direction = proto.Direction.D_ASCENDING,
-        address: str = "",
-        open_orders_address: str = "",
+            self,
+            *,
+            market: str = "",
+            status: proto.OrderStatus = proto.OrderStatus.OS_UNKNOWN,
+            side: proto.Side = proto.Side.S_UNKNOWN,
+            types: List[proto.OrderType] = [],
+            from_: Optional[datetime.datetime] = None,
+            limit: int = 0,
+            direction: proto.Direction = proto.Direction.D_ASCENDING,
+            address: str = "",
+            open_orders_address: str = "",
     ) -> proto.GetOrdersResponse:
         raise NotImplementedError()
 
     async def get_open_orders(
-        self,
-        *,
-        market: str = "",
-        side: proto.Side = proto.Side.S_UNKNOWN,
-        types: List[proto.OrderType] = [],
-        from_: Optional[datetime.datetime] = None,
-        limit: int = 0,
-        direction: proto.Direction = proto.Direction.D_ASCENDING,
-        address: str = "",
-        open_orders_address: str = "",
+            self,
+            *,
+            market: str = "",
+            side: proto.Side = proto.Side.S_UNKNOWN,
+            types: List[proto.OrderType] = [],
+            from_: Optional[datetime.datetime] = None,
+            limit: int = 0,
+            direction: proto.Direction = proto.Direction.D_ASCENDING,
+            address: str = "",
+            open_orders_address: str = "",
     ) -> proto.GetOpenOrdersResponse:
         async with self._session.get(
-            f"{self._endpoint}/trade/orders/{market}"
-            f"?address={address}"
-            f"?openOrdersAddress={open_orders_address}"
-            f"&side={side}"
-            "&types=OT_LIMIT"
-            f"&direction={direction.name}"
+                f"{self._endpoint}/trade/orders/{market}"
+                f"?address={address}"
+                f"?openOrdersAddress={open_orders_address}"
+                f"&side={side}"
+                "&types=OT_LIMIT"
+                f"&direction={direction.name}"
         ) as res:
             return await map_response(res, proto.GetOpenOrdersResponse())
 
     async def get_order_by_i_d(
-        self, *, order_i_d: str = "", market: str = ""
+            self, *, order_i_d: str = "", market: str = ""
     ) -> proto.GetOrderByIDResponse:
         # TODO
         raise NotImplementedError()
 
     async def get_unsettled(
-        self, *, market: str = "", owner: str = ""
+            self, *, market: str = "", owner: str = ""
     ) -> proto.GetUnsettledResponse:
         async with self._session.get(
-            f"{self._endpoint}/trade/unsettled/{market}?owner={owner}"
+                f"{self._endpoint}/trade/unsettled/{market}?owner={owner}"
         ) as res:
             return await map_response(res, proto.GetUnsettledResponse())
 
     async def get_account_balance(
-        self, owner_address: str = ""
+            self, owner_address: str = ""
     ) -> proto.GetAccountBalanceResponse:
         async with self._session.get(
-            f"{self._endpoint}/account/balance?ownerAddress={owner_address}"
+                f"{self._endpoint}/account/balance?ownerAddress={owner_address}"
         ) as res:
             return await map_response(res, proto.GetAccountBalanceResponse())
 
+    async def get_pools(
+            self, projects: List[str] = []
+    ) -> proto.GetPoolsResponse:
+        params = '?' + 'projects=&'.join(projects) if len(projects) > 0 else ''
+        async with self._session.get(
+                f"{self._endpoint}/market/pools{params}"
+        ) as res:
+            return await map_response(res, proto.GetPoolsResponse())
+
+    async def get_price(
+            self, projects: List[str] = []
+    ) -> proto.GetPriceResponse:
+        params = '?' + 'tokens=&'.join(projects) if len(projects) > 0 else ''
+        async with self._session.get(
+                f"{self._endpoint}/market/price{params}"
+        ) as res:
+            return await map_response(res, proto.GetPriceResponse())
+
+    async def get_recent_block_hash(self) -> proto.GetRecentBlockHashResponse:
+        async with self._session.get(
+                f"{self._endpoint}/system/blockhash"
+        ) as res:
+            return await map_response(res, proto.GetRecentBlockHashResponse())
+
+    async def post_trade_swap(
+            self,
+            project: proto.Project,
+            owner: str,
+            in_token: str,
+            out_token: str,
+            in_amount: float,
+            slippage: float,
+    ) -> proto.PostOrderResponse:
+        request = proto.TradeSwapRequest(
+            project,
+            owner,
+            in_token,
+            out_token,
+            in_amount,
+            slippage,
+        )
+
+        async with self._session.post(
+                f"{self._endpoint}/trade/place", json=request.to_dict()
+        ) as res:
+            return await map_response(res, proto.TradeSwapResponse())
+
     async def post_order(
-        self,
-        *,
-        owner_address: str = "",
-        payer_address: str = "",
-        market: str = "",
-        side: proto.Side = proto.Side.S_UNKNOWN,
-        type: List["proto.OrderType"] = [],
-        amount: float = 0,
-        price: float = 0,
-        open_orders_address: str = "",
-        client_order_i_d: int = 0,
+            self,
+            *,
+            owner_address: str = "",
+            payer_address: str = "",
+            market: str = "",
+            side: proto.Side = proto.Side.S_UNKNOWN,
+            type: List["proto.OrderType"] = [],
+            amount: float = 0,
+            price: float = 0,
+            open_orders_address: str = "",
+            client_order_i_d: int = 0,
     ) -> proto.PostOrderResponse:
         request = proto.PostOrderRequest(
             owner_address,
@@ -161,18 +208,18 @@ class HttpProvider(Provider):
         )
 
         async with self._session.post(
-            f"{self._endpoint}/trade/place", json=request.to_dict()
+                f"{self._endpoint}/trade/place", json=request.to_dict()
         ) as res:
             return await map_response(res, proto.PostOrderResponse())
 
     async def post_cancel_order(
-        self,
-        *,
-        order_i_d: str = "",
-        side: proto.Side = proto.Side.S_UNKNOWN,
-        market_address: str = "",
-        owner_address: str = "",
-        open_orders_address: str = "",
+            self,
+            *,
+            order_i_d: str = "",
+            side: proto.Side = proto.Side.S_UNKNOWN,
+            market_address: str = "",
+            owner_address: str = "",
+            open_orders_address: str = "",
     ) -> proto.PostCancelOrderResponse:
         request = proto.PostCancelOrderRequest(
             order_i_d,
@@ -183,17 +230,17 @@ class HttpProvider(Provider):
         )
 
         async with self._session.post(
-            f"{self._endpoint}/trade/cancel", json=request.to_dict()
+                f"{self._endpoint}/trade/cancel", json=request.to_dict()
         ) as res:
             return await map_response(res, proto.PostCancelOrderResponse())
 
     async def post_cancel_by_client_order_i_d(
-        self,
-        *,
-        client_order_i_d: int = 0,
-        market_address: str = "",
-        owner_address: str = "",
-        open_orders_address: str = "",
+            self,
+            *,
+            client_order_i_d: int = 0,
+            market_address: str = "",
+            owner_address: str = "",
+            open_orders_address: str = "",
     ) -> proto.PostCancelOrderResponse:
         request = proto.PostCancelByClientOrderIDRequest(
             client_order_i_d,
@@ -203,33 +250,33 @@ class HttpProvider(Provider):
         )
 
         async with self._session.post(
-            f"{self._endpoint}/trade/cancelbyid", json=request.to_dict()
+                f"{self._endpoint}/trade/cancelbyid", json=request.to_dict()
         ) as res:
             return await map_response(res, proto.PostCancelOrderResponse())
 
     async def post_cancel_all(
-        self,
-        *,
-        market: str = "",
-        owner_address: str = "",
-        open_orders_addresses: List[str] = [],
+            self,
+            *,
+            market: str = "",
+            owner_address: str = "",
+            open_orders_addresses: List[str] = [],
     ) -> proto.PostCancelAllResponse:
         request = proto.PostCancelAllRequest(
             market, owner_address, open_orders_addresses
         )
         async with self._session.post(
-            f"{self._endpoint}/trade/cancelall", json=request.to_dict()
+                f"{self._endpoint}/trade/cancelall", json=request.to_dict()
         ) as res:
             return await map_response(res, proto.PostCancelAllResponse())
 
     async def post_settle(
-        self,
-        *,
-        owner_address: str = "",
-        market: str = "",
-        base_token_wallet: str = "",
-        quote_token_wallet: str = "",
-        open_orders_address: str = "",
+            self,
+            *,
+            owner_address: str = "",
+            market: str = "",
+            base_token_wallet: str = "",
+            quote_token_wallet: str = "",
+            open_orders_address: str = "",
     ) -> proto.PostSettleResponse:
         request = proto.PostSettleRequest(
             owner_address,
@@ -239,31 +286,31 @@ class HttpProvider(Provider):
             open_orders_address,
         )
         async with self._session.post(
-            f"{self._endpoint}/trade/settle", json=request.to_dict()
+                f"{self._endpoint}/trade/settle", json=request.to_dict()
         ) as res:
             return await map_response(res, proto.PostSettleResponse())
 
     async def post_submit(
-        self, *, transaction: str = "", skip_pre_flight: bool = False
+            self, *, transaction: str = "", skip_pre_flight: bool = False
     ) -> proto.PostSubmitResponse:
         request = proto.PostSubmitRequest(transaction, skip_pre_flight)
         async with self._session.post(
-            f"{self._endpoint}/trade/submit", json=request.to_dict()
+                f"{self._endpoint}/trade/submit", json=request.to_dict()
         ) as res:
             return await map_response(res, proto.PostSubmitResponse())
 
     async def post_replace_by_client_order_i_d(
-        self,
-        *,
-        owner_address: str = "",
-        payer_address: str = "",
-        market: str = "",
-        side: proto.Side = proto.Side.S_UNKNOWN,
-        type: List["proto.OrderType"] = [],
-        amount: float = 0,
-        price: float = 0,
-        open_orders_address: str = "",
-        client_order_i_d: int = 0,
+            self,
+            *,
+            owner_address: str = "",
+            payer_address: str = "",
+            market: str = "",
+            side: proto.Side = proto.Side.S_UNKNOWN,
+            type: List["proto.OrderType"] = [],
+            amount: float = 0,
+            price: float = 0,
+            open_orders_address: str = "",
+            client_order_i_d: int = 0,
     ) -> proto.PostOrderResponse:
         request = proto.PostOrderRequest(
             owner_address,
@@ -278,23 +325,23 @@ class HttpProvider(Provider):
         )
 
         async with self._session.post(
-            f"{self._endpoint}/trade/replacebyclientid", json=request.to_dict()
+                f"{self._endpoint}/trade/replacebyclientid", json=request.to_dict()
         ) as res:
             return await map_response(res, proto.PostOrderResponse())
 
     async def post_replace_order(
-        self,
-        *,
-        owner_address: str = "",
-        payer_address: str = "",
-        market: str = "",
-        side: proto.Side = proto.Side.S_UNKNOWN,
-        type: List["proto.OrderType"] = [],
-        amount: float = 0,
-        price: float = 0,
-        open_orders_address: str = "",
-        client_order_i_d: int = 0,
-        order_i_d: str,
+            self,
+            *,
+            owner_address: str = "",
+            payer_address: str = "",
+            market: str = "",
+            side: proto.Side = proto.Side.S_UNKNOWN,
+            type: List["proto.OrderType"] = [],
+            amount: float = 0,
+            price: float = 0,
+            open_orders_address: str = "",
+            client_order_i_d: int = 0,
+            order_i_d: str,
     ) -> proto.PostOrderResponse:
         request = proto.PostReplaceOrderRequest(
             owner_address,
@@ -310,20 +357,20 @@ class HttpProvider(Provider):
         )
 
         async with self._session.post(
-            f"{self._endpoint}/trade/replace", json=request.to_dict()
+                f"{self._endpoint}/trade/replace", json=request.to_dict()
         ) as res:
             return await map_response(res, proto.PostOrderResponse())
 
     async def _unary_stream(
-        self,
-        route: str,
-        # pyre-ignore[11]: type is too hard to find
-        request: "IProtoMessage",
-        response_type: Type["T"],
-        *,
-        timeout: Optional[float] = None,
-        deadline: Optional["Deadline"] = None,
-        metadata: Optional["_MetadataLike"] = None,
+            self,
+            route: str,
+            # pyre-ignore[11]: type is too hard to find
+            request: "IProtoMessage",
+            response_type: Type["T"],
+            *,
+            timeout: Optional[float] = None,
+            deadline: Optional["Deadline"] = None,
+            metadata: Optional["_MetadataLike"] = None,
     ) -> AsyncGenerator["T", None]:
         raise NotImplementedError(
             "streaming is not implemented in HTTP provider"
