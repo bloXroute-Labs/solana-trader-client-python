@@ -135,6 +135,53 @@ class HttpProvider(Provider):
         ) as res:
             return await map_response(res, proto.GetAccountBalanceResponse())
 
+    async def get_pools(
+        self, projects: List[str] = []
+    ) -> proto.GetPoolsResponse:
+        params = "?" + "projects=&".join(projects) if len(projects) > 0 else ""
+        async with self._session.get(
+            f"{self._endpoint}/market/pools{params}"
+        ) as res:
+            return await map_response(res, proto.GetPoolsResponse())
+
+    async def get_price(
+        self, projects: List[str] = []
+    ) -> proto.GetPriceResponse:
+        params = "?" + "tokens=&".join(projects) if len(projects) > 0 else ""
+        async with self._session.get(
+            f"{self._endpoint}/market/price{params}"
+        ) as res:
+            return await map_response(res, proto.GetPriceResponse())
+
+    async def get_recent_block_hash(self) -> proto.GetRecentBlockHashResponse:
+        async with self._session.get(
+            f"{self._endpoint}/system/blockhash"
+        ) as res:
+            return await map_response(res, proto.GetRecentBlockHashResponse())
+
+    async def post_trade_swap(
+        self,
+        project: proto.Project,
+        owner: str,
+        in_token: str,
+        out_token: str,
+        in_amount: float,
+        slippage: float,
+    ) -> proto.PostOrderResponse:
+        request = proto.TradeSwapRequest(
+            project,
+            owner,
+            in_token,
+            out_token,
+            in_amount,
+            slippage,
+        )
+
+        async with self._session.post(
+            f"{self._endpoint}/trade/place", json=request.to_dict()
+        ) as res:
+            return await map_response(res, proto.TradeSwapResponse())
+
     async def post_order(
         self,
         *,

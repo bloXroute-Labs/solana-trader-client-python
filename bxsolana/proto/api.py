@@ -47,6 +47,20 @@ class Step(betterproto.Enum):
     STEP3 = 3
 
 
+class Project(betterproto.Enum):
+    P_UNKNOWN = 0
+    P_JUPITER = 1
+    P_RAYDIUM = 2
+    P_Serum = 3
+    P_ALL = 4
+
+
+class Infinity(betterproto.Enum):
+    INF_NOT = 0
+    INF_POSITIVE = 1
+    INF_NEGATIVE = 2
+
+
 @dataclass
 class GetMarketsRequest(betterproto.Message):
     pass
@@ -160,9 +174,12 @@ class GetTradesResponse(betterproto.Message):
 class Trade(betterproto.Message):
     side: "Side" = betterproto.enum_field(1)
     size: float = betterproto.double_field(2)
-    price: float = betterproto.double_field(3)
+    fill_price: float = betterproto.double_field(3)
     order_i_d: str = betterproto.string_field(4)
     is_maker: bool = betterproto.bool_field(5)
+    address: str = betterproto.string_field(6)
+    fee_or_rebate: float = betterproto.double_field(7)
+    order_price: float = betterproto.double_field(8)
 
 
 @dataclass
@@ -436,6 +453,197 @@ class GetTradesStreamResponse(betterproto.Message):
     trades: "GetTradesResponse" = betterproto.message_field(2)
 
 
+@dataclass
+class GetQuotesRequest(betterproto.Message):
+    in_token: str = betterproto.string_field(1)
+    out_token: str = betterproto.string_field(2)
+    in_amount: float = betterproto.double_field(3)
+    slippage: float = betterproto.double_field(4)
+    limit: int = betterproto.int32_field(5)
+    projects: List["Project"] = betterproto.enum_field(6)
+
+
+@dataclass
+class GetQuotesResponse(betterproto.Message):
+    in_token: str = betterproto.string_field(1)
+    in_token_address: str = betterproto.string_field(2)
+    out_token: str = betterproto.string_field(3)
+    out_token_address: str = betterproto.string_field(4)
+    in_amount: float = betterproto.double_field(5)
+    quotes: List["ProjectQuote"] = betterproto.message_field(6)
+
+
+@dataclass
+class ProjectQuote(betterproto.Message):
+    project: "Project" = betterproto.enum_field(1)
+    routes: List["QuoteRoute"] = betterproto.message_field(2)
+
+
+@dataclass
+class TradeSwapRequest(betterproto.Message):
+    project: "Project" = betterproto.enum_field(1)
+    owner: str = betterproto.string_field(2)
+    in_token: str = betterproto.string_field(3)
+    out_token: str = betterproto.string_field(4)
+    in_amount: float = betterproto.double_field(5)
+    slippage: float = betterproto.double_field(6)
+
+
+@dataclass
+class TradeSwapResponse(betterproto.Message):
+    project: "Project" = betterproto.enum_field(1)
+    transactions: List[str] = betterproto.string_field(2)
+    out_amount: float = betterproto.double_field(3)
+    min_out_amount: float = betterproto.double_field(4)
+    price_impact: "PriceImpactPercent" = betterproto.message_field(5)
+    fee: "Fee" = betterproto.message_field(6)
+
+
+@dataclass
+class QuoteRoute(betterproto.Message):
+    in_amount: float = betterproto.double_field(1)
+    out_amount: float = betterproto.double_field(2)
+    steps: List["QuoteStep"] = betterproto.message_field(3)
+
+
+@dataclass
+class QuoteStep(betterproto.Message):
+    project: "StepProject" = betterproto.message_field(1)
+    in_token: str = betterproto.string_field(2)
+    in_token_address: str = betterproto.string_field(3)
+    out_token: str = betterproto.string_field(4)
+    out_token_address: str = betterproto.string_field(5)
+    in_amount: float = betterproto.double_field(6)
+    out_amount: float = betterproto.double_field(7)
+    slippage: float = betterproto.double_field(8)
+    price_impact_percent: "PriceImpactPercent" = betterproto.message_field(9)
+    fee: "Fee" = betterproto.message_field(10)
+
+
+@dataclass
+class StepProject(betterproto.Message):
+    label: str = betterproto.string_field(1)
+    id: str = betterproto.string_field(2)
+
+
+@dataclass
+class Fee(betterproto.Message):
+    amount: float = betterproto.float_field(1)
+    mint: str = betterproto.string_field(2)
+    percent: float = betterproto.float_field(3)
+
+
+@dataclass
+class PriceImpactPercent(betterproto.Message):
+    percent: float = betterproto.double_field(1)
+    infinity: "Infinity" = betterproto.enum_field(2)
+
+
+@dataclass
+class GetRecentBlockHashRequest(betterproto.Message):
+    pass
+
+
+@dataclass
+class GetRecentBlockHashResponse(betterproto.Message):
+    block_hash: str = betterproto.string_field(1)
+
+
+@dataclass
+class GetPoolsRequest(betterproto.Message):
+    projects: List["Project"] = betterproto.enum_field(1)
+
+
+@dataclass
+class GetPoolsResponse(betterproto.Message):
+    projects: List["ProjectPools"] = betterproto.message_field(1)
+
+
+@dataclass
+class ProjectPools(betterproto.Message):
+    project: "Project" = betterproto.enum_field(1)
+    pools: List["ProjectPool"] = betterproto.message_field(2)
+
+
+@dataclass
+class ProjectPool(betterproto.Message):
+    pool: str = betterproto.string_field(1)
+    pool_address: str = betterproto.string_field(2)
+    token1_reserves: int = betterproto.int64_field(3)
+    token1_mint_address: str = betterproto.string_field(4)
+    token1_mint_symbol: str = betterproto.string_field(5)
+    token2_reserves: int = betterproto.int64_field(6)
+    token2_mint_address: str = betterproto.string_field(7)
+    token2_mint_symbol: str = betterproto.string_field(8)
+
+
+@dataclass
+class GetQuotesStreamResponse(betterproto.Message):
+    slot: int = betterproto.int64_field(1)
+    in_token: str = betterproto.string_field(2)
+    in_token_address: str = betterproto.string_field(3)
+    out_token: str = betterproto.string_field(4)
+    out_token_address: str = betterproto.string_field(5)
+    in_amount: float = betterproto.double_field(6)
+    out_amount: float = betterproto.double_field(7)
+    project: "Project" = betterproto.enum_field(8)
+
+
+@dataclass
+class GetQuotesStreamRequest(betterproto.Message):
+    projects: List["Project"] = betterproto.enum_field(1)
+    token_pairs: List["TokenPair"] = betterproto.message_field(2)
+
+
+@dataclass
+class TokenPair(betterproto.Message):
+    in_token: str = betterproto.string_field(1)
+    out_token: str = betterproto.string_field(2)
+    in_amount: float = betterproto.double_field(3)
+
+
+@dataclass
+class GetPriceRequest(betterproto.Message):
+    tokens: List[str] = betterproto.string_field(1)
+
+
+@dataclass
+class GetPriceResponse(betterproto.Message):
+    token_prices: List["TokenPrice"] = betterproto.message_field(1)
+
+
+@dataclass
+class TokenPrice(betterproto.Message):
+    token: str = betterproto.string_field(1)
+    token_address: str = betterproto.string_field(2)
+    project: "Project" = betterproto.enum_field(3)
+    buy: float = betterproto.double_field(4)
+    buy_size: float = betterproto.double_field(5)
+    sell: float = betterproto.double_field(6)
+    sell_size: float = betterproto.double_field(7)
+
+
+@dataclass
+class GetPoolReservesStreamResponse(betterproto.Message):
+    slot: int = betterproto.int64_field(1)
+    reserves: "PoolReserves" = betterproto.message_field(2)
+
+
+@dataclass
+class PoolReserves(betterproto.Message):
+    token1_reserves: str = betterproto.string_field(1)
+    token1_address: str = betterproto.string_field(2)
+    token2_reserves: str = betterproto.string_field(3)
+    token2_address: str = betterproto.string_field(4)
+    pool_i_d: str = betterproto.string_field(5)
+    project: "Project" = betterproto.enum_field(6)
+
+
+@dataclass
+class GetPoolReservesStreamRequest(betterproto.Message):
+    projects: List["Project"] = betterproto.enum_field(1)
+
+
 class ApiStub(betterproto.ServiceStub):
     async def get_markets(self) -> GetMarketsResponse:
         request = GetMarketsRequest()
@@ -444,6 +652,16 @@ class ApiStub(betterproto.ServiceStub):
             "/api.Api/GetMarkets",
             request,
             GetMarketsResponse,
+        )
+
+    async def get_pools(self, *, projects: List["Project"] = []) -> GetPoolsResponse:
+        request = GetPoolsRequest()
+        request.projects = projects
+
+        return await self._unary_unary(
+            "/api.Api/GetPools",
+            request,
+            GetPoolsResponse,
         )
 
     async def get_tickers(self, *, market: str = "") -> GetTickersResponse:
@@ -513,6 +731,15 @@ class ApiStub(betterproto.ServiceStub):
             "/api.Api/GetServerTime",
             request,
             GetServerTimeResponse,
+        )
+
+    async def get_recent_block_hash(self) -> GetRecentBlockHashResponse:
+        request = GetRecentBlockHashRequest()
+
+        return await self._unary_unary(
+            "/api.Api/GetRecentBlockHash",
+            request,
+            GetRecentBlockHashResponse,
         )
 
     async def get_account_balance(
@@ -795,6 +1022,66 @@ class ApiStub(betterproto.ServiceStub):
             GetUnsettledResponse,
         )
 
+    async def get_quotes(
+        self,
+        *,
+        in_token: str = "",
+        out_token: str = "",
+        in_amount: float = 0,
+        slippage: float = 0,
+        limit: int = 0,
+        projects: List["Project"] = [],
+    ) -> GetQuotesResponse:
+        """AMMs"""
+
+        request = GetQuotesRequest()
+        request.in_token = in_token
+        request.out_token = out_token
+        request.in_amount = in_amount
+        request.slippage = slippage
+        request.limit = limit
+        request.projects = projects
+
+        return await self._unary_unary(
+            "/api.Api/GetQuotes",
+            request,
+            GetQuotesResponse,
+        )
+
+    async def get_price(self, *, tokens: List[str] = []) -> GetPriceResponse:
+        request = GetPriceRequest()
+        request.tokens = tokens
+
+        return await self._unary_unary(
+            "/api.Api/GetPrice",
+            request,
+            GetPriceResponse,
+        )
+
+    async def post_trade_swap(
+        self,
+        *,
+        project: "Project" = 0,
+        owner: str = "",
+        in_token: str = "",
+        out_token: str = "",
+        in_amount: float = 0,
+        slippage: float = 0,
+    ) -> TradeSwapResponse:
+        request = TradeSwapRequest()
+        request.project = project
+        request.owner = owner
+        request.in_token = in_token
+        request.out_token = out_token
+        request.in_amount = in_amount
+        request.slippage = slippage
+
+        return await self._unary_unary(
+            "/api.Api/PostTradeSwap",
+            request,
+            TradeSwapResponse,
+        )
+
     async def get_orderbooks_stream(
         self, *, markets: List[str] = [], limit: int = 0
     ) -> AsyncGenerator[GetOrderbooksStreamResponse, None]:
@@ -861,5 +1148,45 @@ class ApiStub(betterproto.ServiceStub):
             "/api.Api/GetOrderStatusStream",
             request,
             GetOrderStatusStreamResponse,
+        ):
+            yield response
+
+    async def get_recent_block_hash_stream(
+        self,
+    ) -> AsyncGenerator[GetRecentBlockHashResponse, None]:
+        request = GetRecentBlockHashRequest()
+
+        async for response in self._unary_stream(
+            "/api.Api/GetRecentBlockHashStream",
+            request,
+            GetRecentBlockHashResponse,
+        ):
+            yield response
+
+    async def get_quotes_stream(
+        self, *, projects: List["Project"] = [], token_pairs: List["TokenPair"] = []
+    ) -> AsyncGenerator[GetQuotesStreamResponse, None]:
+        request = GetQuotesStreamRequest()
+        request.projects = projects
+        if token_pairs is not None:
+            request.token_pairs = token_pairs
+
+        async for response in self._unary_stream(
+            "/api.Api/GetQuotesStream",
+            request,
+            GetQuotesStreamResponse,
+        ):
+            yield response
+
+    async def get_pool_reserves_stream(
+        self, *, projects: List["Project"] = []
+    ) -> AsyncGenerator[GetPoolReservesStreamResponse, None]:
+        request = GetPoolReservesStreamRequest()
+        request.projects = projects
+
+        async for response in self._unary_stream(
+            "/api.Api/GetPoolReservesStream",
+            request,
+            GetPoolReservesStreamResponse,
         ):
             yield response
