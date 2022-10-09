@@ -24,6 +24,9 @@ different language), and you'll typically want the similarly named `submit_*`
 methods (e.g. `submit_order`). These methods generate, sign, and submit the
 transaction all at once.
 
+You will also need your bloXroute authorization header to use these endpoints. By default, this is loaded from the 
+`AUTH_HEADER` environment variable.
+
 Context manager:
 
 ```python
