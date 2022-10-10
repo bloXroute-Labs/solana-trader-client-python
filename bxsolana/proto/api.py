@@ -51,7 +51,7 @@ class Project(betterproto.Enum):
     P_UNKNOWN = 0
     P_JUPITER = 1
     P_RAYDIUM = 2
-    P_Serum = 3
+    P_SERUM = 3
     P_ALL = 4
 
 
@@ -393,7 +393,7 @@ class GetOrderByIDResponse(betterproto.Message):
 @dataclass
 class GetUnsettledRequest(betterproto.Message):
     market: str = betterproto.string_field(1)
-    owner: str = betterproto.string_field(2)
+    owner_address: str = betterproto.string_field(2)
 
 
 @dataclass
@@ -482,7 +482,7 @@ class ProjectQuote(betterproto.Message):
 @dataclass
 class TradeSwapRequest(betterproto.Message):
     project: "Project" = betterproto.enum_field(1)
-    owner: str = betterproto.string_field(2)
+    owner_address: str = betterproto.string_field(2)
     in_token: str = betterproto.string_field(3)
     out_token: str = betterproto.string_field(4)
     in_amount: float = betterproto.double_field(5)
@@ -635,7 +635,7 @@ class PoolReserves(betterproto.Message):
     token1_address: str = betterproto.string_field(2)
     token2_reserves: str = betterproto.string_field(3)
     token2_address: str = betterproto.string_field(4)
-    pool_i_d: str = betterproto.string_field(5)
+    pool_address: str = betterproto.string_field(5)
     project: "Project" = betterproto.enum_field(6)
 
 
@@ -645,6 +645,16 @@ class GetPoolReservesStreamRequest(betterproto.Message):
 
 
 class ApiStub(betterproto.ServiceStub):
+    async def get_price(self, *, tokens: List[str] = []) -> GetPriceResponse:
+        request = GetPriceRequest()
+        request.tokens = tokens
+
+        return await self._unary_unary(
+            "/api.Api/GetPrice",
+            request,
+            GetPriceResponse,
+        )
+
     async def get_markets(self) -> GetMarketsResponse:
         request = GetMarketsRequest()
 
@@ -724,7 +734,33 @@ class ApiStub(betterproto.ServiceStub):
             GetTradesResponse,
         )
 
+    async def get_quotes(
+        self,
+        *,
+        in_token: str = "",
+        out_token: str = "",
+        in_amount: float = 0,
+        slippage: float = 0,
+        limit: int = 0,
+        projects: List["Project"] = [],
+    ) -> GetQuotesResponse:
+        request = GetQuotesRequest()
+        request.in_token = in_token
+        request.out_token = out_token
+        request.in_amount = in_amount
+        request.slippage = slippage
+        request.limit = limit
+        request.projects = projects
+
+        return await self._unary_unary(
+            "/api.Api/GetQuotes",
+            request,
+            GetQuotesResponse,
+        )
+
     async def get_server_time(self) -> GetServerTimeResponse:
+        """system API"""
+
         request = GetServerTimeRequest()
 
         return await self._unary_unary(
@@ -945,6 +981,30 @@ class ApiStub(betterproto.ServiceStub):
             PostSettleResponse,
         )
 
+    async def post_trade_swap(
+        self,
+        *,
+        project: "Project" = 0,
+        owner_address: str = "",
+        in_token: str = "",
+        out_token: str = "",
+        in_amount: float = 0,
+        slippage: float = 0,
+    ) -> TradeSwapResponse:
+        request = TradeSwapRequest()
+        request.project = project
+        request.owner_address = owner_address
+        request.in_token = in_token
+        request.out_token = out_token
+        request.in_amount = in_amount
+        request.slippage = slippage
+
+        return await self._unary_unary(
+            "/api.Api/PostTradeSwap",
+            request,
+            TradeSwapResponse,
+        )
+
     async def get_orders(
         self,
         *,
@@ -1010,76 +1070,16 @@ class ApiStub(betterproto.ServiceStub):
         )
 
     async def get_unsettled(
-        self, *, market: str = "", owner: str = ""
+        self, *, market: str = "", owner_address: str = ""
     ) -> GetUnsettledResponse:
         request = GetUnsettledRequest()
         request.market = market
-        request.owner = owner
+        request.owner_address = owner_address
 
         return await self._unary_unary(
             "/api.Api/GetUnsettled",
             request,
             GetUnsettledResponse,
-        )
-
-    async def get_quotes(
-        self,
-        *,
-        in_token: str = "",
-        out_token: str = "",
-        in_amount: float = 0,
-        slippage: float = 0,
-        limit: int = 0,
-        projects: List["Project"] = [],
-    ) -> GetQuotesResponse:
-        """AMMs"""
-
-        request = GetQuotesRequest()
-        request.in_token = in_token
-        request.out_token = out_token
-        request.in_amount = in_amount
-        request.slippage = slippage
-        request.limit = limit
-        request.projects = projects
-
-        return await self._unary_unary(
-            "/api.Api/GetQuotes",
-            request,
-            GetQuotesResponse,
-        )
-
-    async def get_price(self, *, tokens: List[str] = []) -> GetPriceResponse:
-        request = GetPriceRequest()
-        request.tokens = tokens
-
-        return await self._unary_unary(
-            "/api.Api/GetPrice",
-            request,
-            GetPriceResponse,
-        )
-
-    async def post_trade_swap(
-        self,
-        *,
-        project: "Project" = 0,
-        owner: str = "",
-        in_token: str = "",
-        out_token: str = "",
-        in_amount: float = 0,
-        slippage: float = 0,
-    ) -> TradeSwapResponse:
-        request = TradeSwapRequest()
-        request.project = project
-        request.owner = owner
-        request.in_token = in_token
-        request.out_token = out_token
-        request.in_amount = in_amount
-        request.slippage = slippage
-
-        return await self._unary_unary(
-            "/api.Api/PostTradeSwap",
-            request,
-            TradeSwapResponse,
         )
 
     async def get_orderbooks_stream(
