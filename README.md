@@ -5,7 +5,7 @@ Provides a Python SDK for bloXroute's Solana Trader API.
 ## Installation
 
 ```
-$ pip install bxsolana
+$ pip install bxsolana-trader
 ```
 
 ## Usage
