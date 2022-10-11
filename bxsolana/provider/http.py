@@ -120,10 +120,10 @@ class HttpProvider(Provider):
         raise NotImplementedError()
 
     async def get_unsettled(
-        self, *, market: str = "", owner: str = ""
+        self, *, market: str = "", owner_address: str = ""
     ) -> proto.GetUnsettledResponse:
         async with self._session.get(
-            f"{self._endpoint}/trade/unsettled/{market}?owner={owner}"
+            f"{self._endpoint}/trade/unsettled/{market}?ownerAddress={owner_address}"
         ) as res:
             return await map_response(res, proto.GetUnsettledResponse())
 
@@ -161,16 +161,16 @@ class HttpProvider(Provider):
 
     async def post_trade_swap(
         self,
-        project: proto.Project,
-        owner: str,
-        in_token: str,
-        out_token: str,
-        in_amount: float,
-        slippage: float,
-    ) -> proto.PostOrderResponse:
+        project: proto.Project = 0,
+        owner_address: str = "",
+        in_token: str = "",
+        out_token: str = "",
+        in_amount: float = 0,
+        slippage: float = 0,
+    ) -> proto.TradeSwapResponse:
         request = proto.TradeSwapRequest(
             project,
-            owner,
+            owner_address,
             in_token,
             out_token,
             in_amount,
