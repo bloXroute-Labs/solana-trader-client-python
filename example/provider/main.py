@@ -320,13 +320,14 @@ async def do_stream(api: bxsolana.Provider):
             item_count = 0
             break
 
-    print("streaming trade updates...")
-    async for response in api.get_trades_stream(market="SOLUSDC"):
-        print(response.to_json())
-        item_count += 1
-        if item_count == 1:
-            item_count = 0
-            break
+    # trades stream is skipped, since the frequency of updates on this stream is low
+    # print("streaming trade updates...")
+    # async for response in api.get_trades_stream(market="SOLUSDC"):
+    #     print(response.to_json())
+    #     item_count += 1
+    #     if item_count == 1:
+    #         item_count = 0
+    #         break
 
 
 if __name__ == "__main__":
