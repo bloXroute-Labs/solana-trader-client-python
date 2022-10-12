@@ -61,12 +61,14 @@ jobs:
           command: |
             cd ~/ws/solana-trader-client-python
             . venv/bin/activate
+            export RUN_TRADES=false
             API_ENV=testnet AUTH_HEADER=$AUTH_HEADER_TESTNET python example/provider/main.py
       - run:
           name: Mainnet
           command: |
             cd ~/ws/solana-trader-client-python
             . venv/bin/activate
+            export RUN_TRADES=false
             API_ENV=mainnet AUTH_HEADER=$AUTH_HEADER_MAINNET python example/provider/main.py
 workflows:
   version: 2

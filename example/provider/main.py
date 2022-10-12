@@ -10,6 +10,13 @@ if API_ENV not in ["mainnet", "testnet"]:
         f'invalid API_ENV value: {API_ENV} (valid values: "mainnet", "testnet")'
     )
 
+# trades stream is infrequent in terms of updates
+RUN_TRADES = os.environ.get("RUN_TRADES", "true")
+if RUN_TRADES == "false":
+    RUN_TRADES = False
+else:
+    RUN_TRADES = True
+
 # sample public key for trades API
 PUBLIC_KEY = "AFT8VayE7qr8MoQsW3wHsDS83HhEvhGWdbNSHRKeUDfQ"
 USDC_WALLET = "3wYEfi36o9fEzq4L36JN4rcwf3uDmQMcKexoQ8kwSrUR"
@@ -320,14 +327,14 @@ async def do_stream(api: bxsolana.Provider):
             item_count = 0
             break
 
-    # trades stream is skipped, since the frequency of updates on this stream is low
-    # print("streaming trade updates...")
-    # async for response in api.get_trades_stream(market="SOLUSDC"):
-    #     print(response.to_json())
-    #     item_count += 1
-    #     if item_count == 1:
-    #         item_count = 0
-    #         break
+    if RUN_TRADES:
+        print("streaming trade updates...")
+        async for response in api.get_trades_stream(market="SOLUSDC"):
+            print(response.to_json())
+            item_count += 1
+            if item_count == 1:
+                item_count = 0
+                break
 
 
 if __name__ == "__main__":
