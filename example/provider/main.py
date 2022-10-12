@@ -1,10 +1,19 @@
 import asyncio
+import os
+
 import bxsolana
 from bxsolana import provider, proto
+
+API_ENV = os.environ.get("API_ENV", "testnet")
+if API_ENV not in ["mainnet", "testnet"]:
+    raise EnvironmentError(
+        f'invalid API_ENV value: {API_ENV} (valid values: "mainnet", "testnet")'
+    )
 
 # sample public key for trades API
 PUBLIC_KEY = "AFT8VayE7qr8MoQsW3wHsDS83HhEvhGWdbNSHRKeUDfQ"
 USDC_WALLET = "3wYEfi36o9fEzq4L36JN4rcwf3uDmQMcKexoQ8kwSrUR"
+ORDER_ID = "3929156487700134707538850"
 
 
 async def main():
@@ -18,30 +27,45 @@ async def http():
     # alternatively, can specify the key manually in base58 str if loaded from other source
     # p = provider.HttpProvider("127.0.0.1", 9000, private_key="...")
 
-    p = provider.http()
+    if API_ENV == "mainnet":
+        p = provider.http()
+    else:
+        p = provider.http_testnet()
     api = await bxsolana.trader_api(p)
 
     # either `try`/`finally` or `async with` work with each type of provider
     try:
         await do_requests(api)
+        await do_transaction_requests(api)
     except Exception as e:
         print(e)
+        raise e
     finally:
         await p.close()
 
 
 async def ws():
-    async with provider.ws() as api:
+    if API_ENV == "mainnet":
+        p = provider.ws()
+    else:
+        p = provider.ws_testnet()
+
+    async with p as api:
         await do_requests(api)
+        await do_transaction_requests(api)
         await do_stream(api)
 
 
 async def grpc():
-    p = provider.grpc()
+    if API_ENV == "mainnet":
+        p = provider.grpc()
+    else:
+        p = provider.grpc_testnet()
     api = await bxsolana.trader_api(p)
 
     try:
         await do_requests(api)
+        await do_transaction_requests(api)
         await do_stream(api)
     finally:
         await p.close()
@@ -63,17 +87,25 @@ async def do_requests(api: bxsolana.Provider):
 
     # trade API
     print("fetching open orders for account")
-    print((await api.get_open_orders(market="SOLUSDC", address=PUBLIC_KEY)).to_json())
+    print(
+        (
+            await api.get_open_orders(market="SOLUSDC", address=PUBLIC_KEY)
+        ).to_json()
+    )
 
     print("fetching unsettled amounts")
-    print((await api.get_unsettled(market="SOLUSDC", owner=PUBLIC_KEY)).to_json())
+    print(
+        (
+            await api.get_unsettled(market="SOLUSDC", owner_address=PUBLIC_KEY)
+        ).to_json()
+    )
 
     print("fetching account balance amounts")
     print((await api.get_account_balance(owner_address=PUBLIC_KEY)).to_json())
 
     print(
-        "generating unsigned order (no sign or submission) to sell 0.1 SOL for USDC at "
-        "150_000 USD/SOL"
+        "generating unsigned order (no sign or submission) to sell 0.1 SOL for"
+        " USDC at 150_000 USD/SOL"
     )
     print(
         (
@@ -86,54 +118,26 @@ async def do_requests(api: bxsolana.Provider):
                 amount=0.1,
                 price=150_000,
                 # optional, but much faster if known
-                open_orders_address="5yyh4mzzycmjfR6arY736d1mB6vNSLiUaFWfepKLf8kZ",
+                open_orders_address=(
+                    "5yyh4mzzycmjfR6arY736d1mB6vNSLiUaFWfepKLf8kZ"
+                ),
                 # optional, for identification
                 client_order_i_d=0,
             )
         ).to_json()
     )
 
-    print(
-        "submitting order (generate + sign) to sell 0.1 SOL for USDC at 150_000 USD/SOL"
-    )
-    print(
-        await api.submit_order(
-            owner_address=PUBLIC_KEY,
-            payer_address=PUBLIC_KEY,
-            market="SOLUSDC",
-            side=proto.Side.S_ASK,
-            types=[proto.OrderType.OT_LIMIT],
-            amount=0.1,
-            price=150_000,
-            # optional, but much faster if known
-            open_orders_address="5yyh4mzzycmjfR6arY736d1mB6vNSLiUaFWfepKLf8kZ",
-            # optional, for identification
-            client_order_id=0,
-        )
-    )
-
     print("generate cancel order")
     print(
         (
             await api.post_cancel_order(
-                order_i_d="",
+                order_i_d=ORDER_ID,
                 side=proto.Side.S_ASK,
                 market_address="SOLUSDC",
                 owner_address=PUBLIC_KEY,
-                open_orders_address="",  # optional
+                open_orders_address="5yyh4mzzycmjfR6arY736d1mB6vNSLiUaFWfepKLf8kZ",
             )
         ).to_json()
-    )
-
-    print("submit cancel order")
-    print(
-        await api.submit_cancel_order(
-            order_i_d="",
-            side=proto.Side.S_ASK,
-            market_address="SOLUSDC",
-            owner_address=PUBLIC_KEY,
-            open_orders_address="",  # optional
-        )
     )
 
     print("generate cancel order by client ID")
@@ -142,34 +146,13 @@ async def do_requests(api: bxsolana.Provider):
             client_order_i_d=123,
             market_address="9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT",
             owner_address=PUBLIC_KEY,
-            open_orders_address="",  # optional
-        )
-    )
-
-    print("submit cancel order by client ID")
-    print(
-        await api.submit_cancel_by_client_order_i_d(
-            client_order_i_d=123,
-            market_address="9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT",
-            owner_address=PUBLIC_KEY,
-            open_orders_address="",  # optional
+            open_orders_address="5yyh4mzzycmjfR6arY736d1mB6vNSLiUaFWfepKLf8kZ",
         )
     )
 
     print("generate settle order")
     print(
         await api.post_settle(
-            owner_address=PUBLIC_KEY,
-            market="SOLUSDC",
-            base_token_wallet=PUBLIC_KEY,
-            quote_token_wallet=USDC_WALLET,
-            open_orders_address="",  # optional
-        )
-    )
-
-    print("submit settle order")
-    print(
-        await api.submit_settle(
             owner_address=PUBLIC_KEY,
             market="SOLUSDC",
             base_token_wallet=PUBLIC_KEY,
@@ -189,30 +172,13 @@ async def do_requests(api: bxsolana.Provider):
                 amount=0.1,
                 price=150_000,
                 # optional, but much faster if known
-                open_orders_address="5yyh4mzzycmjfR6arY736d1mB6vNSLiUaFWfepKLf8kZ",
+                open_orders_address=(
+                    "5yyh4mzzycmjfR6arY736d1mB6vNSLiUaFWfepKLf8kZ"
+                ),
                 # optional, for identification
                 client_order_i_d=123,
             )
         ).to_json()
-    )
-
-    print(
-        "submitting order (generate + sign) to sell 0.1 SOL for USDC at 150_000 USD/SOL"
-    )
-    print(
-        await api.submit_replace_by_client_order_i_d(
-            owner_address=PUBLIC_KEY,
-            payer_address=PUBLIC_KEY,
-            market="SOLUSDC",
-            side=proto.Side.S_ASK,
-            types=[proto.OrderType.OT_LIMIT],
-            amount=0.1,
-            price=150_000,
-            # optional, but much faster if known
-            open_orders_address="5yyh4mzzycmjfR6arY736d1mB6vNSLiUaFWfepKLf8kZ",
-            # optional, for identification
-            client_order_id=123,
-        )
     )
 
     print(
@@ -226,16 +192,95 @@ async def do_requests(api: bxsolana.Provider):
                 amount=0.1,
                 price=150_000,
                 # optional, but much faster if known
-                open_orders_address="5yyh4mzzycmjfR6arY736d1mB6vNSLiUaFWfepKLf8kZ",
+                open_orders_address=(
+                    "5yyh4mzzycmjfR6arY736d1mB6vNSLiUaFWfepKLf8kZ"
+                ),
                 # optional, for identification
                 client_order_i_d=0,
-                order_i_d=""
+                order_i_d=ORDER_ID,
             )
         ).to_json()
     )
 
+
+async def do_transaction_requests(api: bxsolana.Provider):
+    if api.private_key() is None:
+        print("skipping transaction requests: no PRIVATE_KEY provided")
+        return
+
     print(
-        "submitting order (generate + sign) to sell 0.1 SOL for USDC at 150_000 USD/SOL"
+        "submitting order (generate + sign) to sell 0.1 SOL for USDC at 150_000"
+        " USD/SOL"
+    )
+    print(
+        await api.submit_order(
+            owner_address=PUBLIC_KEY,
+            payer_address=PUBLIC_KEY,
+            market="SOLUSDC",
+            side=proto.Side.S_ASK,
+            types=[proto.OrderType.OT_LIMIT],
+            amount=0.1,
+            price=150_000,
+            # optional, but much faster if known
+            open_orders_address="5yyh4mzzycmjfR6arY736d1mB6vNSLiUaFWfepKLf8kZ",
+            # optional, for identification
+            client_order_id=0,
+        )
+    )
+
+    print("submit cancel order")
+    print(
+        await api.submit_cancel_order(
+            order_i_d=ORDER_ID,
+            side=proto.Side.S_ASK,
+            market_address="SOLUSDC",
+            owner_address=PUBLIC_KEY,
+            open_orders_address="5yyh4mzzycmjfR6arY736d1mB6vNSLiUaFWfepKLf8kZ",
+        )
+    )
+
+    print("submit cancel order by client ID")
+    print(
+        await api.submit_cancel_by_client_order_i_d(
+            client_order_i_d=123,
+            market_address="9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT",
+            owner_address=PUBLIC_KEY,
+            open_orders_address="5yyh4mzzycmjfR6arY736d1mB6vNSLiUaFWfepKLf8kZ",
+        )
+    )
+    print("submit settle order")
+    print(
+        await api.submit_settle(
+            owner_address=PUBLIC_KEY,
+            market="SOLUSDC",
+            base_token_wallet=PUBLIC_KEY,
+            quote_token_wallet=USDC_WALLET,
+            open_orders_address="",  # optional
+        )
+    )
+
+    print(
+        "submitting order (generate + sign) to sell 0.1 SOL for USDC at 150_000"
+        " USD/SOL"
+    )
+    print(
+        await api.submit_replace_by_client_order_i_d(
+            owner_address=PUBLIC_KEY,
+            payer_address=PUBLIC_KEY,
+            market="SOLUSDC",
+            side=proto.Side.S_ASK,
+            types=[proto.OrderType.OT_LIMIT],
+            amount=0.1,
+            price=150_000,
+            # optional, but much faster if known
+            open_orders_address="5yyh4mzzycmjfR6arY736d1mB6vNSLiUaFWfepKLf8kZ",
+            # optional, for identification
+            client_order_i_d=123,
+        )
+    )
+    print(
+        "submitting order (generate + sign) to sell 0.1 SOL for USDC at 150_000"
+        " USD/SOL"
     )
     print(
         await api.submit_replace_order(
@@ -250,7 +295,7 @@ async def do_requests(api: bxsolana.Provider):
             open_orders_address="5yyh4mzzycmjfR6arY736d1mB6vNSLiUaFWfepKLf8kZ",
             # optional, for identification
             client_order_id=0,
-            order_id=""
+            order_i_d=ORDER_ID,
         )
     )
 
@@ -267,7 +312,6 @@ async def do_stream(api: bxsolana.Provider):
             item_count = 0
             break
 
-
     print("streaming ticker updates...")
     async for response in api.get_tickers_stream(market="SOLUSDC"):
         print(response.to_json())
@@ -280,7 +324,7 @@ async def do_stream(api: bxsolana.Provider):
     async for response in api.get_trades_stream(market="SOLUSDC"):
         print(response.to_json())
         item_count += 1
-        if item_count == 5:
+        if item_count == 1:
             item_count = 0
             break
 

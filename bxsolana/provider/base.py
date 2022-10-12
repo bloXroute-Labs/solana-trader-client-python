@@ -169,7 +169,7 @@ class Provider(proto.ApiStub, ABC):
         amount: float,
         price: float,
         open_orders_address: str = "",
-        client_order_id: int = 0,
+        client_order_i_d: int = 0,
         skip_pre_flight: bool = False,
     ) -> str:
         pk = self.require_private_key()
@@ -182,7 +182,7 @@ class Provider(proto.ApiStub, ABC):
             amount=amount,
             price=price,
             open_orders_address=open_orders_address,
-            client_order_i_d=client_order_id,
+            client_order_i_d=client_order_i_d,
         )
         signed_tx = transaction.sign_tx_with_private_key(order.transaction, pk)
         result = await self.post_submit(
@@ -192,7 +192,7 @@ class Provider(proto.ApiStub, ABC):
 
     async def submit_replace_order(
         self,
-        order_id: str,
+        order_i_d: str,
         owner_address: str,
         payer_address: str,
         market: str,
@@ -215,7 +215,7 @@ class Provider(proto.ApiStub, ABC):
             price=price,
             open_orders_address=open_orders_address,
             client_order_i_d=client_order_id,
-            order_i_d=order_id,
+            order_i_d=order_i_d,
         )
         signed_tx = transaction.sign_tx_with_private_key(order.transaction, pk)
         result = await self.post_submit(
