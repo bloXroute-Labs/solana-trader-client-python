@@ -170,7 +170,7 @@ async def do_requests(api: bxsolana.Provider):
             market="SOLUSDC",
             base_token_wallet=PUBLIC_KEY,
             quote_token_wallet=USDC_WALLET,
-            open_orders_address="",  # optional
+            open_orders_address=OPEN_ORDERS,
         )
     )
 
