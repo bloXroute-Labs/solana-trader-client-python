@@ -37,7 +37,6 @@ class GrpcProvider(Provider):
     ):
         self._host = host
         self._port = port
-        self._auth_header = auth_header
         self._use_ssl = use_ssl
 
         if private_key is None:
