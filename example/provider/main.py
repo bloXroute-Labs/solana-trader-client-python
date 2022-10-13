@@ -18,8 +18,10 @@ else:
     RUN_TRADES = True
 
 # sample public key for trades API
-PUBLIC_KEY = "AFT8VayE7qr8MoQsW3wHsDS83HhEvhGWdbNSHRKeUDfQ"
-USDC_WALLET = "3wYEfi36o9fEzq4L36JN4rcwf3uDmQMcKexoQ8kwSrUR"
+PUBLIC_KEY = "4JCZomAb4eKcJQ9fqoi2JPT1TzjbhJEk8V8MmFKUQfnV"
+USDC_WALLET = "8w1igsiZfsWnMTJSKkSvDQYYCZyf6aXMihuXEYpxcZVD"
+OPEN_ORDERS = "4JCZomAb4eKcJQ9fqoi2JPT1TzjbhJEk8V8MmFKUQfnV"
+SOL_USDC_MARKET = SOL_USDC_MARKET
 ORDER_ID = "3929156487700134707538850"
 
 
@@ -125,9 +127,7 @@ async def do_requests(api: bxsolana.Provider):
                 amount=0.1,
                 price=150_000,
                 # optional, but much faster if known
-                open_orders_address=(
-                    "5yyh4mzzycmjfR6arY736d1mB6vNSLiUaFWfepKLf8kZ"
-                ),
+                open_orders_address=OPEN_ORDERS,
                 # optional, for identification
                 client_order_i_d=0,
             )
@@ -142,7 +142,7 @@ async def do_requests(api: bxsolana.Provider):
                 side=proto.Side.S_ASK,
                 market_address="SOLUSDC",
                 owner_address=PUBLIC_KEY,
-                open_orders_address="5yyh4mzzycmjfR6arY736d1mB6vNSLiUaFWfepKLf8kZ",
+                open_orders_address=OPEN_ORDERS,
             )
         ).to_json()
     )
@@ -151,9 +151,9 @@ async def do_requests(api: bxsolana.Provider):
     print(
         await api.post_cancel_by_client_order_i_d(
             client_order_i_d=123,
-            market_address="9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT",
+            market_address=SOL_USDC_MARKET,
             owner_address=PUBLIC_KEY,
-            open_orders_address="5yyh4mzzycmjfR6arY736d1mB6vNSLiUaFWfepKLf8kZ",
+            open_orders_address=OPEN_ORDERS,
         )
     )
 
@@ -179,9 +179,7 @@ async def do_requests(api: bxsolana.Provider):
                 amount=0.1,
                 price=150_000,
                 # optional, but much faster if known
-                open_orders_address=(
-                    "5yyh4mzzycmjfR6arY736d1mB6vNSLiUaFWfepKLf8kZ"
-                ),
+                open_orders_address=OPEN_ORDERS,
                 # optional, for identification
                 client_order_i_d=123,
             )
@@ -199,9 +197,7 @@ async def do_requests(api: bxsolana.Provider):
                 amount=0.1,
                 price=150_000,
                 # optional, but much faster if known
-                open_orders_address=(
-                    "5yyh4mzzycmjfR6arY736d1mB6vNSLiUaFWfepKLf8kZ"
-                ),
+                open_orders_address=OPEN_ORDERS,
                 # optional, for identification
                 client_order_i_d=0,
                 order_i_d=ORDER_ID,
@@ -229,7 +225,7 @@ async def do_transaction_requests(api: bxsolana.Provider):
             amount=0.1,
             price=150_000,
             # optional, but much faster if known
-            open_orders_address="5yyh4mzzycmjfR6arY736d1mB6vNSLiUaFWfepKLf8kZ",
+            open_orders_address=OPEN_ORDERS,
             # optional, for identification
             client_order_id=0,
         )
@@ -242,7 +238,7 @@ async def do_transaction_requests(api: bxsolana.Provider):
             side=proto.Side.S_ASK,
             market_address="SOLUSDC",
             owner_address=PUBLIC_KEY,
-            open_orders_address="5yyh4mzzycmjfR6arY736d1mB6vNSLiUaFWfepKLf8kZ",
+            open_orders_address=OPEN_ORDERS,
         )
     )
 
@@ -250,9 +246,9 @@ async def do_transaction_requests(api: bxsolana.Provider):
     print(
         await api.submit_cancel_by_client_order_i_d(
             client_order_i_d=123,
-            market_address="9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT",
+            market_address=SOL_USDC_MARKET,
             owner_address=PUBLIC_KEY,
-            open_orders_address="5yyh4mzzycmjfR6arY736d1mB6vNSLiUaFWfepKLf8kZ",
+            open_orders_address=OPEN_ORDERS,
         )
     )
     print("submit settle order")
@@ -280,7 +276,7 @@ async def do_transaction_requests(api: bxsolana.Provider):
             amount=0.1,
             price=150_000,
             # optional, but much faster if known
-            open_orders_address="5yyh4mzzycmjfR6arY736d1mB6vNSLiUaFWfepKLf8kZ",
+            open_orders_address=OPEN_ORDERS,
             # optional, for identification
             client_order_i_d=123,
         )
@@ -299,7 +295,7 @@ async def do_transaction_requests(api: bxsolana.Provider):
             amount=0.1,
             price=150_000,
             # optional, but much faster if known
-            open_orders_address="5yyh4mzzycmjfR6arY736d1mB6vNSLiUaFWfepKLf8kZ",
+            open_orders_address=OPEN_ORDERS,
             # optional, for identification
             client_order_id=0,
             order_i_d=ORDER_ID,
