@@ -11,6 +11,12 @@ if API_ENV not in ["mainnet", "testnet"]:
     )
 
 # trades stream is infrequent in terms of updates
+RUN_TRADE_STREAM = os.environ.get("RUN_TRADE_STREAM", "true")
+if RUN_TRADE_STREAM == "false":
+    RUN_TRADE_STREAM = False
+else:
+    RUN_TRADE_STREAM = True
+
 RUN_TRADES = os.environ.get("RUN_TRADES", "true")
 if RUN_TRADES == "false":
     RUN_TRADES = False
@@ -207,8 +213,8 @@ async def do_requests(api: bxsolana.Provider):
 
 
 async def do_transaction_requests(api: bxsolana.Provider):
-    if api.private_key() is None:
-        print("skipping transaction requests: no PRIVATE_KEY provided")
+    if not RUN_TRADES:
+        print("skipping transaction requests: set by environment")
         return
 
     print(
@@ -323,7 +329,7 @@ async def do_stream(api: bxsolana.Provider):
             item_count = 0
             break
 
-    if RUN_TRADES:
+    if RUN_TRADE_STREAM:
         print("streaming trade updates...")
         async for response in api.get_trades_stream(market="SOLUSDC"):
             print(response.to_json())

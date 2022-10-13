@@ -3,6 +3,9 @@ executors:
   bxpython:
     docker:
       - image: cimg/python:3.10.7
+    environment:
+      RUN_TRADES: false
+      RUN_TRADE_STREAM: false
     working_directory: ~/ws
 jobs:
   init:
