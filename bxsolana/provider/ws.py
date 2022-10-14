@@ -28,13 +28,17 @@ class WsProvider(Provider):
         endpoint: str = constants.MAINNET_API_WS,
         auth_header: Optional[str] = None,
         private_key: Optional[str] = None,
+        request_timeout_s: Optional[int] = None,
     ):
         self._endpoint = endpoint
 
         if auth_header is None:
             auth_header = os.environ["AUTH_HEADER"]
 
-        opts = jsonrpc.WsRpcOpts(headers={"authorization": auth_header})
+        opts = jsonrpc.WsRpcOpts(
+            headers={"authorization": auth_header},
+            request_timeout_s=request_timeout_s,
+        )
         self._ws = jsonrpc.WsRpcConnection(endpoint, opts)
 
         if private_key is None:

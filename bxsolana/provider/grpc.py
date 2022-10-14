@@ -19,6 +19,8 @@ class GrpcProvider(Provider):
 
     _host: str
     _port: int
+    _auth_header: str
+    _use_ssl: bool
     _private_key: Optional[keypair.Keypair]
 
     def __init__(
@@ -27,6 +29,7 @@ class GrpcProvider(Provider):
         port: int = constants.MAINNET_API_GRPC_PORT,
         private_key: Optional[str] = None,
         auth_header: Optional[str] = None,
+        use_ssl: bool = False,
         *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
@@ -34,7 +37,7 @@ class GrpcProvider(Provider):
     ):
         self._host = host
         self._port = port
-        self._auth_header = auth_header
+        self._use_ssl = use_ssl
 
         if private_key is None:
             try:
@@ -59,7 +62,9 @@ class GrpcProvider(Provider):
 
     async def connect(self):
         if self.channel is None:
-            self.channel = client.Channel(self._host, self._port)
+            self.channel = client.Channel(
+                self._host, self._port, ssl=self._use_ssl
+            )
             self.metadata = {"authorization": self._auth_header}
 
     def private_key(self) -> Optional[keypair.Keypair]:
@@ -72,7 +77,7 @@ class GrpcProvider(Provider):
 
 
 def grpc(auth_header: Optional[str] = None) -> Provider:
-    return GrpcProvider(auth_header=auth_header)
+    return GrpcProvider(auth_header=auth_header, use_ssl=True)
 
 
 def grpc_testnet(auth_header: Optional[str] = None) -> Provider:

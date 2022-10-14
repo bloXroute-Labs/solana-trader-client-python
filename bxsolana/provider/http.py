@@ -106,7 +106,7 @@ class HttpProvider(Provider):
         async with self._session.get(
             f"{self._endpoint}/trade/orders/{market}"
             f"?address={address}"
-            f"?openOrdersAddress={open_orders_address}"
+            f"&openOrdersAddress={open_orders_address}"
             f"&side={side}"
             "&types=OT_LIMIT"
             f"&direction={direction.name}"
@@ -136,18 +136,20 @@ class HttpProvider(Provider):
             return await map_response(res, proto.GetAccountBalanceResponse())
 
     async def get_pools(
-        self, projects: List[str] = []
+        self, projects: List[proto.Project] = []
     ) -> proto.GetPoolsResponse:
-        params = "?" + "projects=&".join(projects) if len(projects) > 0 else ""
+        params = (
+            "?" + "projects=&".join(project.value for project in projects)
+            if len(projects) > 0
+            else ""
+        )
         async with self._session.get(
             f"{self._endpoint}/market/pools{params}"
         ) as res:
             return await map_response(res, proto.GetPoolsResponse())
 
-    async def get_price(
-        self, projects: List[str] = []
-    ) -> proto.GetPriceResponse:
-        params = "?" + "tokens=&".join(projects) if len(projects) > 0 else ""
+    async def get_price(self, tokens: List[str] = []) -> proto.GetPriceResponse:
+        params = "?" + "tokens=&".join(tokens) if len(tokens) > 0 else ""
         async with self._session.get(
             f"{self._endpoint}/market/price{params}"
         ) as res:
@@ -161,7 +163,7 @@ class HttpProvider(Provider):
 
     async def post_trade_swap(
         self,
-        project: proto.Project = 0,
+        project: proto.Project = proto.Project.P_ALL,
         owner_address: str = "",
         in_token: str = "",
         out_token: str = "",

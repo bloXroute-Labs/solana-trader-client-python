@@ -1,0 +1,88 @@
+version: 2.1
+executors:
+  bxpython:
+    docker:
+      - image: cimg/python:3.10.7
+    environment:
+      RUN_TRADES: false
+      RUN_TRADE_STREAM: false
+    working_directory: ~/ws
+jobs:
+  init:
+    executor: bxpython
+    steps:
+      - attach_workspace:
+          at: ~/ws
+      - checkout:
+          path: solana-trader-client-python
+      - restore_cache:
+          key: deps-{{ .BRANCH }}-{{ checksum "~/ws/solana-trader-client-python/requirements.txt" }}
+      - run:
+          name: Install dependencies
+          command: |
+            cd ~/ws/solana-trader-client-python
+            python -m virtualenv venv
+            . venv/bin/activate
+            pip install -r requirements.txt
+      - save_cache:
+          key: deps-{{ checksum "~/ws/solana-trader-client-python/requirements.txt" }}
+          paths:
+            - ~/ws/solana-trader-client-python/venv
+      - persist_to_workspace:
+          root: ~/ws
+          paths:
+            - solana-trader-client-python
+  lint:
+    executor: bxpython
+    steps:
+      - attach_workspace:
+          at: ~/ws
+      - run:
+          name: lint
+          command: |
+            cd ~/ws/solana-trader-client-python
+            . venv/bin/activate
+            make lint
+  unit:
+    executor: bxpython
+    steps:
+      - attach_workspace:
+          at: ~/ws
+      - run:
+          name: Unit test
+          command: |
+            cd ~/ws/solana-trader-client-python
+            . venv/bin/activate
+            make test
+  examples:
+    executor: bxpython
+    steps:
+      - attach_workspace:
+          at: ~/ws
+      - run:
+          name: Testnet
+          command: |
+            cd ~/ws/solana-trader-client-python
+            . venv/bin/activate
+            API_ENV=testnet AUTH_HEADER=$AUTH_HEADER_TESTNET python example/provider/main.py
+      - run:
+          name: Mainnet
+          command: |
+            cd ~/ws/solana-trader-client-python
+            . venv/bin/activate
+            API_ENV=mainnet AUTH_HEADER=$AUTH_HEADER_MAINNET python example/provider/main.py
+workflows:
+  version: 2
+  test-branch:
+    jobs:
+      - init
+      - lint:
+          requires:
+            - init
+      - unit:
+          requires:
+            - init
+      - examples:
+          context: trader-api-sdk
+          requires:
+            - init
