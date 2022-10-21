@@ -6,7 +6,7 @@ clean:
 pkg:
 	python -m build
 
-release: clean all
+release: all
 	python -m twine upload dist/*
 
 proto:
