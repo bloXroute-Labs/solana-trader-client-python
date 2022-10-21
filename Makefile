@@ -1,8 +1,10 @@
-all:
-	python -m build
+all: clean pkg
 
 clean:
 	rm -rf dist build *.egg-info
+
+pkg:
+	python -m build
 
 release: clean all
 	python -m twine upload dist/*
