@@ -7,12 +7,12 @@ from solana.message import CompiledInstruction, Message, MessageArgs, MessageHea
 
 
 class Memo:
-    BxMemoMarkerMsg: "Powered by bloXroute Trader Api"
+    BxMemoMarkerMsg = "Powered by bloXroute Trader Api"
     TraderAPIMemoProgram = PublicKey("HQ2UUt18uJqKaQFJhgV9zaTdQxUZjNrsKFgoEDquBkcx")
 
     # create_trader_api_memo_instruction generates a transaction instruction that places a memo in the transaction log
     # Having a memo instruction with signals Trader-API usage is required
-    def create_trader_api_memo_instruction(self, msg: ""):
+    def create_trader_api_memo_instruction(self, msg):
         if msg == "":
             msg = self.BxMemoMarkerMsg
 
