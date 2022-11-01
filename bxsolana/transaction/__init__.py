@@ -1,3 +1,10 @@
+
+from .memo import (
+    create_trader_api_memo_instruction,
+    add_memo_to_serialized_txn,
+    build_fully_signed_txn,
+)
+
 from .signing import (
     load_private_key,
     load_private_key_from_env,
@@ -12,4 +19,7 @@ __all__ = [
     "sign_tx",
     "sign_tx_with_private_key",
     "load_open_orders",
+    "create_trader_api_memo_instruction",
+    "build_fully_signed_txn",
+    "add_memo_to_serialized_txn",
 ]

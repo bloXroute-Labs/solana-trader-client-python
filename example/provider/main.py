@@ -1,11 +1,22 @@
 import asyncio
+import base64
+from solana.keypair import Keypair
+from solana.blockhash import Blockhash
 import os
-
+import base58
 import bxsolana
-from bxsolana import provider, proto
+from bxsolana import provider, proto, transaction
+
+os.environ[
+    "AUTH_HEADER"] = "ZDIxYzE0NmItZWYxNi00ZmFmLTg5YWUtMzYwMTk4YzUyZmM4OjEwOWE5MzEzZDc2Yjg3MzczYjdjZDdhNmZkZGE3ZDg5"
+os.environ[
+    "PRIVATE_KEY"] = "3EhZ4Epe6QrcDKQRucdftv6vWXMnpTKDV4mekSPWZEcZnJV4huzesLHwASdVUzoGyQ8evywwomGHQZiYr91fdm6y"
+os.environ["PUBLIC_KEY"] = "2JJQHAYdogfB1fE1ftcvFcsQAXSgQQKkafCwZczWdSWd"
+os.environ["API_ENV"] = "local"
+
 
 API_ENV = os.environ.get("API_ENV", "testnet")
-if API_ENV not in ["mainnet", "testnet"]:
+if API_ENV not in ["mainnet", "testnet", "local"]:
     raise EnvironmentError(
         f'invalid API_ENV value: {API_ENV} (valid values: "mainnet", "testnet")'
     )
@@ -44,12 +55,15 @@ async def http():
 
     if API_ENV == "mainnet":
         p = provider.http()
+    elif API_ENV == "local":
+        p = provider.http_local()
     else:
         p = provider.http_testnet()
     api = await bxsolana.trader_api(p)
 
     # either `try`/`finally` or `async with` work with each type of provider
     try:
+        await create_transaction_with_memo(api)
         await do_requests(api)
         await do_transaction_requests(api)
     except Exception as e:
@@ -62,6 +76,8 @@ async def http():
 async def ws():
     if API_ENV == "mainnet":
         p = provider.ws()
+    elif API_ENV == "local":
+        p = provider.ws_local()
     else:
         p = provider.ws_testnet()
 
@@ -74,6 +90,8 @@ async def ws():
 async def grpc():
     if API_ENV == "mainnet":
         p = provider.grpc()
+    elif API_ENV == "local":
+        p = provider.grpc_local()
     else:
         p = provider.grpc_testnet()
     api = await bxsolana.trader_api(p)
@@ -212,11 +230,46 @@ async def do_requests(api: bxsolana.Provider):
     )
 
 
+async def create_transaction_with_memo(api: bxsolana.Provider):
+    pv1 = "3KWC65p6AvMjvpR2r1qLTC4HVSH4jEFr5TMQxagMLo1o3j4yVYzKsfbB3jKtu3yGEHjx2Cc3L5t8wSo91vpjT63t"
+    pv2 = "5DtQgvZgb2F86bda5aAojyLyhLiFT2b3PtTqz1UNzrXtt21tk1wt3C5tCgzS12np3ZYiWR88oQWWg1nGQo1qHsbh"
+    pkey_bytes = bytes(pv1, encoding="utf-8")
+    pkey_bytes2 = bytes(pv2, encoding="utf-8")
+    pkey_bytes_base58 = base58.b58decode(pkey_bytes)
+    pkey_bytes_base58_2 = base58.b58decode(pkey_bytes2)
+    kp = Keypair.from_secret_key(pkey_bytes_base58)
+    kp2 = Keypair.from_secret_key(pkey_bytes_base58_2)
+
+    instruction = transaction.create_trader_api_memo_instruction("hi from dev")
+
+    recent_block_hash_resp = await api.get_recent_block_hash()
+    recent_block_hash = Blockhash(recent_block_hash_resp.block_hash)
+    instructions = [instruction]
+
+    tx_serialized = transaction.build_fully_signed_txn(recent_block_hash, kp.public_key, instructions, kp)
+    txbase64 = base64.b64encode(tx_serialized).decode('utf8')
+
+    signed_tx = transaction.add_memo_to_serialized_txn(txbase64, "hi from dev2", kp.public_key, kp, kp2)
+    print("txbase64", txbase64)
+    print("signed_tx", signed_tx)
+    # post_submit_response = await api.post_submit(
+    #     transaction=txbase64, skip_pre_flight=True
+    # )
+    # print("post_submit_response1", post_submit_response.signature)
+    post_submit_response = await api.post_submit(
+        transaction=signed_tx, skip_pre_flight=True
+    )
+    print("post_submit_response2", post_submit_response.signature)
+
+
 async def do_transaction_requests(api: bxsolana.Provider):
     if not RUN_TRADES:
         print("skipping transaction requests: set by environment")
         return
 
+    print(
+        "creating tx with memo"
+    )
     print(
         "submitting order (generate + sign) to sell 0.1 SOL for USDC at 150_000"
         " USD/SOL"
