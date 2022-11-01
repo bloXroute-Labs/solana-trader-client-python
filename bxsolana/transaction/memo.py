@@ -50,6 +50,9 @@ class Memo:
 
         tx = solana_transaction.Transaction(recent_blockhash=recent_block_hash)
 
+        for x in instructions:
+            tx.instructions.append(x)
+
         tx.fee_payer = owner
         tx.sign(private_keys)
 
