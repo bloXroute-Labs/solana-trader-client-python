@@ -7,14 +7,6 @@ import base58
 import bxsolana
 from bxsolana import provider, proto, transaction
 
-os.environ[
-    "AUTH_HEADER"] = "ZDIxYzE0NmItZWYxNi00ZmFmLTg5YWUtMzYwMTk4YzUyZmM4OjEwOWE5MzEzZDc2Yjg3MzczYjdjZDdhNmZkZGE3ZDg5"
-os.environ[
-    "PRIVATE_KEY"] = "3EhZ4Epe6QrcDKQRucdftv6vWXMnpTKDV4mekSPWZEcZnJV4huzesLHwASdVUzoGyQ8evywwomGHQZiYr91fdm6y"
-os.environ["PUBLIC_KEY"] = "2JJQHAYdogfB1fE1ftcvFcsQAXSgQQKkafCwZczWdSWd"
-os.environ["API_ENV"] = "local"
-
-
 API_ENV = os.environ.get("API_ENV", "testnet")
 if API_ENV not in ["mainnet", "testnet", "local"]:
     raise EnvironmentError(
