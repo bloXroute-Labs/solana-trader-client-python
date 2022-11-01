@@ -23,7 +23,9 @@ class TestMemo(unittest.TestCase):
         instruction = Memo.create_trader_api_memo_instruction("hi from dev")
 
         recent_block_hash = Blockhash(str(PublicKey(3)))
-        tx_serialized = Memo.build_fully_signed_txn(recent_block_hash, kp.public_key, instruction, kp)
+        instructions = [instruction]
+
+        tx_serialized = Memo.build_fully_signed_txn(recent_block_hash, kp.public_key, instructions, kp)
 
         txbase64_str = base64.encodebytes(tx_serialized).decode('utf-8')
         print("txbase64_str", txbase64_str)
