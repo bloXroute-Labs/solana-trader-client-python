@@ -7,6 +7,7 @@ import base58
 import bxsolana
 from bxsolana import provider, proto, transaction
 
+
 API_ENV = os.environ.get("API_ENV", "testnet")
 if API_ENV not in ["mainnet", "testnet", "local"]:
     raise EnvironmentError(
@@ -255,9 +256,6 @@ async def do_transaction_requests(api: bxsolana.Provider):
         print("skipping transaction requests: set by environment")
         return
 
-    print(
-        "creating tx with memo"
-    )
     print(
         "submitting order (generate + sign) to sell 0.1 SOL for USDC at 150_000"
         " USD/SOL"

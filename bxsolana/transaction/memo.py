@@ -3,6 +3,7 @@ import base64
 from solana import transaction as solana_transaction, keypair
 from solana.publickey import PublicKey
 from solana.keypair import Keypair
+from solana.blockhash import Blockhash
 
 
 BxMemoMarkerMsg = "Powered by bloXroute Trader Api"
@@ -11,7 +12,7 @@ TraderAPIMemoProgram = PublicKey("HQ2UUt18uJqKaQFJhgV9zaTdQxUZjNrsKFgoEDquBkcx")
 
 # create_trader_api_memo_instruction generates a transaction instruction that places a memo in the transaction log
 # Having a memo instruction with signals Trader-API usage is required
-def create_trader_api_memo_instruction(msg):
+def create_trader_api_memo_instruction(msg: str) -> solana_transaction.TransactionInstruction:
     if msg == "":
         msg = BxMemoMarkerMsg
 
@@ -22,7 +23,8 @@ def create_trader_api_memo_instruction(msg):
     return instruction
 
 
-def add_memo(instructions: list[solana_transaction.TransactionInstruction], memo_content: str, blockhash, owner, *private_keys: Keypair):
+def add_memo(instructions: list[solana_transaction.TransactionInstruction], memo_content: str,
+             blockhash: Blockhash, owner: PublicKey, *private_keys: Keypair) -> str:
     memo = create_trader_api_memo_instruction(memo_content)
 
     instructions.append(memo)
@@ -34,7 +36,7 @@ def add_memo(instructions: list[solana_transaction.TransactionInstruction], memo
 
 # add_memo_to_serialized_txn adds memo instruction to a serialized transaction, it's primarily used if the user
 # doesn't want to interact with Trader-API directly
-def add_memo_to_serialized_txn(tx_base64: str, memo_content: str, owner, *private_keys: Keypair):
+def add_memo_to_serialized_txn(tx_base64: str, memo_content: str, owner: PublicKey, *private_keys: Keypair) -> str:
     tx_bytes = bytes(tx_base64, encoding="utf-8")
     tx_bytes_base64 = base64.b64decode(tx_bytes)
 
@@ -43,7 +45,9 @@ def add_memo_to_serialized_txn(tx_base64: str, memo_content: str, owner, *privat
     return add_memo(tx.instructions, memo_content, tx.recent_blockhash, owner, *private_keys)
 
 
-def build_fully_signed_txn(recent_block_hash, owner, instructions: list[solana_transaction.TransactionInstruction], *private_keys: Keypair):
+def build_fully_signed_txn(recent_block_hash: Blockhash, owner: PublicKey,
+                           instructions: list[solana_transaction.TransactionInstruction],
+                           *private_keys: Keypair) -> bytes:
 
     tx = solana_transaction.Transaction(recent_blockhash=recent_block_hash)
 
