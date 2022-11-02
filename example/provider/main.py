@@ -5,6 +5,7 @@ import os
 import bxsolana
 from bxsolana import provider, proto, transaction
 
+
 API_ENV = os.environ.get("API_ENV", "testnet")
 if API_ENV not in ["mainnet", "testnet", "local"]:
     raise EnvironmentError(
@@ -53,7 +54,6 @@ async def http():
 
     # either `try`/`finally` or `async with` work with each type of provider
     try:
-        await create_transaction_with_memo(api)
         await do_requests(api)
         await do_transaction_requests(api)
     except Exception as e:
@@ -251,6 +251,9 @@ async def do_transaction_requests(api: bxsolana.Provider):
     if not RUN_TRADES:
         print("skipping transaction requests: set by environment")
         return
+
+    print("creating transactions with memo")
+    await create_transaction_with_memo(api)
 
     print(
         "submitting order (generate + sign) to sell 0.1 SOL for USDC at 150_000"
