@@ -240,18 +240,14 @@ async def create_transaction_with_memo(api: bxsolana.Provider):
 
     tx_serialized = transaction.build_fully_signed_txn(recent_block_hash, kp.public_key, instructions, kp)
     txbase64 = base64.b64encode(tx_serialized).decode('utf8')
+    print("serialized memo txbase64", txbase64)
 
-    signed_tx = transaction.add_memo_to_serialized_txn(txbase64, "hi from dev2", kp.public_key, kp, kp2)
-    print("txbase64", txbase64)
+    signed_tx = transaction.add_memo_to_serialized_txn(txbase64, "hi from dev2", kp2.public_key, kp2)
     print("signed_tx", signed_tx)
-    # post_submit_response = await api.post_submit(
-    #     transaction=txbase64, skip_pre_flight=True
-    # )
-    # print("post_submit_response1", post_submit_response.signature)
     post_submit_response = await api.post_submit(
         transaction=signed_tx, skip_pre_flight=True
     )
-    print("post_submit_response2", post_submit_response.signature)
+    print("signature for memo tx", post_submit_response.signature)
 
 
 async def do_transaction_requests(api: bxsolana.Provider):

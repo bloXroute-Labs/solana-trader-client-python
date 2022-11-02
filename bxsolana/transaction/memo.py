@@ -39,22 +39,8 @@ def add_memo_to_serialized_txn(tx_base64: str, memo_content: str, owner, *privat
     tx_bytes_base64 = base64.b64decode(tx_bytes)
 
     tx = solana_transaction.Transaction.deserialize(tx_bytes_base64)
-    new_tx = solana_transaction.Transaction(recent_blockhash=tx.recent_blockhash)
 
-    for cmpInst in tx.compile_message().instructions:
-        accounts = []
-        for key in cmpInst.accounts:
-            inst = tx.compile_message().account_keys[key]
-            accounts.append(inst)
-
-        new_tx.instructions.append(
-            solana_transaction.TransactionInstruction(
-                keys=accounts, program_id=tx.compile_message().account_keys[cmpInst.program_id_index], data=cmpInst.data))
-
-    new_tx.fee_payer = owner
-    new_tx.sign(*private_keys)
-
-    return add_memo(new_tx.instructions, memo_content, new_tx.recent_blockhash, owner, *private_keys)
+    return add_memo(tx.instructions, memo_content, tx.recent_blockhash, owner, *private_keys)
 
 
 def build_fully_signed_txn(recent_block_hash, owner, instructions: list[solana_transaction.TransactionInstruction], *private_keys: Keypair):
