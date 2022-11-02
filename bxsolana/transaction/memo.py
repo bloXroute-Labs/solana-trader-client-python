@@ -1,6 +1,6 @@
 import base64
 
-from solana import transaction as solana_transaction, keypair
+from solana import transaction as solana_transaction
 from solana.publickey import PublicKey
 from solana.keypair import Keypair
 from solana.blockhash import Blockhash
