@@ -33,7 +33,7 @@ class TestMemo(unittest.TestCase):
             recent_block_hash, kp.public_key, instructions, kp
         )
 
-        txbase64 = base64.encodebytes(tx_serialized).decode("utf-8")
+        txbase64 = base64.encodebytes(tx_serialized).decode("ascii")
         tx_bytes = memo.add_memo_to_serialized_txn(
             txbase64, "hi from dev2", kp.public_key, kp, kp2
         )

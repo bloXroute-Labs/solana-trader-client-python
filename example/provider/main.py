@@ -1,12 +1,9 @@
 import asyncio
 import base64
-from solana.keypair import Keypair
 from solana.blockhash import Blockhash
 import os
-import base58
 import bxsolana
 from bxsolana import provider, proto, transaction
-
 
 API_ENV = os.environ.get("API_ENV", "testnet")
 if API_ENV not in ["mainnet", "testnet", "local"]:
@@ -224,14 +221,7 @@ async def do_requests(api: bxsolana.Provider):
 
 
 async def create_transaction_with_memo(api: bxsolana.Provider):
-    pv1 = "3KWC65p6AvMjvpR2r1qLTC4HVSH4jEFr5TMQxagMLo1o3j4yVYzKsfbB3jKtu3yGEHjx2Cc3L5t8wSo91vpjT63t"
-    pv2 = "5DtQgvZgb2F86bda5aAojyLyhLiFT2b3PtTqz1UNzrXtt21tk1wt3C5tCgzS12np3ZYiWR88oQWWg1nGQo1qHsbh"
-    pkey_bytes = bytes(pv1, encoding="utf-8")
-    pkey_bytes2 = bytes(pv2, encoding="utf-8")
-    pkey_bytes_base58 = base58.b58decode(pkey_bytes)
-    pkey_bytes_base58_2 = base58.b58decode(pkey_bytes2)
-    kp = Keypair.from_secret_key(pkey_bytes_base58)
-    kp2 = Keypair.from_secret_key(pkey_bytes_base58_2)
+    private_key = transaction.load_private_key_from_env()
 
     instruction = transaction.create_trader_api_memo_instruction("hi from dev")
 
@@ -239,8 +229,8 @@ async def create_transaction_with_memo(api: bxsolana.Provider):
     recent_block_hash = Blockhash(recent_block_hash_resp.block_hash)
     instructions = [instruction]
 
-    tx_serialized = transaction.build_fully_signed_txn(recent_block_hash, kp.public_key, instructions, kp)
-    single_memo_txn = base64.b64encode(tx_serialized).decode('utf8')
+    tx_serialized = transaction.build_fully_signed_txn(recent_block_hash, private_key.public_key, instructions, private_key)
+    single_memo_txn = base64.b64encode(tx_serialized).decode("utf-8")
     print("serialized memo single_memo_txn", single_memo_txn)
 
     post_submit_response = await api.post_submit(
@@ -248,7 +238,8 @@ async def create_transaction_with_memo(api: bxsolana.Provider):
     )
     print("signature for single memo txn", post_submit_response.signature)
 
-    dboule_memo_txn_signed = transaction.add_memo_to_serialized_txn(single_memo_txn, "hi from dev2", kp2.public_key, kp2)
+    dboule_memo_txn_signed = transaction.add_memo_to_serialized_txn(single_memo_txn, "hi from dev2",
+                                                                    private_key.public_key, private_key)
     print("dboule_memo_txn_signed", dboule_memo_txn_signed)
     post_submit_response = await api.post_submit(
         transaction=dboule_memo_txn_signed, skip_pre_flight=True

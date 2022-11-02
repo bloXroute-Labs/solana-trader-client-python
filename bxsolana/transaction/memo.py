@@ -41,7 +41,7 @@ def add_memo(
         blockhash, owner, instructions, *private_keys
     )
 
-    return base64.b64encode(txn_bytes).decode("utf8")
+    return base64.b64encode(txn_bytes).decode('utf-8')
 
 
 # add_memo_to_serialized_txn adds memo instruction to a serialized transaction, it's primarily used if the user
