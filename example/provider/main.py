@@ -1,11 +1,13 @@
 import asyncio
+import base64
+from solana.blockhash import Blockhash
 import os
-
 import bxsolana
-from bxsolana import provider, proto
+from bxsolana import provider, proto, transaction
+
 
 API_ENV = os.environ.get("API_ENV", "testnet")
-if API_ENV not in ["mainnet", "testnet"]:
+if API_ENV not in ["mainnet", "testnet", "local"]:
     raise EnvironmentError(
         f'invalid API_ENV value: {API_ENV} (valid values: "mainnet", "testnet")'
     )
@@ -44,6 +46,8 @@ async def http():
 
     if API_ENV == "mainnet":
         p = provider.http()
+    elif API_ENV == "local":
+        p = provider.http_local()
     else:
         p = provider.http_testnet()
     api = await bxsolana.trader_api(p)
@@ -62,6 +66,8 @@ async def http():
 async def ws():
     if API_ENV == "mainnet":
         p = provider.ws()
+    elif API_ENV == "local":
+        p = provider.ws_local()
     else:
         p = provider.ws_testnet()
 
@@ -74,6 +80,8 @@ async def ws():
 async def grpc():
     if API_ENV == "mainnet":
         p = provider.grpc()
+    elif API_ENV == "local":
+        p = provider.grpc_local()
     else:
         p = provider.grpc_testnet()
     api = await bxsolana.trader_api(p)
@@ -212,10 +220,40 @@ async def do_requests(api: bxsolana.Provider):
     )
 
 
+async def create_transaction_with_memo(api: bxsolana.Provider):
+    private_key = transaction.load_private_key_from_env()
+
+    instruction = transaction.create_trader_api_memo_instruction("hi from dev")
+
+    recent_block_hash_resp = await api.get_recent_block_hash()
+    recent_block_hash = Blockhash(recent_block_hash_resp.block_hash)
+    instructions = [instruction]
+
+    tx_serialized = transaction.build_fully_signed_txn(recent_block_hash, private_key.public_key, instructions, private_key)
+    single_memo_txn = base64.b64encode(tx_serialized).decode("utf-8")
+    print("serialized memo single_memo_txn", single_memo_txn)
+
+    post_submit_response = await api.post_submit(
+        transaction=single_memo_txn, skip_pre_flight=True
+    )
+    print("signature for single memo txn", post_submit_response.signature)
+
+    dboule_memo_txn_signed = transaction.add_memo_to_serialized_txn(single_memo_txn, "hi from dev2",
+                                                                    private_key.public_key, private_key)
+    print("dboule_memo_txn_signed", dboule_memo_txn_signed)
+    post_submit_response = await api.post_submit(
+        transaction=dboule_memo_txn_signed, skip_pre_flight=True
+    )
+    print("signature for double memo tx", post_submit_response.signature)
+
+
 async def do_transaction_requests(api: bxsolana.Provider):
     if not RUN_TRADES:
         print("skipping transaction requests: set by environment")
         return
+
+    print("creating transactions with memo")
+    await create_transaction_with_memo(api)
 
     print(
         "submitting order (generate + sign) to sell 0.1 SOL for USDC at 150_000"

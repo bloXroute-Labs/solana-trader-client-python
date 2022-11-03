@@ -7,7 +7,8 @@ import jsonrpc
 from grpclib import GRPCError
 from solana import keypair
 
-from ... import provider, transaction, proto
+
+from ... import provider, proto, transaction
 
 
 async def test_submit_cancel_order(t: unittest.TestCase, p: provider.Provider):
