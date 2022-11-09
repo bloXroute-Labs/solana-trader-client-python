@@ -40,6 +40,13 @@ class Direction(betterproto.Enum):
     D_DESCENDING = 1
 
 
+class SubmitStrategy(betterproto.Enum):
+    P_UKNOWN = 0
+    P_SUBMIT_ALL = 1
+    P_ABORT_ON_FIRST_ERROR = 2
+    P_WAIT_FOR_CONFIRMATION = 3
+
+
 class Step(betterproto.Enum):
     STEP0 = 0
     STEP1 = 1
@@ -240,7 +247,7 @@ class PostReplaceOrderRequest(betterproto.Message):
 
 @dataclass
 class PostOrderResponse(betterproto.Message):
-    transaction: str = betterproto.string_field(1)
+    transaction: "TransactionMessage" = betterproto.message_field(1)
     open_orders_address: str = betterproto.string_field(2)
 
 
@@ -263,7 +270,7 @@ class PostCancelByClientOrderIDRequest(betterproto.Message):
 
 @dataclass
 class PostCancelOrderResponse(betterproto.Message):
-    transaction: str = betterproto.string_field(1)
+    transaction: "TransactionMessage" = betterproto.message_field(1)
 
 
 @dataclass
@@ -274,8 +281,14 @@ class PostCancelAllRequest(betterproto.Message):
 
 
 @dataclass
+class TransactionMessage(betterproto.Message):
+    content: str = betterproto.string_field(1)
+    is_cleanup: bool = betterproto.bool_field(2)
+
+
+@dataclass
 class PostCancelAllResponse(betterproto.Message):
-    transactions: List[str] = betterproto.string_field(1)
+    transactions: List["TransactionMessage"] = betterproto.message_field(1)
 
 
 @dataclass
@@ -289,7 +302,7 @@ class PostSettleRequest(betterproto.Message):
 
 @dataclass
 class PostSettleResponse(betterproto.Message):
-    transaction: str = betterproto.string_field(1)
+    transaction: "TransactionMessage" = betterproto.message_field(1)
 
 
 @dataclass
@@ -357,13 +370,37 @@ class GetOrderStatusResponse(betterproto.Message):
 
 @dataclass
 class PostSubmitRequest(betterproto.Message):
-    transaction: str = betterproto.string_field(1)
+    transaction: "TransactionMessage" = betterproto.message_field(1)
     skip_pre_flight: bool = betterproto.bool_field(2)
+
+
+@dataclass
+class PostSubmitRequestEntry(betterproto.Message):
+    transaction: "TransactionMessage" = betterproto.message_field(1)
+    skip_pre_flight: bool = betterproto.bool_field(2)
+
+
+@dataclass
+class PostSubmitBatchRequest(betterproto.Message):
+    entries: List["PostSubmitRequestEntry"] = betterproto.message_field(1)
+    submit_strategy: "SubmitStrategy" = betterproto.enum_field(2)
 
 
 @dataclass
 class PostSubmitResponse(betterproto.Message):
     signature: str = betterproto.string_field(1)
+
+
+@dataclass
+class PostSubmitBatchResponseEntry(betterproto.Message):
+    signature: str = betterproto.string_field(1)
+    error: str = betterproto.string_field(2)
+    submitted: bool = betterproto.bool_field(3)
+
+
+@dataclass
+class PostSubmitBatchResponse(betterproto.Message):
+    transactions: List["PostSubmitBatchResponseEntry"] = betterproto.message_field(1)
 
 
 @dataclass
@@ -490,20 +527,38 @@ class TradeSwapRequest(betterproto.Message):
 
 
 @dataclass
+class RouteTradeSwapRequest(betterproto.Message):
+    project: "Project" = betterproto.enum_field(1)
+    owner_address: str = betterproto.string_field(2)
+    steps: List["RouteStep"] = betterproto.message_field(3)
+
+
+@dataclass
+class RouteStep(betterproto.Message):
+    in_token: str = betterproto.string_field(1)
+    in_amount: float = betterproto.double_field(2)
+    out_token: str = betterproto.string_field(3)
+    out_amount: float = betterproto.double_field(4)
+    out_amount_min: float = betterproto.double_field(5)
+    project: "StepProject" = betterproto.message_field(6)
+
+
+@dataclass
 class TradeSwapResponse(betterproto.Message):
     project: "Project" = betterproto.enum_field(1)
-    transactions: List[str] = betterproto.string_field(2)
+    transactions: List["TransactionMessage"] = betterproto.message_field(2)
     out_amount: float = betterproto.double_field(3)
     min_out_amount: float = betterproto.double_field(4)
     price_impact: "PriceImpactPercent" = betterproto.message_field(5)
-    fee: "Fee" = betterproto.message_field(6)
+    fees: List["Fee"] = betterproto.message_field(6)
 
 
 @dataclass
 class QuoteRoute(betterproto.Message):
     in_amount: float = betterproto.double_field(1)
     out_amount: float = betterproto.double_field(2)
-    steps: List["QuoteStep"] = betterproto.message_field(3)
+    out_amount_min: float = betterproto.double_field(3)
+    steps: List["QuoteStep"] = betterproto.message_field(4)
 
 
 @dataclass
@@ -518,6 +573,8 @@ class QuoteStep(betterproto.Message):
     slippage: float = betterproto.double_field(8)
     price_impact_percent: "PriceImpactPercent" = betterproto.message_field(9)
     fee: "Fee" = betterproto.message_field(10)
+    out_amount_min: float = betterproto.double_field(11)
+    pool_address: str = betterproto.string_field(12)
 
 
 @dataclass
@@ -596,6 +653,21 @@ class GetQuotesStreamRequest(betterproto.Message):
 
 
 @dataclass
+class GetSwapsStreamRequest(betterproto.Message):
+    projects: List["Project"] = betterproto.enum_field(1)
+    markets: List[str] = betterproto.string_field(2)
+
+
+@dataclass
+class GetSwapsStreamResponse(betterproto.Message):
+    project: "Project" = betterproto.enum_field(1)
+    slot: int = betterproto.int64_field(2)
+    market: str = betterproto.string_field(3)
+    in_amount: int = betterproto.uint64_field(4)
+    out_amount: int = betterproto.uint64_field(5)
+
+
+@dataclass
 class TokenPair(betterproto.Message):
     in_token: str = betterproto.string_field(1)
     out_token: str = betterproto.string_field(2)
@@ -642,6 +714,18 @@ class PoolReserves(betterproto.Message):
 @dataclass
 class GetPoolReservesStreamRequest(betterproto.Message):
     projects: List["Project"] = betterproto.enum_field(1)
+
+
+@dataclass
+class GetPricesStreamRequest(betterproto.Message):
+    projects: List["Project"] = betterproto.enum_field(1)
+    tokens: List[str] = betterproto.string_field(2)
+
+
+@dataclass
+class GetPricesStreamResponse(betterproto.Message):
+    slot: int = betterproto.int64_field(1)
+    price: "TokenPrice" = betterproto.message_field(2)
 
 
 class ApiStub(betterproto.ServiceStub):
@@ -825,16 +909,37 @@ class ApiStub(betterproto.ServiceStub):
         )
 
     async def post_submit(
-        self, *, transaction: str = "", skip_pre_flight: bool = False
+        self,
+        *,
+        transaction: Optional["TransactionMessage"] = None,
+        skip_pre_flight: bool = False,
     ) -> PostSubmitResponse:
         request = PostSubmitRequest()
-        request.transaction = transaction
+        if transaction is not None:
+            request.transaction = transaction
         request.skip_pre_flight = skip_pre_flight
 
         return await self._unary_unary(
             "/api.Api/PostSubmit",
             request,
             PostSubmitResponse,
+        )
+
+    async def post_submit_batch(
+        self,
+        *,
+        entries: List["PostSubmitRequestEntry"] = [],
+        submit_strategy: "SubmitStrategy" = 0,
+    ) -> PostSubmitBatchResponse:
+        request = PostSubmitBatchRequest()
+        if entries is not None:
+            request.entries = entries
+        request.submit_strategy = submit_strategy
+
+        return await self._unary_unary(
+            "/api.Api/PostSubmitBatch",
+            request,
+            PostSubmitBatchResponse,
         )
 
     async def post_cancel_order(
@@ -1082,6 +1187,25 @@ class ApiStub(betterproto.ServiceStub):
             GetUnsettledResponse,
         )
 
+    async def post_route_trade_swap(
+        self,
+        *,
+        project: "Project" = 0,
+        owner_address: str = "",
+        steps: List["RouteStep"] = [],
+    ) -> TradeSwapResponse:
+        request = RouteTradeSwapRequest()
+        request.project = project
+        request.owner_address = owner_address
+        if steps is not None:
+            request.steps = steps
+
+        return await self._unary_unary(
+            "/api.Api/PostRouteTradeSwap",
+            request,
+            TradeSwapResponse,
+        )
+
     async def get_orderbooks_stream(
         self, *, markets: List[str] = [], limit: int = 0
     ) -> AsyncGenerator[GetOrderbooksStreamResponse, None]:
@@ -1188,5 +1312,33 @@ class ApiStub(betterproto.ServiceStub):
             "/api.Api/GetPoolReservesStream",
             request,
             GetPoolReservesStreamResponse,
+        ):
+            yield response
+
+    async def get_prices_stream(
+        self, *, projects: List["Project"] = [], tokens: List[str] = []
+    ) -> AsyncGenerator[GetPricesStreamResponse, None]:
+        request = GetPricesStreamRequest()
+        request.projects = projects
+        request.tokens = tokens
+
+        async for response in self._unary_stream(
+            "/api.Api/GetPricesStream",
+            request,
+            GetPricesStreamResponse,
+        ):
+            yield response
+
+    async def get_swaps_stream(
+        self, *, projects: List["Project"] = [], markets: List[str] = []
+    ) -> AsyncGenerator[GetSwapsStreamResponse, None]:
+        request = GetSwapsStreamRequest()
+        request.projects = projects
+        request.markets = markets
+
+        async for response in self._unary_stream(
+            "/api.Api/GetSwapsStream",
+            request,
+            GetSwapsStreamResponse,
         ):
             yield response
