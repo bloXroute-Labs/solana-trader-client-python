@@ -1,3 +1,5 @@
+.PHONY: all clean pkg release proto lint fmt fmt-check analyze typecheck test
+
 all: clean pkg
 
 clean:
@@ -31,4 +33,4 @@ typecheck:
 	pyre check
 
 test:
-	python -m unittest discover
+	python -m unittest discover test/unit

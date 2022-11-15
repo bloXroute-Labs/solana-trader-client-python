@@ -1,15 +1,17 @@
 import asyncio
 import base64
-from solana.blockhash import Blockhash
 import os
+
+from solana.blockhash import Blockhash
+
 import bxsolana
 from bxsolana import provider, proto, transaction
-
 
 API_ENV = os.environ.get("API_ENV", "testnet")
 if API_ENV not in ["mainnet", "testnet", "local"]:
     raise EnvironmentError(
-        f'invalid API_ENV value: {API_ENV} (valid values: "mainnet", "testnet")'
+        f'invalid API_ENV value: {API_ENV} (valid values: "mainnet", "testnet",'
+        ' "local)'
     )
 
 # trades stream is infrequent in terms of updates
@@ -229,20 +231,25 @@ async def create_transaction_with_memo(api: bxsolana.Provider):
     recent_block_hash = Blockhash(recent_block_hash_resp.block_hash)
     instructions = [instruction]
 
-    tx_serialized = transaction.build_fully_signed_txn(recent_block_hash, private_key.public_key, instructions, private_key)
+    tx_serialized = transaction.build_fully_signed_txn(
+        recent_block_hash, private_key.public_key, instructions, private_key
+    )
     single_memo_txn = base64.b64encode(tx_serialized).decode("utf-8")
     print("serialized memo single_memo_txn", single_memo_txn)
 
     post_submit_response = await api.post_submit(
-        transaction=single_memo_txn, skip_pre_flight=True
+        transaction=proto.TransactionMessage(single_memo_txn),
+        skip_pre_flight=True,
     )
     print("signature for single memo txn", post_submit_response.signature)
 
-    dboule_memo_txn_signed = transaction.add_memo_to_serialized_txn(single_memo_txn, "hi from dev2",
-                                                                    private_key.public_key, private_key)
-    print("dboule_memo_txn_signed", dboule_memo_txn_signed)
+    double_memo_txn_signed = transaction.add_memo_to_serialized_txn(
+        single_memo_txn, "hi from dev2", private_key.public_key, private_key
+    )
+    print("double_memo_txn_signed", double_memo_txn_signed)
     post_submit_response = await api.post_submit(
-        transaction=dboule_memo_txn_signed, skip_pre_flight=True
+        transaction=proto.TransactionMessage(double_memo_txn_signed),
+        skip_pre_flight=True,
     )
     print("signature for double memo tx", post_submit_response.signature)
 
