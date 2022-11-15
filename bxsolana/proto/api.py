@@ -363,9 +363,10 @@ class GetOrderStatusResponse(betterproto.Message):
     client_order_i_d: int = betterproto.uint64_field(4)
     quantity_released: float = betterproto.float_field(5)
     quantity_remaining: float = betterproto.float_field(6)
-    price: float = betterproto.float_field(7)
+    fill_price: float = betterproto.float_field(7)
     side: "Side" = betterproto.enum_field(8)
     order_status: "OrderStatus" = betterproto.enum_field(9)
+    order_price: float = betterproto.float_field(10)
 
 
 @dataclass
@@ -548,7 +549,7 @@ class TradeSwapResponse(betterproto.Message):
     project: "Project" = betterproto.enum_field(1)
     transactions: List["TransactionMessage"] = betterproto.message_field(2)
     out_amount: float = betterproto.double_field(3)
-    min_out_amount: float = betterproto.double_field(4)
+    out_amount_min: float = betterproto.double_field(4)
     price_impact: "PriceImpactPercent" = betterproto.message_field(5)
     fees: List["Fee"] = betterproto.message_field(6)
 
@@ -675,13 +676,16 @@ class GetSwapsStreamUpdate(betterproto.Message):
     success: bool = betterproto.bool_field(1)
     project: "Project" = betterproto.enum_field(2)
     pool_address: str = betterproto.string_field(3)
-    in_token: str = betterproto.string_field(4)
-    in_token_address: str = betterproto.string_field(5)
-    in_amount: int = betterproto.uint64_field(6)
-    out_amount: int = betterproto.uint64_field(7)
-    out_token: str = betterproto.string_field(8)
-    out_token_address: str = betterproto.string_field(9)
-    signature: str = betterproto.string_field(10)
+    base_token: str = betterproto.string_field(4)
+    base_token_address: str = betterproto.string_field(5)
+    quote_token: str = betterproto.string_field(6)
+    quote_token_address: str = betterproto.string_field(7)
+    in_amount: int = betterproto.uint64_field(8)
+    out_amount_min: int = betterproto.uint64_field(9)
+    source_account: str = betterproto.string_field(10)
+    destination_account: str = betterproto.string_field(11)
+    owner_account: str = betterproto.string_field(12)
+    signature: str = betterproto.string_field(13)
 
 
 @dataclass
