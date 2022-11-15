@@ -57,7 +57,9 @@ class Provider(proto.ApiStub, ABC):
             open_orders_address=open_orders_address,
             client_order_i_d=client_order_id,
         )
-        signed_tx = transaction.sign_tx_message_with_private_key(order.transaction, pk)
+        signed_tx = transaction.sign_tx_message_with_private_key(
+            order.transaction, pk
+        )
         result = await self.post_submit(
             transaction=signed_tx, skip_pre_flight=skip_pre_flight
         )
@@ -80,7 +82,9 @@ class Provider(proto.ApiStub, ABC):
             owner_address=owner_address,
             open_orders_address=open_orders_address,
         )
-        signed_tx = transaction.sign_tx_message_with_private_key(order.transaction, pk)
+        signed_tx = transaction.sign_tx_message_with_private_key(
+            order.transaction, pk
+        )
         result = await self.post_submit(
             transaction=signed_tx, skip_pre_flight=skip_pre_flight
         )
@@ -101,7 +105,9 @@ class Provider(proto.ApiStub, ABC):
             owner_address=owner_address,
             open_orders_address=open_orders_address,
         )
-        signed_tx = transaction.sign_tx_message_with_private_key(order.transaction, pk)
+        signed_tx = transaction.sign_tx_message_with_private_key(
+            order.transaction, pk
+        )
         result = await self.post_submit(
             transaction=signed_tx, skip_pre_flight=skip_pre_flight
         )
@@ -184,7 +190,9 @@ class Provider(proto.ApiStub, ABC):
             open_orders_address=open_orders_address,
             client_order_i_d=client_order_i_d,
         )
-        signed_tx = transaction.sign_tx_message_with_private_key(order.transaction, pk)
+        signed_tx = transaction.sign_tx_message_with_private_key(
+            order.transaction, pk
+        )
         result = await self.post_submit(
             transaction=signed_tx, skip_pre_flight=skip_pre_flight
         )
@@ -217,7 +225,9 @@ class Provider(proto.ApiStub, ABC):
             client_order_i_d=client_order_id,
             order_i_d=order_i_d,
         )
-        signed_tx = transaction.sign_tx_message_with_private_key(order.transaction, pk)
+        signed_tx = transaction.sign_tx_message_with_private_key(
+            order.transaction, pk
+        )
         result = await self.post_submit(
             transaction=signed_tx, skip_pre_flight=skip_pre_flight
         )

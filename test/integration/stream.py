@@ -1,6 +1,6 @@
 import asyncio
 import async_timeout
-from ... import provider
+from bxsolana import provider
 import unittest
 import typing
 

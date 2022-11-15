@@ -1,7 +1,7 @@
 import aiounittest
 
 from . import private, public
-from ... import provider
+from bxsolana import provider
 
 
 class TestHTTP(aiounittest.AsyncTestCase):

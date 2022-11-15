@@ -1,7 +1,7 @@
 import aiounittest
 
 from . import private, public, stream
-from ... import provider
+from bxsolana import provider
 
 
 class TestWS(aiounittest.AsyncTestCase):
