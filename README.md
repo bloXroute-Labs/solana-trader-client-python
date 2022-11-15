@@ -74,8 +74,7 @@ $ pip install -r requirements.txt
 Run tests:
 
 ```
-$
-
+$ make test
 ```
 
 Regenerate protobuf files:
