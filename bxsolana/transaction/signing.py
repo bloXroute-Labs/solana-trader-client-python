@@ -5,6 +5,7 @@ import base64
 from solana import keypair as kp
 
 from .deserializer import PartialTransaction
+from .. import proto
 
 
 def load_private_key(pkey_str: str) -> kp.Keypair:
@@ -58,3 +59,12 @@ def sign_tx_with_private_key(
     # convert transaction back to base64
     signed_tx_bytes_base64 = base64.b64encode(partial_tx.serialize())
     return signed_tx_bytes_base64.decode("utf-8")
+
+
+def sign_tx_message_with_private_key(
+    tx_message: proto.TransactionMessage, keypair: kp.Keypair
+) -> proto.TransactionMessage:
+    return proto.TransactionMessage(
+        sign_tx_with_private_key(tx_message.content, keypair),
+        tx_message.is_cleanup
+    )

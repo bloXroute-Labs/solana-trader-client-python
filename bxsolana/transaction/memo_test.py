@@ -7,7 +7,7 @@ from solana.keypair import Keypair
 from solana.publickey import PublicKey
 from solana.blockhash import Blockhash
 
-from bxsolana.transaction import memo
+from . import memo
 
 # key generated for this test
 RANDOM_PRIVATE_KEY = "3KWC65p6AvMjvpR2r1qLTC4HVSH4jEFr5TMQxagMLo1o3j4yVYzKsfbB3jKtu3yGEHjx2Cc3L5t8wSo91vpjT63t"

@@ -293,8 +293,14 @@ class HttpProvider(Provider):
             return await map_response(res, proto.PostSettleResponse())
 
     async def post_submit(
-        self, *, transaction: str = "", skip_pre_flight: bool = False
+        self,
+        *,
+        transaction: Optional[proto.TransactionMessage] = None,
+        skip_pre_flight: bool = False,
     ) -> proto.PostSubmitResponse:
+        if transaction is None:
+            raise ValueError("transaction cannot be omitted")
+
         request = proto.PostSubmitRequest(transaction, skip_pre_flight)
         async with self._session.post(
             f"{self._endpoint}/trade/submit", json=request.to_dict()
