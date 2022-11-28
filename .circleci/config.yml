@@ -99,13 +99,10 @@ workflows:
           context:
             - circleci
       - unit:
-          context:
-            - slack
           requires:
             - init
-      - integration-mainnet:
+      - Mainnet:
           context:
-            - slack
             - trader-api-sdk
           requires:
             - init
