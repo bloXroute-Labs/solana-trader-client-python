@@ -101,7 +101,7 @@ workflows:
       - unit:
           requires:
             - init
-      - Mainnet:
+      - examples:
           context:
             - trader-api-sdk
           requires:
