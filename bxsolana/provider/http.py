@@ -62,7 +62,11 @@ class HttpProvider(Provider):
             return await map_response(res, proto.GetMarketsResponse())
 
     async def get_orderbook(
-        self, *, market: str = "", limit: int = 0, program: proto.MarketProgram = proto.MarketProgram.MP_SERUM
+        self,
+        *,
+        market: str = "",
+        limit: int = 0,
+        program: proto.MarketProgram = proto.MarketProgram.MP_SERUM,
     ) -> proto.GetOrderbookResponse:
         async with self._session.get(
             f"{self._endpoint}/market/orderbooks/{market}?limit={limit}"
@@ -70,7 +74,10 @@ class HttpProvider(Provider):
             return await map_response(res, proto.GetOrderbookResponse())
 
     async def get_tickers(
-        self, *, market: str = "", program: proto.MarketProgram = proto.MarketProgram.MP_SERUM
+        self,
+        *,
+        market: str = "",
+        program: proto.MarketProgram = proto.MarketProgram.MP_SERUM,
     ) -> proto.GetTickersResponse:
         async with self._session.get(
             f"{self._endpoint}/market/tickers/{market}"
@@ -89,7 +96,7 @@ class HttpProvider(Provider):
         direction: proto.Direction = proto.Direction.D_ASCENDING,
         address: str = "",
         open_orders_address: str = "",
-        program: proto.MarketProgram = proto.MarketProgram.MP_SERUM
+        program: proto.MarketProgram = proto.MarketProgram.MP_SERUM,
     ) -> proto.GetOrdersResponse:
         raise NotImplementedError()
 
@@ -104,7 +111,7 @@ class HttpProvider(Provider):
         direction: proto.Direction = proto.Direction.D_ASCENDING,
         address: str = "",
         open_orders_address: str = "",
-        program: proto.MarketProgram = proto.MarketProgram.MP_SERUM
+        program: proto.MarketProgram = proto.MarketProgram.MP_SERUM,
     ) -> proto.GetOpenOrdersResponse:
         async with self._session.get(
             f"{self._endpoint}/trade/orders/{market}"
@@ -117,13 +124,21 @@ class HttpProvider(Provider):
             return await map_response(res, proto.GetOpenOrdersResponse())
 
     async def get_order_by_i_d(
-        self, *, order_i_d: str = "", market: str = "", program: proto.MarketProgram = proto.MarketProgram.MP_SERUM
+        self,
+        *,
+        order_i_d: str = "",
+        market: str = "",
+        program: proto.MarketProgram = proto.MarketProgram.MP_SERUM,
     ) -> proto.GetOrderByIDResponse:
         # TODO
         raise NotImplementedError()
 
     async def get_unsettled(
-        self, *, market: str = "", owner_address: str = "", program: proto.MarketProgram = proto.MarketProgram.MP_SERUM
+        self,
+        *,
+        market: str = "",
+        owner_address: str = "",
+        program: proto.MarketProgram = proto.MarketProgram.MP_SERUM,
     ) -> proto.GetUnsettledResponse:
         async with self._session.get(
             f"{self._endpoint}/trade/unsettled/{market}?ownerAddress={owner_address}"
@@ -199,7 +214,7 @@ class HttpProvider(Provider):
         price: float = 0,
         open_orders_address: str = "",
         client_order_i_d: int = 0,
-        program: proto.MarketProgram = proto.MarketProgram.MP_SERUM
+        program: proto.MarketProgram = proto.MarketProgram.MP_SERUM,
     ) -> proto.PostOrderResponse:
         request = proto.PostOrderRequest(
             owner_address,
@@ -226,7 +241,7 @@ class HttpProvider(Provider):
         market_address: str = "",
         owner_address: str = "",
         open_orders_address: str = "",
-        program: proto.MarketProgram = proto.MarketProgram.MP_SERUM
+        program: proto.MarketProgram = proto.MarketProgram.MP_SERUM,
     ) -> proto.PostCancelOrderResponse:
         request = proto.PostCancelOrderRequest(
             order_i_d,
@@ -248,7 +263,7 @@ class HttpProvider(Provider):
         market_address: str = "",
         owner_address: str = "",
         open_orders_address: str = "",
-        program: proto.MarketProgram = proto.MarketProgram.MP_SERUM
+        program: proto.MarketProgram = proto.MarketProgram.MP_SERUM,
     ) -> proto.PostCancelOrderResponse:
         request = proto.PostCancelByClientOrderIDRequest(
             client_order_i_d,
@@ -268,7 +283,7 @@ class HttpProvider(Provider):
         market: str = "",
         owner_address: str = "",
         open_orders_addresses: List[str] = [],
-        program: proto.MarketProgram = proto.MarketProgram.MP_SERUM
+        program: proto.MarketProgram = proto.MarketProgram.MP_SERUM,
     ) -> proto.PostCancelAllResponse:
         request = proto.PostCancelAllRequest(
             market, owner_address, open_orders_addresses
@@ -286,7 +301,7 @@ class HttpProvider(Provider):
         base_token_wallet: str = "",
         quote_token_wallet: str = "",
         open_orders_address: str = "",
-        program: proto.MarketProgram = proto.MarketProgram.MP_SERUM
+        program: proto.MarketProgram = proto.MarketProgram.MP_SERUM,
     ) -> proto.PostSettleResponse:
         request = proto.PostSettleRequest(
             owner_address,
@@ -327,7 +342,7 @@ class HttpProvider(Provider):
         price: float = 0,
         open_orders_address: str = "",
         client_order_i_d: int = 0,
-        program: proto.MarketProgram = proto.MarketProgram.MP_SERUM
+        program: proto.MarketProgram = proto.MarketProgram.MP_SERUM,
     ) -> proto.PostOrderResponse:
         request = proto.PostOrderRequest(
             owner_address,
