@@ -5,7 +5,8 @@ import os
 from solana.blockhash import Blockhash
 
 import bxsolana
-from bxsolana import provider, proto, transaction
+from bxsolana import provider, transaction
+from solana_trader_python_proto import api as proto
 
 API_ENV = os.environ.get("API_ENV", "testnet")
 if API_ENV not in ["mainnet", "testnet", "local"]:
