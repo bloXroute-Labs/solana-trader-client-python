@@ -101,7 +101,6 @@ workflows:
           context: trader-api-sdk
           requires:
             - init
-
   nightly:
       triggers:
         - schedule:
