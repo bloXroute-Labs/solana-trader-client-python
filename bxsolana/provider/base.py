@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import List, Optional
 
 from solana import keypair
-from solana_trader_python_proto import api
+from bxsolana_trader_proto import api
 from .. import transaction
 
 

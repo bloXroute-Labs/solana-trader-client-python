@@ -5,7 +5,7 @@ from typing import Type, AsyncGenerator, Optional, TYPE_CHECKING, List
 import aiohttp
 from solana import keypair
 
-from solana_trader_python_proto import api as proto
+from bxsolana_trader_proto import api as proto
 from .. import transaction
 from . import constants
 from .base import Provider

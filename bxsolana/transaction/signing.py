@@ -5,7 +5,7 @@ import base64
 from solana import keypair as kp
 
 from .deserializer import PartialTransaction
-from solana_trader_python_proto import api as proto
+from bxsolana_trader_proto import api as proto
 
 
 def load_private_key(pkey_str: str) -> kp.Keypair:
