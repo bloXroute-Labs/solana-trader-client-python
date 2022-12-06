@@ -73,12 +73,12 @@ you can build the solana-trader-proto/python directory using these commands
     
     upgrade the version in pyproject.toml
     
-    rm -rf python/dist/
+   
     make proto-build-api-python
     cd python
     
     you can also push the package to pypi 
-   
+    rm -rf python/dist/
     python3 -m build
     python3 -m twine upload --repository pypi dist/*
     
