@@ -54,7 +54,7 @@ jobs:
             cd ~/ws/solana-trader-client-python
             . venv/bin/activate
             make test
-  examples-testnet:
+  examples_testnet:
     executor: bxpython
     steps:
       - attach_workspace:
@@ -65,7 +65,7 @@ jobs:
             cd ~/ws/solana-trader-client-python
             . venv/bin/activate
             API_ENV=testnet AUTH_HEADER=$AUTH_HEADER_TESTNET python example/provider/main.py
-  examples-mainnet:
+  examples_mainnet:
     executor: bxpython
     steps:
       - attach_workspace:
@@ -93,11 +93,11 @@ workflows:
       - unit:
           requires:
             - init
-      - examples-testnet:
+      - examples_testnet:
           context: trader-api-sdk
           requires:
             - init
-      - examples-mainnet:
+      - examples_mainnet:
           context: trader-api-sdk
           requires:
             - init
@@ -116,13 +116,13 @@ workflows:
         - unit:
             requires:
               - init
-        - examples-testnet:
+        - examples_testnet:
             context:
               - trader-api-sdk
             requires:
               - init
               - unit
-        - examples-mainnet:
+        - examples_mainnet:
             context:
               - trader-api-sdk
             requires:
