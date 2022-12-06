@@ -63,7 +63,7 @@ Refer to the `examples/` for more info.
 bloXroute Solana Trader API's interfaces are primarily powered by protobuf, so you will 
 need to install it for your system: https://grpc.io/docs/protoc-installation/
 
-In order to install local version of solana_trader_python_proto dependency
+In order to install local version of bxsolana_trader_proto dependency
 
 you can build the solana-trader-proto/python directory using these commands
 
