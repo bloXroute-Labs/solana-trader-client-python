@@ -97,22 +97,14 @@ workflows:
           requires:
             - init
   nightly:
-    triggers:
-        - schedule:
-          cron: "0 0 12 * *"
-          filters:
-            branches:
-              only:
-                - develop
-    jobs:
-      - unit:
-          requires:
-            - init
-      - examples-testnet:
-          context: trader-api-sdk
-          requires:
-            - init
-      - examples-mainnet:
-          context: trader-api-sdk
-          requires:
-            - init
+  triggers:
+      - schedule:
+        cron: "0 0 12 * *"
+        filters:
+          branches:
+            only:
+              - develop
+  jobs:
+    - examples-testnet:
+    - examples-mainnet:
+    
