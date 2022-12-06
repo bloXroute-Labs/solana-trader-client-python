@@ -5,7 +5,7 @@ executors:
       - image: cimg/python:3.10.7
     environment:
       RUN_TRADES: false
-      RUN_TRADE_STREAM: false
+      RUN_SLOW_STREAMS: false
     working_directory: ~/ws
 jobs:
   init:
