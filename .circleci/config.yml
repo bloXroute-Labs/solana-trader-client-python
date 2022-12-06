@@ -67,6 +67,7 @@ jobs:
             API_ENV=testnet AUTH_HEADER=$AUTH_HEADER_TESTNET python example/provider/main.py
 
   examples-mainnet:
+    - executor: bxpython
     - steps:
       - attach_workspace:
         at: ~/ws
@@ -106,5 +107,10 @@ workflows:
               - develop
   jobs:
     - examples-testnet:
+        context: trader-api-sdk
+        requires:
+          - init
     - examples-mainnet:
-    
+        context: trader-api-sdk
+        requires:
+          - init
