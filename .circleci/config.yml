@@ -108,10 +108,6 @@ workflows:
       - unit:
           requires:
             - init
-      - examples-testnet:
-          context: trader-api-sdk
-          requires:
-            - init
       - examples-mainnet:
           context: trader-api-sdk
           requires:
