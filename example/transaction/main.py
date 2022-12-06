@@ -5,7 +5,8 @@ import time
 
 import async_timeout
 
-from bxsolana import proto, provider
+from bxsolana_trader_proto import api as proto
+from bxsolana import provider
 from bxsolana.transaction import signing
 
 public_key = os.getenv("PUBLIC_KEY")

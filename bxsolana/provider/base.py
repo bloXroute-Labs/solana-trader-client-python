@@ -2,11 +2,11 @@ from abc import ABC, abstractmethod
 from typing import List, Optional
 
 from solana import keypair
+from bxsolana_trader_proto import api
+from .. import transaction
 
-from .. import proto, transaction
 
-
-class Provider(proto.ApiStub, ABC):
+class Provider(api.ApiStub, ABC):
     async def __aenter__(self):
         await self.connect()
         return self
@@ -37,8 +37,8 @@ class Provider(proto.ApiStub, ABC):
         owner_address: str,
         payer_address: str,
         market: str,
-        side: "proto.Side",
-        types: List["proto.OrderType"],
+        side: "api.Side",
+        types: List["api.OrderType"],
         amount: float,
         price: float,
         open_orders_address: str = "",
@@ -68,7 +68,7 @@ class Provider(proto.ApiStub, ABC):
     async def submit_cancel_order(
         self,
         order_i_d: str = "",
-        side: proto.Side = proto.Side.S_UNKNOWN,
+        side: api.Side = api.Side.S_UNKNOWN,
         market_address: str = "",
         owner_address: str = "",
         open_orders_address: str = "",
@@ -170,8 +170,8 @@ class Provider(proto.ApiStub, ABC):
         owner_address: str,
         payer_address: str,
         market: str,
-        side: "proto.Side",
-        types: List["proto.OrderType"],
+        side: "api.Side",
+        types: List["api.OrderType"],
         amount: float,
         price: float,
         open_orders_address: str = "",
@@ -204,8 +204,8 @@ class Provider(proto.ApiStub, ABC):
         owner_address: str,
         payer_address: str,
         market: str,
-        side: "proto.Side",
-        types: List["proto.OrderType"],
+        side: "api.Side",
+        types: List["api.OrderType"],
         amount: float,
         price: float,
         open_orders_address: str = "",

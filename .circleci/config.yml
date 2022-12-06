@@ -5,7 +5,7 @@ executors:
       - image: cimg/python:3.10.7
     environment:
       RUN_TRADES: false
-      RUN_TRADE_STREAM: false
+      RUN_SLOW_STREAMS: false
     working_directory: ~/ws
 jobs:
   init:
@@ -54,7 +54,18 @@ jobs:
             cd ~/ws/solana-trader-client-python
             . venv/bin/activate
             make test
-  examples:
+  testnet_examples:
+    executor: bxpython
+    steps:
+      - attach_workspace:
+          at: ~/ws
+      - run:
+          name: Testnet
+          command: |
+            cd ~/ws/solana-trader-client-python
+            . venv/bin/activate
+            API_ENV=testnet AUTH_HEADER=$AUTH_HEADER_TESTNET python example/provider/main.py
+  mainnet_examples:
     executor: bxpython
     steps:
       - attach_workspace:
@@ -82,7 +93,38 @@ workflows:
       - unit:
           requires:
             - init
-      - examples:
+      - testnet_examples:
           context: trader-api-sdk
           requires:
             - init
+      - mainnet_examples:
+          context: trader-api-sdk
+          requires:
+            - init
+  nightly:
+      triggers:
+        - schedule:
+            cron: "0 0 12 * *"
+            filters:
+              branches:
+                only:
+                  - develop
+      jobs:
+        - init:
+            context:
+              - circleci
+        - unit:
+            requires:
+              - init
+        - testnet_examples:
+            context:
+              - trader-api-sdk
+            requires:
+              - init
+              - unit
+        - mainnet_examples:
+            context:
+              - trader-api-sdk
+            requires:
+              - init
+              - unit

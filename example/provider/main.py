@@ -5,7 +5,8 @@ import os
 from solana.blockhash import Blockhash
 
 import bxsolana
-from bxsolana import provider, proto, transaction
+from bxsolana import provider, transaction
+from bxsolana_trader_proto import api as proto
 
 API_ENV = os.environ.get("API_ENV", "testnet")
 if API_ENV not in ["mainnet", "testnet", "local"]:
@@ -15,11 +16,11 @@ if API_ENV not in ["mainnet", "testnet", "local"]:
     )
 
 # trades stream is infrequent in terms of updates
-RUN_TRADE_STREAM = os.environ.get("RUN_TRADE_STREAM", "true")
-if RUN_TRADE_STREAM == "false":
-    RUN_TRADE_STREAM = False
+RUN_SLOW_STREAMS = os.environ.get("RUN_SLOW_STREAMS", "true")
+if RUN_SLOW_STREAMS == "false":
+    RUN_SLOW_STREAMS = False
 else:
-    RUN_TRADE_STREAM = True
+    RUN_SLOW_STREAMS = True
 
 RUN_TRADES = os.environ.get("RUN_TRADES", "true")
 if RUN_TRADES == "false":
@@ -358,23 +359,25 @@ async def do_transaction_requests(api: bxsolana.Provider):
 async def do_stream(api: bxsolana.Provider):
     item_count = 0
 
-    print("streaming orderbook updates...")
-    async for response in api.get_orderbooks_stream(markets=["SOLUSDC"]):
-        print(response.to_json())
-        item_count += 1
-        if item_count == 5:
-            item_count = 0
-            break
+    if RUN_SLOW_STREAMS:
+        print("streaming orderbook updates...")
+        async for response in api.get_orderbooks_stream(markets=["SOLUSDC"]):
+            print(response.to_json())
+            item_count += 1
+            if item_count == 5:
+                item_count = 0
+                break
 
-    print("streaming ticker updates...")
-    async for response in api.get_tickers_stream(market="SOLUSDC"):
-        print(response.to_json())
-        item_count += 1
-        if item_count == 5:
-            item_count = 0
-            break
+    if RUN_SLOW_STREAMS:
+        print("streaming ticker updates...")
+        async for response in api.get_tickers_stream(market="SOLUSDC"):
+            print(response.to_json())
+            item_count += 1
+            if item_count == 5:
+                item_count = 0
+                break
 
-    if RUN_TRADE_STREAM:
+    if RUN_SLOW_STREAMS:
         print("streaming trade updates...")
         async for response in api.get_trades_stream(market="SOLUSDC"):
             print(response.to_json())
