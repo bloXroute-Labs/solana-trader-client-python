@@ -69,7 +69,7 @@ you can build the solana-trader-proto/python directory using these commands
 
 
 ```
-    cd /Users/mahmoud/Documents/workspace-go/solana-trader-proto/
+    cd ~/solana-trader-proto/
     
     upgrade the version in pyproject.toml
     cd python
@@ -77,7 +77,7 @@ you can build the solana-trader-proto/python directory using these commands
     make proto-build-api-python
     
     and install the package locally now
-    python -m pip install /Users/mahmoud/Documents/workspace-go/solana-trader-proto/python
+    python -m pip install ~/solana-trader-proto/python
     
     you can also push the package to pypi 
    
