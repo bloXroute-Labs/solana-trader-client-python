@@ -8,6 +8,13 @@ import bxsolana
 from bxsolana import provider, transaction
 from bxsolana_trader_proto import api as proto
 
+os.environ[
+    "AUTH_HEADER"] = "ZDIxYzE0NmItZWYxNi00ZmFmLTg5YWUtMzYwMTk4YzUyZmM4OjEwOWE5MzEzZDc2Yjg3MzczYjdjZDdhNmZkZGE3ZDg5"
+os.environ[
+    "PRIVATE_KEY"] = "3EhZ4Epe6QrcDKQRucdftv6vWXMnpTKDV4mekSPWZEcZnJV4huzesLHwASdVUzoGyQ8evywwomGHQZiYr91fdm6y"
+os.environ["PUBLIC_KEY"] = "2JJQHAYdogfB1fE1ftcvFcsQAXSgQQKkafCwZczWdSWd"
+os.environ["API_ENV"] = "local"
+
 API_ENV = os.environ.get("API_ENV", "testnet")
 if API_ENV not in ["mainnet", "testnet", "local"]:
     raise EnvironmentError(
@@ -98,6 +105,21 @@ async def grpc():
 
 
 async def do_requests(api: bxsolana.Provider):
+
+    step = proto.RouteStep()
+    step.in_token = "USDC"
+    step.in_amount = "0.01"
+    step.out_token = "SOL"
+    step.out_amount = "0.01"
+    step.out_amount_min = "0.01"
+    step.project= proto.StepProject
+
+    await api.post_route_trade_swap(
+        project=proto.Project.P_RAYDIUM,
+        owner_address=PUBLIC_KEY,
+        steps=[step])
+
+
     # markets API
     print("fetching all markets")
     print((await api.get_markets()).to_json())
