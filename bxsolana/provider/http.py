@@ -61,19 +61,6 @@ class HttpProvider(Provider):
         async with self._session.get(f"{self._endpoint}/market/markets") as res:
             return await map_response(res, proto.GetMarketsResponse())
 
-    async def get_pools(
-        self, *, projects: List["Project"] = []
-    ) -> proto.GetPoolsResponse:
-        projects = (
-            "projects=&".join(project.value for project in projects)
-            if len(projects) > 0
-            else ""
-        )
-        async with self._session.get(
-            f"{self._endpoint}/market/pools?projects={projects}"
-        ) as res:
-            return await map_response(res, proto.GetPoolsResponse())
-
     async def get_quotes(
         self,
         *,
@@ -85,7 +72,7 @@ class HttpProvider(Provider):
         projects: List["Project"] = [],
     ) -> proto.GetQuotesResponse:
         projects = (
-            "projects=&".join(project.value for project in projects)
+            "projects=&".join(str(project.value) for project in projects)
             if len(projects) > 0
             else ""
         )
@@ -205,10 +192,10 @@ class HttpProvider(Provider):
             return await map_response(res, proto.GetAccountBalanceResponse())
 
     async def get_pools(
-        self, projects: List[proto.Project] = []
+        self, projects: List["Project"] = []
     ) -> proto.GetPoolsResponse:
         params = (
-            "?" + "projects=&".join(project.value for project in projects)
+            "?" + "projects=&".join(str(project.value) for project in projects)
             if len(projects) > 0
             else ""
         )
