@@ -69,7 +69,7 @@ class HttpProvider(Provider):
         in_amount: float = 0,
         slippage: float = 0,
         limit: int = 10,
-        projects: List["Project"] = [],
+        projects: List["proto.Project"] = [],
     ) -> proto.GetQuotesResponse:
         projects = (
             "projects=&".join(str(project.value) for project in projects)
@@ -84,9 +84,9 @@ class HttpProvider(Provider):
     async def post_route_trade_swap(
         self,
         *,
-        project: "Project" = 0,
+        project: "proto.Project" = 0,
         owner_address: str = "",
-        steps: List["RouteStep"] = [],
+        steps: List["proto.RouteStep"] = [],
     ) -> proto.TradeSwapResponse:
         request = proto.RouteTradeSwapRequest()
         request.project = project
@@ -192,7 +192,7 @@ class HttpProvider(Provider):
             return await map_response(res, proto.GetAccountBalanceResponse())
 
     async def get_pools(
-        self, projects: List["Project"] = []
+        self, projects: List["proto.Project"] = []
     ) -> proto.GetPoolsResponse:
         params = (
             "?" + "projects=&".join(str(project.value) for project in projects)
