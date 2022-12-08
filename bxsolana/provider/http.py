@@ -69,22 +69,22 @@ class HttpProvider(Provider):
         in_amount: float = 0,
         slippage: float = 0,
         limit: int = 10,
-        projects: List["proto.Project"] = [],
+        projects: List[proto.Project] = [],
     ) -> proto.GetQuotesResponse:
-        projects = (
+        projects_str = (
             "projects=&".join(str(project.value) for project in projects)
             if len(projects) > 0
             else ""
         )
         async with self._session.get(
-            f"{self._endpoint}/market/quote?inToken={in_token}&outToken={out_token}&inAmount={in_amount}&slippage={slippage}&limit={limit}&projects={projects}"
+            f"{self._endpoint}/market/quote?inToken={in_token}&outToken={out_token}&inAmount={in_amount}&slippage={slippage}&limit={limit}&projects={projects_str}"
         ) as res:
             return await map_response(res, proto.GetQuotesResponse())
 
     async def post_route_trade_swap(
         self,
         *,
-        project: "proto.Project" = 0,
+        project: proto.Project = proto.Project.P_RAYDIUM,
         owner_address: str = "",
         steps: List["proto.RouteStep"] = [],
     ) -> proto.TradeSwapResponse:
