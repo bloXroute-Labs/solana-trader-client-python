@@ -66,10 +66,10 @@ class HttpProvider(Provider):
         *,
         market: str = "",
         limit: int = 0,
-        program: proto.MarketProgram = proto.MarketProgram.MP_SERUM,
+        project: proto.Project = proto.Project.P_UNKNOWN,
     ) -> proto.GetOrderbookResponse:
         async with self._session.get(
-            f"{self._endpoint}/market/orderbooks/{market}?limit={limit}"
+            f"{self._endpoint}/market/orderbooks/{market}?limit={limit}&project={project.name}"
         ) as res:
             return await map_response(res, proto.GetOrderbookResponse())
 
@@ -77,10 +77,10 @@ class HttpProvider(Provider):
         self,
         *,
         market: str = "",
-        program: proto.MarketProgram = proto.MarketProgram.MP_SERUM,
+        project: proto.Project = proto.Project.P_UNKNOWN,
     ) -> proto.GetTickersResponse:
         async with self._session.get(
-            f"{self._endpoint}/market/tickers/{market}"
+            f"{self._endpoint}/market/tickers/{market}?project={project.name}"
         ) as res:
             return await map_response(res, proto.GetTickersResponse())
 
@@ -96,7 +96,7 @@ class HttpProvider(Provider):
         direction: proto.Direction = proto.Direction.D_ASCENDING,
         address: str = "",
         open_orders_address: str = "",
-        program: proto.MarketProgram = proto.MarketProgram.MP_SERUM,
+        project: proto.Project = proto.Project.P_UNKNOWN,
     ) -> proto.GetOrdersResponse:
         raise NotImplementedError()
 
@@ -111,15 +111,16 @@ class HttpProvider(Provider):
         direction: proto.Direction = proto.Direction.D_ASCENDING,
         address: str = "",
         open_orders_address: str = "",
-        program: proto.MarketProgram = proto.MarketProgram.MP_SERUM,
+        project: proto.Project = proto.Project.P_UNKNOWN,
     ) -> proto.GetOpenOrdersResponse:
         async with self._session.get(
             f"{self._endpoint}/trade/orders/{market}"
             f"?address={address}"
             f"&openOrdersAddress={open_orders_address}"
             f"&side={side}"
-            "&types=OT_LIMIT"
+            f"&types=OT_LIMIT"
             f"&direction={direction.name}"
+            f"&project={project.name}"
         ) as res:
             return await map_response(res, proto.GetOpenOrdersResponse())
 
@@ -128,7 +129,7 @@ class HttpProvider(Provider):
         *,
         order_i_d: str = "",
         market: str = "",
-        program: proto.MarketProgram = proto.MarketProgram.MP_SERUM,
+        project: proto.Project = proto.Project.P_UNKNOWN,
     ) -> proto.GetOrderByIDResponse:
         # TODO
         raise NotImplementedError()
@@ -138,10 +139,10 @@ class HttpProvider(Provider):
         *,
         market: str = "",
         owner_address: str = "",
-        program: proto.MarketProgram = proto.MarketProgram.MP_SERUM,
+        project: proto.Project = proto.Project.P_UNKNOWN,
     ) -> proto.GetUnsettledResponse:
         async with self._session.get(
-            f"{self._endpoint}/trade/unsettled/{market}?ownerAddress={owner_address}"
+            f"{self._endpoint}/trade/unsettled/{market}?ownerAddress={owner_address}&project={project.name}"
         ) as res:
             return await map_response(res, proto.GetUnsettledResponse())
 
@@ -198,7 +199,7 @@ class HttpProvider(Provider):
         )
 
         async with self._session.post(
-            f"{self._endpoint}/trade/place", json=request.to_dict()
+            f"{self._endpoint}/trade/swap", json=request.to_dict()
         ) as res:
             return await map_response(res, proto.TradeSwapResponse())
 
@@ -214,7 +215,7 @@ class HttpProvider(Provider):
         price: float = 0,
         open_orders_address: str = "",
         client_order_i_d: int = 0,
-        program: proto.MarketProgram = proto.MarketProgram.MP_SERUM,
+        project: proto.Project = proto.Project.P_UNKNOWN,
     ) -> proto.PostOrderResponse:
         request = proto.PostOrderRequest(
             owner_address,
@@ -226,6 +227,7 @@ class HttpProvider(Provider):
             price,
             open_orders_address,
             client_order_i_d,
+            project,
         )
 
         async with self._session.post(
@@ -241,7 +243,7 @@ class HttpProvider(Provider):
         market_address: str = "",
         owner_address: str = "",
         open_orders_address: str = "",
-        program: proto.MarketProgram = proto.MarketProgram.MP_SERUM,
+        project: proto.Project = proto.Project.P_UNKNOWN,
     ) -> proto.PostCancelOrderResponse:
         request = proto.PostCancelOrderRequest(
             order_i_d,
@@ -249,6 +251,7 @@ class HttpProvider(Provider):
             market_address,
             owner_address,
             open_orders_address,
+            project,
         )
 
         async with self._session.post(
@@ -263,13 +266,14 @@ class HttpProvider(Provider):
         market_address: str = "",
         owner_address: str = "",
         open_orders_address: str = "",
-        program: proto.MarketProgram = proto.MarketProgram.MP_SERUM,
+        project: proto.Project = proto.Project.P_UNKNOWN,
     ) -> proto.PostCancelOrderResponse:
         request = proto.PostCancelByClientOrderIDRequest(
             client_order_i_d,
             market_address,
             owner_address,
             open_orders_address,
+            project,
         )
 
         async with self._session.post(
@@ -283,10 +287,10 @@ class HttpProvider(Provider):
         market: str = "",
         owner_address: str = "",
         open_orders_addresses: List[str] = [],
-        program: proto.MarketProgram = proto.MarketProgram.MP_SERUM,
+        project: proto.Project = proto.Project.P_UNKNOWN,
     ) -> proto.PostCancelAllResponse:
         request = proto.PostCancelAllRequest(
-            market, owner_address, open_orders_addresses
+            market, owner_address, open_orders_addresses, project
         )
         async with self._session.post(
             f"{self._endpoint}/trade/cancelall", json=request.to_dict()
@@ -301,7 +305,7 @@ class HttpProvider(Provider):
         base_token_wallet: str = "",
         quote_token_wallet: str = "",
         open_orders_address: str = "",
-        program: proto.MarketProgram = proto.MarketProgram.MP_SERUM,
+        project: proto.Project = proto.Project.P_UNKNOWN,
     ) -> proto.PostSettleResponse:
         request = proto.PostSettleRequest(
             owner_address,
@@ -309,6 +313,7 @@ class HttpProvider(Provider):
             base_token_wallet,
             quote_token_wallet,
             open_orders_address,
+            project,
         )
         async with self._session.post(
             f"{self._endpoint}/trade/settle", json=request.to_dict()
@@ -342,7 +347,7 @@ class HttpProvider(Provider):
         price: float = 0,
         open_orders_address: str = "",
         client_order_i_d: int = 0,
-        program: proto.MarketProgram = proto.MarketProgram.MP_SERUM,
+        project: proto.Project = proto.Project.P_UNKNOWN,
     ) -> proto.PostOrderResponse:
         request = proto.PostOrderRequest(
             owner_address,
@@ -354,6 +359,7 @@ class HttpProvider(Provider):
             price,
             open_orders_address,
             client_order_i_d,
+            project,
         )
 
         async with self._session.post(
@@ -374,7 +380,7 @@ class HttpProvider(Provider):
         open_orders_address: str = "",
         client_order_i_d: int = 0,
         order_i_d: str = "",
-        program: proto.MarketProgram = proto.MarketProgram.MP_SERUM,
+        project: proto.Project = proto.Project.P_UNKNOWN,
     ) -> proto.PostOrderResponse:
         request = proto.PostReplaceOrderRequest(
             owner_address,
@@ -387,6 +393,7 @@ class HttpProvider(Provider):
             open_orders_address,
             client_order_i_d,
             order_i_d,
+            project,
         )
 
         async with self._session.post(

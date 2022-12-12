@@ -43,6 +43,7 @@ class Provider(api.ApiStub, ABC):
         price: float,
         open_orders_address: str = "",
         client_order_id: int = 0,
+        project: api.Project = api.Project.P_UNKNOWN,
         skip_pre_flight: bool = False,
     ) -> str:
         pk = self.require_private_key()
@@ -56,6 +57,7 @@ class Provider(api.ApiStub, ABC):
             price=price,
             open_orders_address=open_orders_address,
             client_order_i_d=client_order_id,
+            project=project,
         )
         signed_tx = transaction.sign_tx_message_with_private_key(
             order.transaction, pk
@@ -72,6 +74,7 @@ class Provider(api.ApiStub, ABC):
         market_address: str = "",
         owner_address: str = "",
         open_orders_address: str = "",
+        project: api.Project = api.Project.P_UNKNOWN,
         skip_pre_flight: bool = True,
     ) -> str:
         pk = self.require_private_key()
@@ -81,6 +84,7 @@ class Provider(api.ApiStub, ABC):
             market_address=market_address,
             owner_address=owner_address,
             open_orders_address=open_orders_address,
+            project=project,
         )
         signed_tx = transaction.sign_tx_message_with_private_key(
             order.transaction, pk
@@ -96,6 +100,7 @@ class Provider(api.ApiStub, ABC):
         market_address: str = "",
         owner_address: str = "",
         open_orders_address: str = "",
+        project: api.Project = api.Project.P_UNKNOWN,
         skip_pre_flight: bool = True,
     ) -> str:
         pk = self.require_private_key()
@@ -104,6 +109,7 @@ class Provider(api.ApiStub, ABC):
             market_address=market_address,
             owner_address=owner_address,
             open_orders_address=open_orders_address,
+            project=project,
         )
         signed_tx = transaction.sign_tx_message_with_private_key(
             order.transaction, pk
@@ -118,6 +124,7 @@ class Provider(api.ApiStub, ABC):
         market: str = "",
         owner_address: str = "",
         open_orders_addresses: Optional[List[str]] = None,
+        project: api.Project = api.Project.P_UNKNOWN,
         skip_pre_flight: bool = True,
     ) -> List[str]:
         if open_orders_addresses is None:
@@ -128,6 +135,7 @@ class Provider(api.ApiStub, ABC):
             market=market,
             owner_address=owner_address,
             open_orders_addresses=open_orders_addresses,
+            project=project,
         )
 
         signatures = []
@@ -147,6 +155,7 @@ class Provider(api.ApiStub, ABC):
         base_token_wallet: str = "",
         quote_token_wallet: str = "",
         open_orders_address: str = "",
+        project: api.Project = api.Project.P_UNKNOWN,
         skip_pre_flight: bool = False,
     ) -> str:
         pk = self.require_private_key()
@@ -156,6 +165,7 @@ class Provider(api.ApiStub, ABC):
             base_token_wallet=base_token_wallet,
             quote_token_wallet=quote_token_wallet,
             open_orders_address=open_orders_address,
+            project=project,
         )
         signed_tx = transaction.sign_tx_message_with_private_key(
             response.transaction, pk
@@ -176,6 +186,7 @@ class Provider(api.ApiStub, ABC):
         price: float,
         open_orders_address: str = "",
         client_order_i_d: int = 0,
+        project: api.Project = api.Project.P_UNKNOWN,
         skip_pre_flight: bool = False,
     ) -> str:
         pk = self.require_private_key()
@@ -189,6 +200,7 @@ class Provider(api.ApiStub, ABC):
             price=price,
             open_orders_address=open_orders_address,
             client_order_i_d=client_order_i_d,
+            project=project,
         )
         signed_tx = transaction.sign_tx_message_with_private_key(
             order.transaction, pk
@@ -210,6 +222,7 @@ class Provider(api.ApiStub, ABC):
         price: float,
         open_orders_address: str = "",
         client_order_id: int = 0,
+        project: api.Project = api.Project.P_UNKNOWN,
         skip_pre_flight: bool = False,
     ) -> str:
         pk = self.require_private_key()
@@ -224,6 +237,7 @@ class Provider(api.ApiStub, ABC):
             open_orders_address=open_orders_address,
             client_order_i_d=client_order_id,
             order_i_d=order_i_d,
+            project=project,
         )
         signed_tx = transaction.sign_tx_message_with_private_key(
             order.transaction, pk
