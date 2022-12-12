@@ -118,7 +118,7 @@ class HttpProvider(Provider):
             f"?address={address}"
             f"&openOrdersAddress={open_orders_address}"
             f"&side={side}"
-            f"&types=OT_LIMIT"
+            "&types=OT_LIMIT"
             f"&direction={direction.name}"
             f"&project={project.name}"
         ) as res:
