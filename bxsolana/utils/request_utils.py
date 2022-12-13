@@ -3,13 +3,18 @@ from bxsolana_trader_proto import api as proto
 
 from bxsolana.utils.constants import SOL_USDC_MARKET, PUBLIC_KEY, OPEN_ORDERS, ORDER_ID, USDC_WALLET
 
+public_key = PUBLIC_KEY
+open_orders = OPEN_ORDERS
+order_id = ORDER_ID
+usdc_wallet = USDC_WALLET
+sol_usdc_market = SOL_USDC_MARKET
 
 async def do_requests(api: bxsolana.Provider,
-                      public_key: PUBLIC_KEY,
-                      open_orders: OPEN_ORDERS,
-                      order_id: ORDER_ID,
-                      usdc_wallet: USDC_WALLET,
-                      sol_usdc_market: SOL_USDC_MARKET):
+                      public_key: public_key,
+                      open_orders: open_orders,
+                      order_id: order_id,
+                      usdc_wallet: usdc_wallet,
+                      sol_usdc_market: sol_usdc_market):
     # markets API
     print("fetching all markets")
     print((await api.get_markets()).to_json())

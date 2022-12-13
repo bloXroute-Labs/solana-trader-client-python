@@ -1,8 +1,9 @@
 import bxsolana
 from bxsolana_trader_proto import api as proto
 
+run_slow_streams = False
 async def do_stream(api: bxsolana.Provider,
-                    run_slow_streams: False):
+                    run_slow_streams: run_slow_streams):
     item_count = 0
 
     if run_slow_streams:
