@@ -109,6 +109,3 @@ def ws_devnet() -> Provider:
 
 def ws_local() -> Provider:
     return WsProvider(endpoint=constants.LOCAL_API_WS)
-
-def ws_local_MFTEST() -> Provider:
-    return WsProvider(endpoint=constants.LOCAL_API_WS)
