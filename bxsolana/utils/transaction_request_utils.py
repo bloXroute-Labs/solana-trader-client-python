@@ -8,7 +8,13 @@ from bxsolana_trader_proto import api as proto
 
 from bxsolana.utils.constants import SOL_USDC_MARKET
 
-async def do_transaction_requests(api: bxsolana.Provider, run_trades, owner_addr, payer_addr, open_orders_addr, order_id, usdc_wallet):
+async def do_transaction_requests(api: bxsolana.Provider,
+                                  run_trades,
+                                  owner_addr,
+                                  payer_addr,
+                                  open_orders_addr,
+                                  order_id,
+                                  usdc_wallet):
     if not run_trades:
         print("skipping transaction requests: set by environment")
         return

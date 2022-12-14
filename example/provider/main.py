@@ -50,8 +50,8 @@ async def http():
 
     # either `try`/`finally` or `async with` work with each type of provider
     try:
-        await utils.do_requests(api)
-        await utils.do_transaction_requests(api)
+        await utils.do_requests(api, utils.PUBLIC_KEY, utils.OPEN_ORDERS, utils.ORDER_ID, utils.USDC_WALLET, utils.SOL_USDC_MARKET)
+        await utils.do_transaction_requests(api, RUN_TRADES, utils.PUBLIC_KEY, utils.PUBLIC_KEY, utils.OPEN_ORDERS, utils.ORDER_ID, utils.USDC_WALLET)
     except Exception as e:
         print(e)
         raise e
@@ -68,8 +68,8 @@ async def ws():
         p = provider.ws_testnet()
 
     async with p as api:
-        await utils.do_requests(api)
-        await utils.do_transaction_requests()
+        await utils.do_requests(api, utils.PUBLIC_KEY, utils.OPEN_ORDERS, utils.ORDER_ID, utils.USDC_WALLET, utils.SOL_USDC_MARKET)
+        await utils.do_transaction_requests(api, RUN_TRADES, utils.PUBLIC_KEY, utils.PUBLIC_KEY, utils.OPEN_ORDERS, utils.ORDER_ID, utils.USDC_WALLET)
         await utils.do_stream(api, RUN_SLOW_STREAMS)
 
 
@@ -83,8 +83,8 @@ async def grpc():
     api = await bxsolana.trader_api(p)
 
     try:
-        await utils.do_requests(api)
-        await utils.do_transaction_requests()
+        await utils.do_requests(api, utils.PUBLIC_KEY, utils.OPEN_ORDERS, utils.ORDER_ID, utils.USDC_WALLET, utils.SOL_USDC_MARKET)
+        await utils.do_transaction_requests(api, RUN_TRADES, utils.PUBLIC_KEY, utils.PUBLIC_KEY, utils.OPEN_ORDERS, utils.ORDER_ID, utils.USDC_WALLET)
         await utils.do_stream(api, RUN_SLOW_STREAMS)
     finally:
         await p.close()
