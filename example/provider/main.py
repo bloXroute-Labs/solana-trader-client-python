@@ -131,26 +131,26 @@ async def do_requests(api: bxsolana.Provider):
     print((await api.get_markets()).to_json())
 
     print("fetching SOL/USDC orderbook")
-    print((await api.get_orderbook(market="SOLUSDC")).to_json())
+    print((await api.get_orderbook(market="SOLUSDC", project=proto.Project.P_OPENBOOK)).to_json())
 
     print("fetching SOL/USDC ticker")
-    print((await api.get_tickers(market="SOLUSDC")).to_json())
+    print((await api.get_tickers(market="SOLUSDC", project=proto.Project.P_OPENBOOK)).to_json())
 
     print("fetching all tickers")
-    print((await api.get_tickers()).to_json())
+    print((await api.get_tickers(project=proto.Project.P_OPENBOOK)).to_json())
 
     # trade API
     print("fetching open orders for account")
     print(
         (
-            await api.get_open_orders(market="SOLUSDC", address=PUBLIC_KEY)
+            await api.get_open_orders(market="SOLUSDC", address=PUBLIC_KEY, project=proto.Project.P_OPENBOOK)
         ).to_json()
     )
 
     print("fetching unsettled amounts")
     print(
         (
-            await api.get_unsettled(market="SOLUSDC", owner_address=PUBLIC_KEY)
+            await api.get_unsettled(market="SOLUSDC", owner_address=PUBLIC_KEY, project=proto.Project.P_OPENBOOK)
         ).to_json()
     )
 
@@ -171,6 +171,7 @@ async def do_requests(api: bxsolana.Provider):
                 type=[proto.OrderType.OT_LIMIT],
                 amount=0.1,
                 price=150_000,
+                project=proto.Project.P_OPENBOOK,
                 # optional, but much faster if known
                 open_orders_address=OPEN_ORDERS,
                 # optional, for identification
@@ -186,6 +187,7 @@ async def do_requests(api: bxsolana.Provider):
                 order_i_d=ORDER_ID,
                 side=proto.Side.S_ASK,
                 market_address="SOLUSDC",
+                project=proto.Project.P_OPENBOOK,
                 owner_address=PUBLIC_KEY,
                 open_orders_address=OPEN_ORDERS,
             )
@@ -198,6 +200,7 @@ async def do_requests(api: bxsolana.Provider):
             client_order_i_d=123,
             market_address=SOL_USDC_MARKET,
             owner_address=PUBLIC_KEY,
+            project=proto.Project.P_OPENBOOK,
             open_orders_address=OPEN_ORDERS,
         )
     )
@@ -209,6 +212,7 @@ async def do_requests(api: bxsolana.Provider):
             market="SOLUSDC",
             base_token_wallet=PUBLIC_KEY,
             quote_token_wallet=USDC_WALLET,
+            project=proto.Project.P_OPENBOOK,
             open_orders_address=OPEN_ORDERS,
         )
     )
@@ -223,6 +227,7 @@ async def do_requests(api: bxsolana.Provider):
                 type=[proto.OrderType.OT_LIMIT],
                 amount=0.1,
                 price=150_000,
+                project=proto.Project.P_OPENBOOK,
                 # optional, but much faster if known
                 open_orders_address=OPEN_ORDERS,
                 # optional, for identification
@@ -241,6 +246,7 @@ async def do_requests(api: bxsolana.Provider):
                 type=[proto.OrderType.OT_LIMIT],
                 amount=0.1,
                 price=150_000,
+                project=proto.Project.P_OPENBOOK,
                 # optional, but much faster if known
                 open_orders_address=OPEN_ORDERS,
                 # optional, for identification
@@ -304,6 +310,7 @@ async def do_transaction_requests(api: bxsolana.Provider):
             types=[proto.OrderType.OT_LIMIT],
             amount=0.1,
             price=150_000,
+            project=proto.Project.P_OPENBOOK,
             # optional, but much faster if known
             open_orders_address=OPEN_ORDERS,
             # optional, for identification
@@ -318,6 +325,7 @@ async def do_transaction_requests(api: bxsolana.Provider):
             side=proto.Side.S_ASK,
             market_address="SOLUSDC",
             owner_address=PUBLIC_KEY,
+            project=proto.Project.P_OPENBOOK,
             open_orders_address=OPEN_ORDERS,
         )
     )
@@ -328,6 +336,7 @@ async def do_transaction_requests(api: bxsolana.Provider):
             client_order_i_d=123,
             market_address=SOL_USDC_MARKET,
             owner_address=PUBLIC_KEY,
+            project=proto.Project.P_OPENBOOK,
             open_orders_address=OPEN_ORDERS,
         )
     )
@@ -338,6 +347,7 @@ async def do_transaction_requests(api: bxsolana.Provider):
             market="SOLUSDC",
             base_token_wallet=PUBLIC_KEY,
             quote_token_wallet=USDC_WALLET,
+            project=proto.Project.P_OPENBOOK,
             open_orders_address="",  # optional
         )
     )
@@ -355,6 +365,7 @@ async def do_transaction_requests(api: bxsolana.Provider):
             types=[proto.OrderType.OT_LIMIT],
             amount=0.1,
             price=150_000,
+            project=proto.Project.P_OPENBOOK,
             # optional, but much faster if known
             open_orders_address=OPEN_ORDERS,
             # optional, for identification
@@ -374,6 +385,7 @@ async def do_transaction_requests(api: bxsolana.Provider):
             types=[proto.OrderType.OT_LIMIT],
             amount=0.1,
             price=150_000,
+            project=proto.Project.P_OPENBOOK,
             # optional, but much faster if known
             open_orders_address=OPEN_ORDERS,
             # optional, for identification
@@ -389,7 +401,7 @@ async def do_stream(api: bxsolana.Provider):
 
     if RUN_SLOW_STREAMS:
         print("streaming orderbook updates...")
-        async for response in api.get_orderbooks_stream(markets=["SOLUSDC"]):
+        async for response in api.get_orderbooks_stream(markets=["SOLUSDC"], project=proto.Project.P_OPENBOOK):
             print(response.to_json())
             item_count += 1
             if item_count == 5:
@@ -398,7 +410,7 @@ async def do_stream(api: bxsolana.Provider):
 
     if RUN_SLOW_STREAMS:
         print("streaming ticker updates...")
-        async for response in api.get_tickers_stream(market="SOLUSDC"):
+        async for response in api.get_tickers_stream(market="SOLUSDC", project=proto.Project.P_OPENBOOK):
             print(response.to_json())
             item_count += 1
             if item_count == 5:
@@ -407,7 +419,7 @@ async def do_stream(api: bxsolana.Provider):
 
     if RUN_SLOW_STREAMS:
         print("streaming trade updates...")
-        async for response in api.get_trades_stream(market="SOLUSDC"):
+        async for response in api.get_trades_stream(market="SOLUSDC", project=proto.Project.P_OPENBOOK):
             print(response.to_json())
             item_count += 1
             if item_count == 1:
