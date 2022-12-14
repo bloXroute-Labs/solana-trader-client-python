@@ -71,12 +71,6 @@ jobs:
       - attach_workspace:
           at: ~/ws
       - run:
-          name: Testnet
-          command: |
-            cd ~/ws/solana-trader-client-python
-            . venv/bin/activate
-            API_ENV=testnet AUTH_HEADER=$AUTH_HEADER_TESTNET python example/provider/main.py
-      - run:
           name: Mainnet
           command: |
             cd ~/ws/solana-trader-client-python
