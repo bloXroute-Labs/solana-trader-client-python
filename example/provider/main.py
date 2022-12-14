@@ -37,8 +37,8 @@ ORDER_ID = "3929156487700134707538850"
 
 
 async def main():
-    await http()
     await ws()
+    await http()
     await grpc()
 
 
@@ -98,6 +98,34 @@ async def grpc():
 
 
 async def do_requests(api: bxsolana.Provider):
+
+    print("getting price")
+    print((await api.get_price(tokens=[
+            "So11111111111111111111111111111111111111112", "USDC", "SOL", "USDT"
+        ])).to_json())
+
+    print("getting pools")
+    print((await api.get_pools(projects=[proto.Project.P_RAYDIUM])).to_json())
+
+    print("getting quotes")
+    print((await api.get_quotes(in_token="USDC", out_token= "SOL",
+                         in_amount = 0.01, slippage= 10 , limit = 1, projects=[proto.Project.P_RAYDIUM])).to_json())
+
+    print("posting route swap")
+    step = proto.RouteStep()
+    step.in_token = "USDC"
+    step.in_amount = 0.01
+    step.out_token = "SOL"
+    step.out_amount = 0.01
+    step.out_amount_min = 0.01
+    step_project = proto.StepProject()
+    step_project.label = "Raydium"
+    step_project.id = "1234"
+    step.project = step_project
+    print((await api.post_route_trade_swap(project=proto.Project.P_RAYDIUM,
+                                           owner_address=PUBLIC_KEY, steps=[step])).to_json())
+
+
     # markets API
     print("fetching all markets")
     print((await api.get_markets()).to_json())
@@ -392,6 +420,26 @@ async def do_stream(api: bxsolana.Provider):
     if RUN_SLOW_STREAMS:
         print("streaming trade updates...")
         async for response in api.get_trades_stream(market="SOLUSDC", project=proto.Project.P_OPENBOOK):
+            print(response.to_json())
+            item_count += 1
+            if item_count == 1:
+                item_count = 0
+                break
+
+    if RUN_SLOW_STREAMS:
+        print("streaming pool reserves...")
+        async for response in api.get_pool_reserves_stream(projects=[proto.Project.P_RAYDIUM]):
+            print(response.to_json())
+            item_count += 1
+            if item_count == 1:
+                item_count = 0
+                break
+
+    if RUN_SLOW_STREAMS:
+        print("streaming price streams...")
+        async for response in api.get_prices_stream(projects=[proto.Project.P_RAYDIUM], tokens=[
+            "So11111111111111111111111111111111111111112", "USDC", "SOL", "USDT"
+        ]):
             print(response.to_json())
             item_count += 1
             if item_count == 1:

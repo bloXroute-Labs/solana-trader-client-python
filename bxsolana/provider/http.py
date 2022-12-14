@@ -61,6 +61,44 @@ class HttpProvider(Provider):
         async with self._session.get(f"{self._endpoint}/market/markets") as res:
             return await map_response(res, proto.GetMarketsResponse())
 
+    async def get_quotes(
+        self,
+        *,
+        in_token: str = "",
+        out_token: str = "",
+        in_amount: float = 0,
+        slippage: float = 0,
+        limit: int = 10,
+        projects: List[proto.Project] = [],
+    ) -> proto.GetQuotesResponse:
+        projects_str = (
+            "projects=&".join(str(project.value) for project in projects)
+            if len(projects) > 0
+            else ""
+        )
+        async with self._session.get(
+            f"{self._endpoint}/market/quote?inToken={in_token}&outToken={out_token}&inAmount={in_amount}&slippage={slippage}&limit={limit}&projects={projects_str}"
+        ) as res:
+            return await map_response(res, proto.GetQuotesResponse())
+
+    async def post_route_trade_swap(
+        self,
+        *,
+        project: proto.Project = proto.Project.P_RAYDIUM,
+        owner_address: str = "",
+        steps: List["proto.RouteStep"] = [],
+    ) -> proto.TradeSwapResponse:
+        request = proto.RouteTradeSwapRequest()
+        request.project = project
+        request.owner_address = owner_address
+        if steps is not None:
+            request.steps = steps
+
+        async with self._session.post(
+            f"{self._endpoint}/trade/route-swap", json=request.to_dict()
+        ) as res:
+            return await map_response(res, proto.TradeSwapResponse())
+
     async def get_orderbook(
         self,
         *,
@@ -155,10 +193,10 @@ class HttpProvider(Provider):
             return await map_response(res, proto.GetAccountBalanceResponse())
 
     async def get_pools(
-        self, projects: List[proto.Project] = []
+        self, projects: List["proto.Project"] = []
     ) -> proto.GetPoolsResponse:
         params = (
-            "?" + "projects=&".join(project.value for project in projects)
+            "?" + "projects=&".join(str(project.value) for project in projects)
             if len(projects) > 0
             else ""
         )
