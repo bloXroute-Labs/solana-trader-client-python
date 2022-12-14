@@ -98,6 +98,12 @@ async def grpc():
 
 
 async def do_requests(api: bxsolana.Provider):
+
+    print("getting price")
+    print((await api.get_price(tokens=[
+            "So11111111111111111111111111111111111111112", "USDC", "SOL", "USDT"
+        ])).to_json())
+
     print("getting pools")
     print((await api.get_pools(projects=[proto.Project.P_RAYDIUM])).to_json())
 
