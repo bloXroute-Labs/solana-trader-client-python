@@ -37,8 +37,8 @@ ORDER_ID = "3929156487700134707538850"
 
 
 async def main():
-    await http()
     await ws()
+    await http()
     await grpc()
 
 
@@ -98,7 +98,6 @@ async def grpc():
 
 
 async def do_requests(api: bxsolana.Provider):
-
     print("getting pools")
     print((await api.get_pools(projects=[proto.Project.P_RAYDIUM])).to_json())
 
@@ -403,6 +402,26 @@ async def do_stream(api: bxsolana.Provider):
     if RUN_SLOW_STREAMS:
         print("streaming trade updates...")
         async for response in api.get_trades_stream(market="SOLUSDC"):
+            print(response.to_json())
+            item_count += 1
+            if item_count == 1:
+                item_count = 0
+                break
+
+    if RUN_SLOW_STREAMS:
+        print("streaming pool reserves...")
+        async for response in api.get_pool_reserves_stream(projects=[proto.Project.P_RAYDIUM]):
+            print(response.to_json())
+            item_count += 1
+            if item_count == 1:
+                item_count = 0
+                break
+
+    if RUN_SLOW_STREAMS:
+        print("streaming price streams...")
+        async for response in api.get_prices_stream(projects=[proto.Project.P_RAYDIUM], tokens=[
+            "So11111111111111111111111111111111111111112", "USDC", "SOL", "USDT"
+        ]):
             print(response.to_json())
             item_count += 1
             if item_count == 1:
