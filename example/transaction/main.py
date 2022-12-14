@@ -1,13 +1,9 @@
 import asyncio
 import os
-import random
-import time
 
-import bxsolana.utils
 from bxsolana_trader_proto import api as proto
 from bxsolana import provider
 from bxsolana import utils
-from bxsolana.transaction import signing
 
 # TODO: Add some logic here to indicate to user if missing needed environment variables for tests
 public_key = os.getenv("PUBLIC_KEY")

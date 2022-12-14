@@ -1,13 +1,10 @@
 import asyncio
-import base64
 import os
 
-from solana.blockhash import Blockhash
 
 import bxsolana
-from bxsolana import provider, transaction
+from bxsolana import provider
 from bxsolana import utils
-from bxsolana_trader_proto import api as proto
 
 API_ENV = os.environ.get("API_ENV", "testnet")
 if API_ENV not in ["mainnet", "testnet", "local"]:
