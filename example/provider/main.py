@@ -114,14 +114,14 @@ async def do_requests(api: bxsolana.Provider):
     print("posting route swap")
     step = proto.RouteStep()
     step.in_token = "USDC"
-    step.in_amount = "0.01"
+    step.in_amount = 0.01
     step.out_token = "SOL"
-    step.out_amount = "0.01"
-    step.out_amount_min = "0.01"
-    stepProject = proto.StepProject()
-    stepProject.label = "Raydium"
-    stepProject.id = "1234"
-    step.project = stepProject
+    step.out_amount = 0.01
+    step.out_amount_min = 0.01
+    step_project = proto.StepProject()
+    step_project.label = "Raydium"
+    step_project.id = "1234"
+    step.project = step_project
     print((await api.post_route_trade_swap(project=proto.Project.P_RAYDIUM,
                                            owner_address=PUBLIC_KEY, steps=[step])).to_json())
 
