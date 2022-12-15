@@ -6,7 +6,7 @@ import bxsolana
 from bxsolana import transaction
 from bxsolana_trader_proto import api as proto
 
-from bxsolana.utils.constants import SOL_USDC_MARKET
+from bxsolana.examples.constants import SOL_USDC_MARKET
 
 async def do_transaction_requests(api: bxsolana.Provider,
                                   run_trades,

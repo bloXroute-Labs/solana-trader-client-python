@@ -1,7 +1,7 @@
 import bxsolana
 from bxsolana_trader_proto import api as proto
 
-from bxsolana.utils.constants import SOL_USDC_MARKET, PUBLIC_KEY, OPEN_ORDERS, ORDER_ID, USDC_WALLET
+from bxsolana.examples.constants import SOL_USDC_MARKET, PUBLIC_KEY, OPEN_ORDERS, ORDER_ID, USDC_WALLET
 
 public_key = PUBLIC_KEY
 open_orders = OPEN_ORDERS

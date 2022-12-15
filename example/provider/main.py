@@ -4,7 +4,7 @@ import os
 
 import bxsolana
 from bxsolana import provider
-from bxsolana import utils
+from bxsolana import examples
 
 API_ENV = os.environ.get("API_ENV", "testnet")
 if API_ENV not in ["mainnet", "testnet", "local"]:
@@ -47,8 +47,8 @@ async def http():
 
     # either `try`/`finally` or `async with` work with each type of provider
     try:
-        await utils.do_requests(api, utils.PUBLIC_KEY, utils.OPEN_ORDERS, utils.ORDER_ID, utils.USDC_WALLET, utils.SOL_USDC_MARKET)
-        await utils.do_transaction_requests(api, RUN_TRADES, utils.PUBLIC_KEY, utils.PUBLIC_KEY, utils.OPEN_ORDERS, utils.ORDER_ID, utils.USDC_WALLET)
+        await examples.do_requests(api, examples.PUBLIC_KEY, examples.OPEN_ORDERS, examples.ORDER_ID, examples.USDC_WALLET, examples.SOL_USDC_MARKET)
+        await examples.do_transaction_requests(api, RUN_TRADES, examples.PUBLIC_KEY, examples.PUBLIC_KEY, examples.OPEN_ORDERS, examples.ORDER_ID, examples.USDC_WALLET)
     except Exception as e:
         print(e)
         raise e
@@ -65,9 +65,9 @@ async def ws():
         p = provider.ws_testnet()
 
     async with p as api:
-        await utils.do_requests(api, utils.PUBLIC_KEY, utils.OPEN_ORDERS, utils.ORDER_ID, utils.USDC_WALLET, utils.SOL_USDC_MARKET)
-        await utils.do_transaction_requests(api, RUN_TRADES, utils.PUBLIC_KEY, utils.PUBLIC_KEY, utils.OPEN_ORDERS, utils.ORDER_ID, utils.USDC_WALLET)
-        await utils.do_stream(api, RUN_SLOW_STREAMS)
+        await examples.do_requests(api, examples.PUBLIC_KEY, examples.OPEN_ORDERS, examples.ORDER_ID, examples.USDC_WALLET, examples.SOL_USDC_MARKET)
+        await examples.do_transaction_requests(api, RUN_TRADES, examples.PUBLIC_KEY, examples.PUBLIC_KEY, examples.OPEN_ORDERS, examples.ORDER_ID, examples.USDC_WALLET)
+        await examples.do_stream(api, RUN_SLOW_STREAMS)
 
 
 async def grpc():
@@ -80,9 +80,9 @@ async def grpc():
     api = await bxsolana.trader_api(p)
 
     try:
-        await utils.do_requests(api, utils.PUBLIC_KEY, utils.OPEN_ORDERS, utils.ORDER_ID, utils.USDC_WALLET, utils.SOL_USDC_MARKET)
-        await utils.do_transaction_requests(api, RUN_TRADES, utils.PUBLIC_KEY, utils.PUBLIC_KEY, utils.OPEN_ORDERS, utils.ORDER_ID, utils.USDC_WALLET)
-        await utils.do_stream(api, RUN_SLOW_STREAMS)
+        await examples.do_requests(api, examples.PUBLIC_KEY, examples.OPEN_ORDERS, examples.ORDER_ID, examples.USDC_WALLET, examples.SOL_USDC_MARKET)
+        await examples.do_transaction_requests(api, RUN_TRADES, examples.PUBLIC_KEY, examples.PUBLIC_KEY, examples.OPEN_ORDERS, examples.ORDER_ID, examples.USDC_WALLET)
+        await examples.do_stream(api, RUN_SLOW_STREAMS)
     finally:
         await p.close()
 
