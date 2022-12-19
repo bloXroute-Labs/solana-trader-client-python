@@ -7,6 +7,7 @@ from .order_utils import cancel_order, place_order, settle_funds
 
 crank_timeout = 60
 
+
 async def order_lifecycle(
     p1: provider.Provider,
     p2: provider.Provider,
@@ -50,10 +51,7 @@ async def order_lifecycle(
             if response.order_info.order_status == proto.OrderStatus.OS_OPEN:
                 print("order went to orderbook (`OPEN`) successfully")
             else:
-                print(
-                    "order should be `OPEN` but is "
-                    + response.order_info.order_status.__str__()
-                )
+                print("order should be `OPEN` but is " + response.order_info.order_status.__str__())
     except asyncio.TimeoutError:
         raise Exception("no updates after placing order")
     print()
@@ -68,16 +66,10 @@ async def order_lifecycle(
         print(f"waiting {crank_timeout}s for cancel order to be cranked")
         async with async_timeout.timeout(crank_timeout):
             response = await oss.__anext__()
-            if (
-                response.order_info.order_status
-                == proto.OrderStatus.OS_CANCELLED
-            ):
+            if response.order_info.order_status == proto.OrderStatus.OS_CANCELLED:
                 print("order cancelled (`CANCELLED`) successfully")
             else:
-                print(
-                    "order should be `CANCELLED` but is "
-                    + response.order_info.order_status.__str__()
-                )
+                print("order should be `CANCELLED` but is " + response.order_info.order_status.__str__())
     except asyncio.TimeoutError:
         raise Exception("no updates after cancelling order")
     print()

@@ -1,6 +1,7 @@
 import bxsolana
 from bxsolana_trader_proto import api as proto
 
+
 async def do_stream(api: bxsolana.Provider, run_slow=False):
     item_count = 0
 

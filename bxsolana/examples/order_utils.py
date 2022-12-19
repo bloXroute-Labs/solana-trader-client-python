@@ -134,7 +134,7 @@ async def cancel_all_orders(
 ):
     print("cancel all test\n")
 
-    print(f"placing order #1")
+    print("placing order #1")
     client_order_id_1 = await place_order(
         p,
         owner_addr,
@@ -148,7 +148,7 @@ async def cancel_all_orders(
     )
     print()
 
-    print(f"placing order #2")
+    print("placing order #2")
     client_order_id_2 = await place_order(
         p,
         owner_addr,

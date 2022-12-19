@@ -1,14 +1,6 @@
 import bxsolana
 from bxsolana_trader_proto import api as proto
 
-from .constants import (
-    SOL_USDC_MARKET,
-    PUBLIC_KEY,
-    OPEN_ORDERS,
-    ORDER_ID,
-    USDC_WALLET,
-)
-
 
 async def do_requests(
     api: bxsolana.Provider,
