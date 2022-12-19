@@ -27,7 +27,7 @@ async def order_lifecycle(
         market=market_addr, owner_address=owner_addr
     )
 
-    # pyre-ignore[16]:
+    # pyre-ignore[6]:
     task = asyncio.create_task(oss.__anext__())
     await asyncio.sleep(10)
 
