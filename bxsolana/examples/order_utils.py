@@ -7,18 +7,20 @@ from bxsolana import provider
 from bxsolana.transaction import signing
 
 
-crank_timeout=60
+crank_timeout = 60
 
-async def place_order(p: provider.Provider,
-                      owner_addr,
-                      payer_addr,
-                      market_addr,
-                      order_side,
-                      order_type,
-                      order_amount,
-                      order_price,
-                      open_orders_addr,
-                    )-> int:
+
+async def place_order(
+    p: provider.Provider,
+    owner_addr,
+    payer_addr,
+    market_addr,
+    order_side,
+    order_type,
+    order_amount,
+    order_price,
+    open_orders_addr,
+) -> int:
     print("starting place order")
 
     client_order_id = random.randint(0, 1000000)
@@ -41,16 +43,21 @@ async def place_order(p: provider.Provider,
         transaction=signed_tx, skip_pre_flight=True
     )
 
-    print(f"placing order with clientOrderID {client_order_id.__str__()}, response signature: {post_submit_response.signature}")
+    print(
+        f"placing order with clientOrderID {client_order_id.__str__()},"
+        f" response signature: {post_submit_response.signature}"
+    )
 
     return client_order_id
 
-async def cancel_order(p: provider.Provider,
-                       client_order_id: int,
-                       market_addr: str,
-                       owner_addr: str,
-                       open_orders_addr: str,
-                       ):
+
+async def cancel_order(
+    p: provider.Provider,
+    client_order_id: int,
+    market_addr: str,
+    owner_addr: str,
+    open_orders_addr: str,
+):
     print("starting cancel order")
 
     cancel_order_response = await p.post_cancel_by_client_order_i_d(
@@ -66,15 +73,20 @@ async def cancel_order(p: provider.Provider,
     post_submit_response = await p.post_submit(
         transaction=signed_tx, skip_pre_flight=True
     )
-    print(f"cancelling order with clientOrderID {client_order_id.__str__()}, response signature: {post_submit_response.signature}")
+    print(
+        f"cancelling order with clientOrderID {client_order_id.__str__()},"
+        f" response signature: {post_submit_response.signature}"
+    )
 
 
-async def settle_funds(p: provider.Provider,
-                       owner_addr: str,
-                       market_addr: str,
-                       base_token_wallet: str,
-                       quote_token_wallet: str,
-                       open_orders_addr: str):
+async def settle_funds(
+    p: provider.Provider,
+    owner_addr: str,
+    market_addr: str,
+    base_token_wallet: str,
+    quote_token_wallet: str,
+    open_orders_addr: str,
+):
     print("starting settle funds")
 
     post_settle_response = await p.post_settle(
@@ -92,7 +104,9 @@ async def settle_funds(p: provider.Provider,
         transaction=signed_settle_tx, skip_pre_flight=True
     )
 
-    print("settling funds, response signature: " + post_submit_response.signature)
+    print(
+        "settling funds, response signature: " + post_submit_response.signature
+    )
 
 
 # async def place_order(p: provider.Provider,
@@ -106,23 +120,44 @@ async def settle_funds(p: provider.Provider,
 #                       open_orders_addr,
 #                     )-> int:
 
-async def cancel_all_orders(p: provider.Provider,
-                            owner_addr,
-                            payer_addr,
-                            order_side,
-                            order_type,
-                            order_amount,
-                            order_price,
-                            open_orders_addr,
-                            market_addr):
+
+async def cancel_all_orders(
+    p: provider.Provider,
+    owner_addr,
+    payer_addr,
+    order_side,
+    order_type,
+    order_amount,
+    order_price,
+    open_orders_addr,
+    market_addr,
+):
     print("cancel all test\n")
 
     print(f"placing order #1")
-    client_order_id_1 = await place_order(p, owner_addr, payer_addr, order_side, order_type, order_amount, order_price, open_orders_addr)
+    client_order_id_1 = await place_order(
+        p,
+        owner_addr,
+        payer_addr,
+        order_side,
+        order_type,
+        order_amount,
+        order_price,
+        open_orders_addr,
+    )
     print()
 
     print(f"placing order #2")
-    client_order_id_2 = await place_order(p, owner_addr, payer_addr, order_side, order_type, order_amount, order_price, open_orders_addr)
+    client_order_id_2 = await place_order(
+        p,
+        owner_addr,
+        payer_addr,
+        order_side,
+        order_type,
+        order_amount,
+        order_price,
+        open_orders_addr,
+    )
     print()
 
     print(f"waiting {crank_timeout}s for place orders to be cranked")
@@ -154,10 +189,10 @@ async def cancel_all_orders(p: provider.Provider,
         print("orders in orderbook cancelled")
     print()
 
-async def cancel_all(p: provider.Provider,
-                     owner_addr,
-                     open_orders_addr,
-                     market_addr):
+
+async def cancel_all(
+    p: provider.Provider, owner_addr, open_orders_addr, market_addr
+):
     print("starting cancel all")
 
     open_orders_addresses: [str] = []
@@ -180,19 +215,20 @@ async def cancel_all(p: provider.Provider,
         signatures.append(post_submit_response.signature)
 
     signatures_string = ", ".join(signatures)
-    print(
-        f"cancelling all orders, response signature(s): {signatures_string}"
-    )
+    print(f"cancelling all orders, response signature(s): {signatures_string}")
 
-async def replace_order_by_client_order_i_d(p: provider.Provider,
-                                            owner_addr,
-                                            payer_addr,
-                                            market_addr,
-                                            order_side,
-                                            order_type,
-                                            order_amount,
-                                            order_price,
-                                            open_orders_addr) -> int:
+
+async def replace_order_by_client_order_i_d(
+    p: provider.Provider,
+    owner_addr,
+    payer_addr,
+    market_addr,
+    order_side,
+    order_type,
+    order_amount,
+    order_price,
+    open_orders_addr,
+) -> int:
     print("starting replace order by client order ID")
 
     client_order_id = random.randint(0, 1000000)
@@ -204,7 +240,7 @@ async def replace_order_by_client_order_i_d(p: provider.Provider,
         type=[order_type],
         amount=order_amount,
         price=order_price,
-        open_orders_address=open_orders_addr ,
+        open_orders_address=open_orders_addr,
         client_order_i_d=client_order_id,
     )
     print("replace order transaction created successfully")
@@ -215,7 +251,8 @@ async def replace_order_by_client_order_i_d(p: provider.Provider,
         transaction=signed_tx, skip_pre_flight=True
     )
     print(
-        f"replacing order with clientOrderID {client_order_id.__str__()}, response signature: {post_submit_response.signature}"
+        f"replacing order with clientOrderID {client_order_id.__str__()},"
+        f" response signature: {post_submit_response.signature}"
     )
 
     return client_order_id

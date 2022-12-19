@@ -8,13 +8,16 @@ from bxsolana_trader_proto import api as proto
 
 from bxsolana.examples.constants import SOL_USDC_MARKET
 
-async def do_transaction_requests(api: bxsolana.Provider,
-                                  run_trades,
-                                  owner_addr,
-                                  payer_addr,
-                                  open_orders_addr,
-                                  order_id,
-                                  usdc_wallet):
+
+async def do_transaction_requests(
+    api: bxsolana.Provider,
+    run_trades,
+    owner_addr,
+    payer_addr,
+    open_orders_addr,
+    order_id,
+    usdc_wallet,
+):
     if not run_trades:
         print("skipping transaction requests: set by environment")
         return
@@ -118,6 +121,7 @@ async def do_transaction_requests(api: bxsolana.Provider,
             order_i_d=order_id,
         )
     )
+
 
 async def create_transaction_with_memo(api: bxsolana.Provider):
     private_key = transaction.load_private_key_from_env()

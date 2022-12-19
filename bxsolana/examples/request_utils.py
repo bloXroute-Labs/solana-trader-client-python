@@ -1,7 +1,13 @@
 import bxsolana
 from bxsolana_trader_proto import api as proto
 
-from bxsolana.examples.constants import SOL_USDC_MARKET, PUBLIC_KEY, OPEN_ORDERS, ORDER_ID, USDC_WALLET
+from bxsolana.examples.constants import (
+    SOL_USDC_MARKET,
+    PUBLIC_KEY,
+    OPEN_ORDERS,
+    ORDER_ID,
+    USDC_WALLET,
+)
 
 public_key = PUBLIC_KEY
 open_orders = OPEN_ORDERS
@@ -9,21 +15,36 @@ order_id = ORDER_ID
 usdc_wallet = USDC_WALLET
 sol_usdc_market = SOL_USDC_MARKET
 
-async def do_requests(api: bxsolana.Provider,
-                      public_key: public_key,
-                      open_orders: open_orders,
-                      order_id: order_id,
-                      usdc_wallet: usdc_wallet,
-                      sol_usdc_market: sol_usdc_market):
+
+async def do_requests(
+    api: bxsolana.Provider,
+    public_key: public_key,
+    open_orders: open_orders,
+    order_id: order_id,
+    usdc_wallet: usdc_wallet,
+    sol_usdc_market: sol_usdc_market,
+):
     # markets API
     print("fetching all markets")
     print((await api.get_markets()).to_json())
 
     print("fetching SOL/USDC orderbook")
-    print((await api.get_orderbook(market="SOLUSDC", project=proto.Project.P_OPENBOOK)).to_json())
+    print(
+        (
+            await api.get_orderbook(
+                market="SOLUSDC", project=proto.Project.P_OPENBOOK
+            )
+        ).to_json()
+    )
 
     print("fetching SOL/USDC ticker")
-    print((await api.get_tickers(market="SOLUSDC", project=proto.Project.P_OPENBOOK)).to_json())
+    print(
+        (
+            await api.get_tickers(
+                market="SOLUSDC", project=proto.Project.P_OPENBOOK
+            )
+        ).to_json()
+    )
 
     print("fetching all tickers")
     print((await api.get_tickers(project=proto.Project.P_OPENBOOK)).to_json())
@@ -32,14 +53,22 @@ async def do_requests(api: bxsolana.Provider,
     print("fetching open orders for account")
     print(
         (
-            await api.get_open_orders(market="SOLUSDC", address=public_key, project=proto.Project.P_OPENBOOK)
+            await api.get_open_orders(
+                market="SOLUSDC",
+                address=public_key,
+                project=proto.Project.P_OPENBOOK,
+            )
         ).to_json()
     )
 
     print("fetching unsettled amounts")
     print(
         (
-            await api.get_unsettled(market="SOLUSDC", owner_address=public_key, project=proto.Project.P_OPENBOOK)
+            await api.get_unsettled(
+                market="SOLUSDC",
+                owner_address=public_key,
+                project=proto.Project.P_OPENBOOK,
+            )
         ).to_json()
     )
 

@@ -7,28 +7,42 @@ from .order_utils import cancel_order, place_order, settle_funds
 
 crank_timeout = 60
 
-async def order_lifecycle(p1: provider.Provider,
-                          p2: provider.Provider,
-                          owner_addr,
-                          payer_addr,
-                          market_addr,
-                          order_side,
-                          order_type,
-                          order_amount,
-                          order_price,
-                          open_orders_addr,
-                          base_token_wallet,
-                          quote_token_wallet
-                          ):
+
+async def order_lifecycle(
+    p1: provider.Provider,
+    p2: provider.Provider,
+    owner_addr,
+    payer_addr,
+    market_addr,
+    order_side,
+    order_type,
+    order_amount,
+    order_price,
+    open_orders_addr,
+    base_token_wallet,
+    quote_token_wallet,
+):
     print("order lifecycle test\n")
 
-    oss = p2.get_order_status_stream(market=market_addr, owner_address=owner_addr)
+    oss = p2.get_order_status_stream(
+        market=market_addr, owner_address=owner_addr
+    )
     task = asyncio.create_task(oss.__anext__())
 
     await asyncio.sleep(10)
 
     # Place Order => `Open`
-    client_order_id = await place_order(p1, owner_addr, payer_addr, market_addr, order_side, order_type, order_amount, order_price, open_orders_addr)
+    client_order_id = await place_order(
+        p1,
+        owner_addr,
+        payer_addr,
+        market_addr,
+        order_side,
+        order_type,
+        order_amount,
+        order_price,
+        open_orders_addr,
+    )
     try:
         print(f"waiting {crank_timeout}s for place order to be cranked")
         async with async_timeout.timeout(crank_timeout):
@@ -47,12 +61,17 @@ async def order_lifecycle(p1: provider.Provider,
     await asyncio.sleep(10)
 
     # Cancel Order => `Cancelled`
-    await cancel_order(p1, client_order_id, market_addr, owner_addr, open_orders_addr)
+    await cancel_order(
+        p1, client_order_id, market_addr, owner_addr, open_orders_addr
+    )
     try:
         print(f"waiting {crank_timeout}s for cancel order to be cranked")
         async with async_timeout.timeout(crank_timeout):
             response = await oss.__anext__()
-            if response.order_info.order_status == proto.OrderStatus.OS_CANCELLED:
+            if (
+                response.order_info.order_status
+                == proto.OrderStatus.OS_CANCELLED
+            ):
                 print("order cancelled (`CANCELLED`) successfully")
             else:
                 print(
@@ -64,6 +83,12 @@ async def order_lifecycle(p1: provider.Provider,
     print()
 
     # Settle Funds
-    await settle_funds(p1, owner_addr, market_addr, base_token_wallet, quote_token_wallet, open_orders_addr)
+    await settle_funds(
+        p1,
+        owner_addr,
+        market_addr,
+        base_token_wallet,
+        quote_token_wallet,
+        open_orders_addr,
+    )
     print()
-
