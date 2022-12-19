@@ -40,7 +40,8 @@ async def place_order(
     signed_tx = signing.sign_tx(post_order_response.transaction.content)
 
     post_submit_response = await p.post_submit(
-        transaction=proto.TransactionMessage(content=signed_tx), skip_pre_flight=True
+        transaction=proto.TransactionMessage(content=signed_tx),
+        skip_pre_flight=True,
     )
 
     print(
@@ -71,7 +72,8 @@ async def cancel_order(
     signed_tx = signing.sign_tx(cancel_order_response.transaction.content)
 
     post_submit_response = await p.post_submit(
-        transaction=proto.TransactionMessage(content=signed_tx), skip_pre_flight=True
+        transaction=proto.TransactionMessage(content=signed_tx),
+        skip_pre_flight=True,
     )
     print(
         f"cancelling order with clientOrderID {client_order_id.__str__()},"
@@ -101,7 +103,8 @@ async def settle_funds(
     signed_settle_tx = signing.sign_tx(post_settle_response.transaction.content)
 
     post_submit_response = await p.post_submit(
-        transaction=proto.TransactionMessage(content=signed_settle_tx), skip_pre_flight=True
+        transaction=proto.TransactionMessage(content=signed_settle_tx),
+        skip_pre_flight=True,
     )
 
     print(
@@ -212,7 +215,8 @@ async def cancel_all(
     for transaction in cancel_all_response.transactions:
         signed_tx = signing.sign_tx(transaction.content)
         post_submit_response = await p.post_submit(
-            transaction=proto.TransactionMessage(content=signed_tx), skip_pre_flight=True
+            transaction=proto.TransactionMessage(content=signed_tx),
+            skip_pre_flight=True,
         )
         signatures.append(post_submit_response.signature)
 
@@ -250,7 +254,8 @@ async def replace_order_by_client_order_i_d(
     signed_tx = signing.sign_tx(post_order_response.transaction.content)
 
     post_submit_response = await p.post_submit(
-        transaction=proto.TransactionMessage(content=signed_tx), skip_pre_flight=True
+        transaction=proto.TransactionMessage(content=signed_tx),
+        skip_pre_flight=True,
     )
     print(
         f"replacing order with clientOrderID {client_order_id.__str__()},"
