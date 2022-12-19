@@ -1,4 +1,5 @@
 import base64
+from typing import List
 
 from solana import transaction as solana_transaction
 from solana.publickey import PublicKey
@@ -27,7 +28,7 @@ def create_trader_api_memo_instruction(
 
 
 def add_memo(
-    instructions: list[solana_transaction.TransactionInstruction],
+    instructions: List[solana_transaction.TransactionInstruction],
     memo_content: str,
     blockhash: Blockhash,
     owner: PublicKey,
