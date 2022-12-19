@@ -1,4 +1,5 @@
 import base64
+from typing import List
 
 from solana import transaction as solana_transaction
 from solana.publickey import PublicKey
@@ -27,7 +28,7 @@ def create_trader_api_memo_instruction(
 
 
 def add_memo(
-    instructions: list[solana_transaction.TransactionInstruction],
+    instructions: List[solana_transaction.TransactionInstruction],
     memo_content: str,
     blockhash: Blockhash,
     owner: PublicKey,
@@ -62,7 +63,7 @@ def add_memo_to_serialized_txn(
 def build_fully_signed_txn(
     recent_block_hash: Blockhash,
     owner: PublicKey,
-    instructions: list[solana_transaction.TransactionInstruction],
+    instructions: List[solana_transaction.TransactionInstruction],
     *private_keys: Keypair
 ) -> bytes:
     tx = solana_transaction.Transaction(recent_blockhash=recent_block_hash)
