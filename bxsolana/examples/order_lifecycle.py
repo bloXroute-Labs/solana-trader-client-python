@@ -53,7 +53,7 @@ async def order_lifecycle(
             else:
                 print(
                     "order should be `OPEN` but is "
-                    + response.order_info.order_status.__str__()
+                    + response.order_info.order_status.__str__()  # noqa: W503
                 )
     except asyncio.TimeoutError:
         raise Exception("no updates after placing order")
@@ -71,13 +71,13 @@ async def order_lifecycle(
             response = await oss.__anext__()
             if (
                 response.order_info.order_status
-                == proto.OrderStatus.OS_CANCELLED
+                == proto.OrderStatus.OS_CANCELLED  # noqa: W503
             ):
                 print("order cancelled (`CANCELLED`) successfully")
             else:
                 print(
                     "order should be `CANCELLED` but is "
-                    + response.order_info.order_status.__str__()
+                    + response.order_info.order_status.__str__()  # noqa: W503
                 )
     except asyncio.TimeoutError:
         raise Exception("no updates after cancelling order")

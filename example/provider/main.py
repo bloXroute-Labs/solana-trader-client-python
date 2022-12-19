@@ -1,7 +1,6 @@
 import asyncio
 import os
 
-
 import bxsolana
 from bxsolana import provider
 from bxsolana import examples
