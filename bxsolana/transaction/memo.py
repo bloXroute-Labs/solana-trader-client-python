@@ -63,7 +63,7 @@ def add_memo_to_serialized_txn(
 def build_fully_signed_txn(
     recent_block_hash: Blockhash,
     owner: PublicKey,
-    instructions: list[solana_transaction.TransactionInstruction],
+    instructions: List[solana_transaction.TransactionInstruction],
     *private_keys: Keypair
 ) -> bytes:
     tx = solana_transaction.Transaction(recent_blockhash=recent_block_hash)
