@@ -7,7 +7,6 @@ from .order_utils import cancel_order, place_order, settle_funds
 
 crank_timeout = 60
 
-
 async def order_lifecycle(
     p1: provider.Provider,
     p2: provider.Provider,
@@ -27,8 +26,9 @@ async def order_lifecycle(
     oss = p2.get_order_status_stream(
         market=market_addr, owner_address=owner_addr
     )
-    task = asyncio.create_task(oss.__anext__())
 
+    # pyre-ignore[16]:
+    task = asyncio.create_task(oss.__anext__())
     await asyncio.sleep(10)
 
     # Place Order => `Open`
