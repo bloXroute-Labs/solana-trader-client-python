@@ -257,17 +257,58 @@ class Provider(api.ApiStub, ABC):
         out_token: str = "",
         in_amount: float = 0,
         slippage: float = 0,
-    ) -> str:
-        pass
+        skip_pre_flight: bool = False,
+        submit_strategy: api.SubmitStrategy = api.SubmitStrategy.P_ABORT_ON_FIRST_ERROR,
+    ) -> api.PostSubmitBatchResponse:
+        pk = self.require_private_key()
+        result = await self.post_trade_swap(
+            project=project,
+            owner_address=owner_address,
+            in_token=in_token,
+            out_token=out_token,
+            in_amount=in_amount,
+            slippage=slippage,
+        )
 
-    async def submit_post_route_swap(
+        signed_txs: List[api.PostSubmitRequestEntry] = []
+        for tx in result.transactions:
+            signed_tx = transaction.sign_tx_message_with_private_key(tx, pk)
+            signed_txs.append(
+                api.PostSubmitRequestEntry(
+                    transaction=signed_tx, skip_pre_flight=skip_pre_flight
+                )
+            )
+
+        return await self.post_submit_batch(
+            entries=signed_txs, submit_strategy=submit_strategy
+        )
+
+    async def submit_post_route_trade_swap(
         self,
         *,
         project: "api.Project" = 0,
         owner_address: str = "",
         steps: List["api.RouteStep"] = [],
-    ) -> str:
-        pass
+        skip_pre_flight: bool = False,
+        submit_strategy: api.SubmitStrategy = api.SubmitStrategy.P_ABORT_ON_FIRST_ERROR,
+    ) -> api.PostSubmitBatchResponse:
+        pk = self.require_private_key()
+        result = await self.post_route_trade_swap(
+            project=project, owner_address=owner_address, steps=steps
+        )
+
+        signed_txs: List[api.PostSubmitRequestEntry] = []
+        for tx in result.transactions:
+            signed_tx = transaction.sign_tx_message_with_private_key(tx, pk)
+            signed_txs.append(
+                api.PostSubmitRequestEntry(
+                    transaction=signed_tx, skip_pre_flight=skip_pre_flight
+                )
+            )
+
+        return await self.post_submit_batch(
+            entries=signed_txs, submit_strategy=submit_strategy
+        )
 
 
 class NotConnectedException(Exception):
