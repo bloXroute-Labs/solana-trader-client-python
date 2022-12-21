@@ -25,6 +25,7 @@ if RUN_TRADES == "false":
 else:
     RUN_TRADES = True
 
+
 async def main():
     await http()
     await ws()
@@ -46,8 +47,23 @@ async def http():
 
     # either `try`/`finally` or `async with` work with each type of provider
     try:
-        await examples.do_requests(api, examples.PUBLIC_KEY, examples.OPEN_ORDERS, examples.ORDER_ID, examples.USDC_WALLET, examples.SOL_USDC_MARKET)
-        await examples.do_transaction_requests(api, RUN_TRADES, examples.PUBLIC_KEY, examples.PUBLIC_KEY, examples.OPEN_ORDERS, examples.ORDER_ID, examples.USDC_WALLET)
+        await examples.do_requests(
+            api,
+            examples.PUBLIC_KEY,
+            examples.OPEN_ORDERS,
+            examples.ORDER_ID,
+            examples.USDC_WALLET,
+            examples.SOL_USDC_MARKET,
+        )
+        await examples.do_transaction_requests(
+            api,
+            RUN_TRADES,
+            examples.PUBLIC_KEY,
+            examples.PUBLIC_KEY,
+            examples.OPEN_ORDERS,
+            examples.ORDER_ID,
+            examples.USDC_WALLET,
+        )
     except Exception as e:
         print(e)
         raise e
@@ -64,8 +80,23 @@ async def ws():
         p = provider.ws_testnet()
 
     async with p as api:
-        await examples.do_requests(api, examples.PUBLIC_KEY, examples.OPEN_ORDERS, examples.ORDER_ID, examples.USDC_WALLET, examples.SOL_USDC_MARKET)
-        await examples.do_transaction_requests(api, RUN_TRADES, examples.PUBLIC_KEY, examples.PUBLIC_KEY, examples.OPEN_ORDERS, examples.ORDER_ID, examples.USDC_WALLET)
+        await examples.do_requests(
+            api,
+            examples.PUBLIC_KEY,
+            examples.OPEN_ORDERS,
+            examples.ORDER_ID,
+            examples.USDC_WALLET,
+            examples.SOL_USDC_MARKET,
+        )
+        await examples.do_transaction_requests(
+            api,
+            RUN_TRADES,
+            examples.PUBLIC_KEY,
+            examples.PUBLIC_KEY,
+            examples.OPEN_ORDERS,
+            examples.ORDER_ID,
+            examples.USDC_WALLET,
+        )
         await examples.do_stream(api, RUN_SLOW_STREAMS)
 
 
@@ -79,11 +110,27 @@ async def grpc():
     api = await bxsolana.trader_api(p)
 
     try:
-        await examples.do_requests(api, examples.PUBLIC_KEY, examples.OPEN_ORDERS, examples.ORDER_ID, examples.USDC_WALLET, examples.SOL_USDC_MARKET)
-        await examples.do_transaction_requests(api, RUN_TRADES, examples.PUBLIC_KEY, examples.PUBLIC_KEY, examples.OPEN_ORDERS, examples.ORDER_ID, examples.USDC_WALLET)
+        await examples.do_requests(
+            api,
+            examples.PUBLIC_KEY,
+            examples.OPEN_ORDERS,
+            examples.ORDER_ID,
+            examples.USDC_WALLET,
+            examples.SOL_USDC_MARKET,
+        )
+        await examples.do_transaction_requests(
+            api,
+            RUN_TRADES,
+            examples.PUBLIC_KEY,
+            examples.PUBLIC_KEY,
+            examples.OPEN_ORDERS,
+            examples.ORDER_ID,
+            examples.USDC_WALLET,
+        )
         await examples.do_stream(api, RUN_SLOW_STREAMS)
     finally:
         await p.close()
+
 
 if __name__ == "__main__":
     asyncio.run(main())
