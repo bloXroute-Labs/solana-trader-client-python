@@ -22,9 +22,10 @@ lint: typecheck analyze fmt-check
 
 fmt:
 	black bxsolana
+	black example
 
 fmt-check:
-	black bxsolana --check
+	black bxsolana --check && black example --check
 
 analyze:
 	flake8 bxsolana
