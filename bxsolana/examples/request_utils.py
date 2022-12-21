@@ -159,3 +159,15 @@ async def do_requests(
             )
         ).to_json()
     )
+
+    print(
+        (
+            await api.post_trade_swap()
+        )
+    )
+
+    print(
+        (
+            await api.post_route_trade_swap()
+        )
+    )

@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
-from solana import keypair
 from bxsolana_trader_proto import api
+from solana import keypair
+
 from .. import transaction
 
 
@@ -246,6 +247,27 @@ class Provider(api.ApiStub, ABC):
             transaction=signed_tx, skip_pre_flight=skip_pre_flight
         )
         return result.signature
+
+    async def submit_post_trade_swap(
+        self,
+        *,
+        project: "api.Project" = 0,
+        owner_address: str = "",
+        in_token: str = "",
+        out_token: str = "",
+        in_amount: float = 0,
+        slippage: float = 0,
+    ) -> str:
+        pass
+
+    async def submit_post_route_swap(
+        self,
+        *,
+        project: "api.Project" = 0,
+        owner_address: str = "",
+        steps: List["api.RouteStep"] = [],
+    ) -> str:
+        pass
 
 
 class NotConnectedException(Exception):
