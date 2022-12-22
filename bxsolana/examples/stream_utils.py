@@ -37,3 +37,16 @@ async def do_stream(api: bxsolana.Provider, run_slow=False):
             if item_count == 1:
                 item_count = 0
                 break
+
+    if run_slow:
+        print("streaming swap events...")
+        async for response in api.get_swaps_stream(
+            projects=[proto.Project.P_RAYDIUM],
+            pools=["58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2"],
+            include_failed=True,
+        ):
+            print(response.to_json())
+            item_count += 1
+            if item_count == 1:
+                item_count = 0
+                break
