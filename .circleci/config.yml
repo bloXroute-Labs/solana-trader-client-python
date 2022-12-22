@@ -16,7 +16,12 @@ jobs:
       - checkout:
           path: solana-trader-client-python
       - restore_cache:
-          key: deps-{{ .BRANCH }}-{{ checksum "~/ws/solana-trader-client-python/requirements.txt" }}
+          key: deps-{{ checksum "~/ws/solana-trader-client-python/requirements.txt" }}
+      - run:
+          name: Install awscli
+          command: |
+            sudo apt update
+            sudo apt install awscli
       - run:
           name: Install dependencies
           command: |
@@ -24,6 +29,7 @@ jobs:
             python -m virtualenv venv
             . venv/bin/activate
             pip install -r requirements.txt
+            make environment-integration
       - save_cache:
           key: deps-{{ checksum "~/ws/solana-trader-client-python/requirements.txt" }}
           paths:
@@ -80,7 +86,9 @@ workflows:
   version: 2
   test-branch:
     jobs:
-      - init
+      - init:
+          context:
+            - circleci
       - lint:
           requires:
             - init

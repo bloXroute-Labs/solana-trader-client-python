@@ -2,8 +2,7 @@ import asyncio
 import os
 
 from bxsolana_trader_proto import api as proto
-from bxsolana import provider
-from bxsolana import examples
+from bxsolana import provider, examples
 
 # TODO: Add some logic here to indicate to user if missing needed environment variables for tests
 public_key = os.getenv("PUBLIC_KEY")

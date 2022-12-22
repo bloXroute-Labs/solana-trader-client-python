@@ -1,8 +1,9 @@
-import bxsolana
 from bxsolana_trader_proto import api as proto
 
+from .. import provider
 
-async def do_stream(api: bxsolana.Provider, run_slow=False):
+
+async def do_stream(api: provider.Provider, run_slow: bool = False):
     item_count = 0
 
     if run_slow:
@@ -45,6 +46,34 @@ async def do_stream(api: bxsolana.Provider, run_slow=False):
             # RAY-SOL
             pools=["AVs9TA4nWDzfPJE9gGVNJMVhcQy3V9PGazuz33BfG2RA"],
             include_failed=True,
+        ):
+            print(response.to_json())
+            item_count += 1
+            if item_count == 1:
+                item_count = 0
+                break
+
+    if run_slow:
+        print("streaming pool reserves...")
+        async for response in api.get_pool_reserves_stream(
+            projects=[proto.Project.P_RAYDIUM]
+        ):
+            print(response.to_json())
+            item_count += 1
+            if item_count == 1:
+                item_count = 0
+                break
+
+    if run_slow:
+        print("streaming price streams...")
+        async for response in api.get_prices_stream(
+            projects=[proto.Project.P_RAYDIUM],
+            tokens=[
+                "So11111111111111111111111111111111111111112",
+                "USDC",
+                "SOL",
+                "USDT",
+            ],
         ):
             print(response.to_json())
             item_count += 1

@@ -6,15 +6,20 @@ from .constants import (
     USDC_WALLET,
     OPEN_ORDERS,
     ORDER_ID,
-    SOL_USDC_MARKET,
+    MARKET,
 )
-from .order_utils import cancel_order, replace_order_by_client_order_i_d
+from .order_utils import (
+    cancel_order,
+    cancel_all_orders,
+    replace_order_by_client_order_i_d,
+)
 from .order_lifecycle import order_lifecycle
 
 __all__ = [
     "do_requests",
     "do_transaction_requests",
     "do_stream",
+    "cancel_all_orders",
     "cancel_order",
     "replace_order_by_client_order_i_d",
     "order_lifecycle",
@@ -22,5 +27,5 @@ __all__ = [
     "USDC_WALLET",
     "OPEN_ORDERS",
     "ORDER_ID",
-    "SOL_USDC_MARKET",
+    "MARKET",
 ]
