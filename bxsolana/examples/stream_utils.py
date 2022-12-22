@@ -42,7 +42,8 @@ async def do_stream(api: bxsolana.Provider, run_slow=False):
         print("streaming swap events...")
         async for response in api.get_swaps_stream(
             projects=[proto.Project.P_RAYDIUM],
-            pools=["58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2"],
+            # RAY-SOL
+            pools=["AVs9TA4nWDzfPJE9gGVNJMVhcQy3V9PGazuz33BfG2RA"],
             include_failed=True,
         ):
             print(response.to_json())
