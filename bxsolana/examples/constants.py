@@ -2,9 +2,9 @@
 # maintained by bloxroute team
 import json
 
-PUBLIC_KEY = "5ggt7wtjap91P3SPrFfi3QNuXRCn9D9oXcsNeRQH51q3"
-USDC_WALLET = "8w1igsiZfsWnMTJSKkSvDQYYCZyf6aXMihuXEYpxcZVD"
-OPEN_ORDERS = "4JCZomAb4eKcJQ9fqoi2JPT1TzjbhJEk8V8MmFKUQfnV"
+PUBLIC_KEY = "BgJ8uyf9yhLJaUVESRrqffzwVyQgRi9YvWmpEFaH14kw"
+USDC_WALLET = "6QRBKhLeJQNpPqRUz1L1nwARJ1YGsH3QpmVapn5PeWky"
+OPEN_ORDERS = "FpLJoV6WkBoAq7VRNWhfFCua64UZobfqyQG1z8ceTaz2"
 MARKET = "SOLUSDC"
 ORDER_ID = ""
 
