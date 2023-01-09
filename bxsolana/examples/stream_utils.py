@@ -64,19 +64,18 @@ async def do_stream(api: provider.Provider, run_slow: bool = False):
                 item_count = 0
                 break
 
-    if run_slow:
-        print("streaming price streams...")
-        async for response in api.get_prices_stream(
-            projects=[proto.Project.P_RAYDIUM],
-            tokens=[
-                "So11111111111111111111111111111111111111112",
-                "USDC",
-                "SOL",
-                "USDT",
-            ],
-        ):
-            print(response.to_json())
-            item_count += 1
-            if item_count == 1:
-                item_count = 0
-                break
+    print("streaming price streams...")
+    async for response in api.get_prices_stream(
+        projects=[proto.Project.P_RAYDIUM],
+        tokens=[
+            "So11111111111111111111111111111111111111112",
+            "USDC",
+            "SOL",
+            "USDT",
+        ],
+    ):
+        print(response.to_json())
+        item_count += 1
+        if item_count == 1:
+            item_count = 0
+            break
