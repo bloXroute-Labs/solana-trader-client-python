@@ -55,8 +55,8 @@ async def do_transaction_requests(
     print(signature)
 
     print(
-        "submitting replace order by client ID (generate + sign) to sell 0.1 SOL for USDC at 150_000"
-        " USD/SOL"
+        "submitting replace order by client ID (generate + sign) to sell 0.1"
+        " SOL for USDC at 150_000 USD/SOL"
     )
     print(
         await api.submit_replace_by_client_order_i_d(
@@ -77,8 +77,8 @@ async def do_transaction_requests(
     )
 
     print(
-        "submitting replace order (generate + sign) to sell 0.1 SOL for USDC at 150_000"
-        " USD/SOL"
+        "submitting replace order (generate + sign) to sell 0.1 SOL for USDC at"
+        " 150_000 USD/SOL"
     )
     print(
         await api.submit_replace_order(
