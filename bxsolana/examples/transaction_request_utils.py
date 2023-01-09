@@ -54,6 +54,50 @@ async def do_transaction_requests(
     client_order_id, signature = await submit_order()
     print(signature)
 
+    print(
+        "submitting replace order by client ID (generate + sign) to sell 0.1 SOL for USDC at 150_000"
+        " USD/SOL"
+    )
+    print(
+        await api.submit_replace_by_client_order_i_d(
+            owner_address=owner_addr,
+            payer_address=payer_addr,
+            market=market,
+            side=proto.Side.S_ASK,
+            types=[proto.OrderType.OT_LIMIT],
+            amount=0.1,
+            price=150_000,
+            project=proto.Project.P_SERUM,
+            # optional, but much faster if known
+            open_orders_address=open_orders_addr,
+            # optional, for identification
+            client_order_i_d=client_order_id,
+            skip_pre_flight=True,
+        )
+    )
+
+    print(
+        "submitting replace order (generate + sign) to sell 0.1 SOL for USDC at 150_000"
+        " USD/SOL"
+    )
+    print(
+        await api.submit_replace_order(
+            owner_address=owner_addr,
+            payer_address=payer_addr,
+            market=market,
+            side=proto.Side.S_ASK,
+            types=[proto.OrderType.OT_LIMIT],
+            amount=0.1,
+            price=150_000,
+            project=proto.Project.P_SERUM,
+            # optional, but much faster if known
+            open_orders_address=open_orders_addr,
+            # optional, for identification
+            client_order_id=0,
+            order_i_d=order_id,
+        )
+    )
+
     # cancel order example: comment out if want to try replace example
     print("submit cancel order")
     print(
@@ -91,52 +135,6 @@ async def do_transaction_requests(
             open_orders_address="",  # optional
         )
     )
-
-    # example won't work since order was cancelled; to demonstrate, comment out submit_cancel_by_client_order_i_d
-    # print(
-    #     "submitting replace order by client ID (generate + sign) to sell 0.1 SOL for USDC at 150_000"
-    #     " USD/SOL"
-    # )
-    # print(
-    #     await api.submit_replace_by_client_order_i_d(
-    #         owner_address=owner_addr,
-    #         payer_address=payer_addr,
-    #         market=market,
-    #         side=proto.Side.S_ASK,
-    #         types=[proto.OrderType.OT_LIMIT],
-    #         amount=0.1,
-    #         price=150_000,
-    #         project=proto.Project.P_SERUM,
-    #         # optional, but much faster if known
-    #         open_orders_address=open_orders_addr,
-    #         # optional, for identification
-    #         client_order_i_d=client_order_id,
-    #         skip_pre_flight=True,
-    #     )
-    # )
-
-    # example won't really work since order was already cancelled; to demonstrate, comment out submit_cancel_order
-    # print(
-    #     "submitting replace order (generate + sign) to sell 0.1 SOL for USDC at 150_000"
-    #     " USD/SOL"
-    # )
-    # print(
-    #     await api.submit_replace_order(
-    #         owner_address=owner_addr,
-    #         payer_address=payer_addr,
-    #         market=market,
-    #         side=proto.Side.S_ASK,
-    #         types=[proto.OrderType.OT_LIMIT],
-    #         amount=0.1,
-    #         price=150_000,
-    #         project=proto.Project.P_SERUM,
-    #         # optional, but much faster if known
-    #         open_orders_address=open_orders_addr,
-    #         # optional, for identification
-    #         client_order_id=0,
-    #         order_i_d=order_id,
-    #     )
-    # )
 
     print("creating transactions with memo")
     await create_transaction_with_memo(api)
