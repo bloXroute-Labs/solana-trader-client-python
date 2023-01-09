@@ -9,8 +9,6 @@ async def trader_api(connection_provider: Provider) -> Provider:
     return connection_provider
 
 
-f: int = "123"
-
 __all__ = [
     "examples",
     "Provider",
