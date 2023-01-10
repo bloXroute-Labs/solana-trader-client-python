@@ -112,18 +112,6 @@ async def settle_funds(
     )
 
 
-# async def place_order(p: provider.Provider,
-#                       owner_addr,
-#                       payer_addr,
-#                       market_addr,
-#                       order_side,
-#                       order_type,
-#                       order_amount,
-#                       order_price,
-#                       open_orders_addr,
-#                     )-> int:
-
-
 async def cancel_all_orders(
     p: provider.Provider,
     owner_addr,
