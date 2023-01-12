@@ -1,119 +1,95 @@
 import base64
+import random
+import sys
+from typing import Tuple
 
+from bxsolana_trader_proto import api as proto
 from solana.blockhash import Blockhash
 
-import bxsolana
-from bxsolana import transaction
-from bxsolana_trader_proto import api as proto
-
-from .constants import SOL_USDC_MARKET
+from .. import provider
+from .. import transaction
 
 
+# if you run this example with the integration wallet be sure to clean up your work afterward
 async def do_transaction_requests(
-    api: bxsolana.Provider,
-    run_trades,
-    owner_addr,
-    payer_addr,
-    open_orders_addr,
-    order_id,
-    usdc_wallet,
+    api: provider.Provider,
+    run_trades: bool,
+    owner_addr: str,
+    payer_addr: str,
+    open_orders_addr: str,
+    order_id: str,
+    usdc_wallet: str,
+    market: str,
 ):
     if not run_trades:
         print("skipping transaction requests: set by environment")
         return
 
-    print("creating transactions with memo")
-    await create_transaction_with_memo(api)
-
-    print(
-        "submitting order (generate + sign) to sell 0.1 SOL for USDC at 150_000"
-        " USD/SOL"
-    )
-    print(
-        await api.submit_order(
+    async def submit_order_with_client_id(client_id: int) -> str:
+        return await api.submit_order(
             owner_address=owner_addr,
             payer_address=payer_addr,
-            market="SOLUSDC",
+            market=market,
             side=proto.Side.S_ASK,
             types=[proto.OrderType.OT_LIMIT],
             amount=0.1,
             price=150_000,
-            project=proto.Project.P_OPENBOOK,
+            project=proto.Project.P_SERUM,
             # optional, but much faster if known
             open_orders_address=open_orders_addr,
             # optional, for identification
-            client_order_id=0,
+            client_order_id=client_id,
         )
-    )
 
-    print("submit cancel order")
-    print(
-        await api.submit_cancel_order(
-            order_i_d=order_id,
-            side=proto.Side.S_ASK,
-            market_address="SOLUSDC",
-            owner_address=owner_addr,
-            project=proto.Project.P_OPENBOOK,
-            open_orders_address=open_orders_addr,
-        )
-    )
-
-    print("submit cancel order by client ID")
-    print(
-        await api.submit_cancel_by_client_order_i_d(
-            client_order_i_d=123,
-            market_address=SOL_USDC_MARKET,
-            owner_address=owner_addr,
-            project=proto.Project.P_OPENBOOK,
-            open_orders_address=open_orders_addr,
-        )
-    )
-    print("submit settle order")
-    print(
-        await api.submit_settle(
-            owner_address=owner_addr,
-            market="SOLUSDC",
-            base_token_wallet=owner_addr,
-            quote_token_wallet=usdc_wallet,
-            project=proto.Project.P_OPENBOOK,
-            open_orders_address="",  # optional
-        )
-    )
+    async def submit_order() -> Tuple[int, str]:
+        _client_order_id = random.randint(1, sys.maxsize)
+        _signature = await submit_order_with_client_id(_client_order_id)
+        return _client_order_id, _signature
 
     print(
         "submitting order (generate + sign) to sell 0.1 SOL for USDC at 150_000"
         " USD/SOL"
+    )
+
+    client_order_id, signature = await submit_order()
+    print(signature)
+
+    print(
+        "submitting replace order by client ID (generate + sign) to sell 0.1"
+        " SOL for USDC at 150_000 USD/SOL"
     )
     print(
         await api.submit_replace_by_client_order_i_d(
             owner_address=owner_addr,
             payer_address=payer_addr,
-            market="SOLUSDC",
+            market=market,
             side=proto.Side.S_ASK,
             types=[proto.OrderType.OT_LIMIT],
             amount=0.1,
             price=150_000,
-            project=proto.Project.P_OPENBOOK,
+            project=proto.Project.P_SERUM,
             # optional, but much faster if known
             open_orders_address=open_orders_addr,
             # optional, for identification
-            client_order_i_d=123,
+            client_order_i_d=client_order_id,
+            skip_pre_flight=True,
         )
     )
+
     print(
-        "submitting order (generate + sign) to sell 0.1 SOL for USDC at 150_000"
-        " USD/SOL"
+        "submitting replace order (generate + sign) to sell 0.1 SOL for USDC at"
+        " 150_000 USD/SOL"
     )
     print(
         await api.submit_replace_order(
             owner_address=owner_addr,
             payer_address=payer_addr,
-            market="SOLUSDC",
+            market=market,
             side=proto.Side.S_ASK,
             types=[proto.OrderType.OT_LIMIT],
             amount=0.1,
             price=150_000,
-            project=proto.Project.P_OPENBOOK,
+            project=proto.Project.P_SERUM,
             # optional, but much faster if known
             open_orders_address=open_orders_addr,
             # optional, for identification
@@ -122,8 +98,49 @@ async def do_transaction_requests(
         )
     )
 
+    # cancel order example: comment out if want to try replace example
+    print("submit cancel order")
+    print(
+        await api.submit_cancel_order(
+            order_i_d=order_id,
+            side=proto.Side.S_ASK,
+            market_address=market,
+            owner_address=owner_addr,
+            project=proto.Project.P_SERUM,
+            open_orders_address=open_orders_addr,
+        )
+    )
 
-async def create_transaction_with_memo(api: bxsolana.Provider):
+    # cancel by client order ID example: comment out if want to try replace example
+    print("submit cancel order by client ID")
+    print(
+        await api.submit_cancel_by_client_order_i_d(
+            client_order_i_d=client_order_id,
+            market_address=market,
+            owner_address=owner_addr,
+            project=proto.Project.P_SERUM,
+            open_orders_address=open_orders_addr,
+            skip_pre_flight=True,
+        )
+    )
+
+    print("submit settle order")
+    print(
+        await api.submit_settle(
+            owner_address=owner_addr,
+            market=market,
+            base_token_wallet=owner_addr,
+            quote_token_wallet=usdc_wallet,
+            project=proto.Project.P_SERUM,
+            open_orders_address="",  # optional
+        )
+    )
+
+    print("creating transactions with memo")
+    await create_transaction_with_memo(api)
+
+
+async def create_transaction_with_memo(api: provider.Provider):
     private_key = transaction.load_private_key_from_env()
 
     instruction = transaction.create_trader_api_memo_instruction("hi from dev")

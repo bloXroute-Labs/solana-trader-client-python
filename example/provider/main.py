@@ -47,14 +47,14 @@ async def http():
 
     # either `try`/`finally` or `async with` work with each type of provider
     try:
-        await examples.do_requests(
-            api,
-            examples.PUBLIC_KEY,
-            examples.OPEN_ORDERS,
-            examples.ORDER_ID,
-            examples.USDC_WALLET,
-            examples.SOL_USDC_MARKET,
-        )
+        # await examples.do_requests(
+        #     api,
+        #     examples.PUBLIC_KEY,
+        #     examples.OPEN_ORDERS,
+        #     examples.ORDER_ID,
+        #     examples.USDC_WALLET,
+        #     examples.MARKET,
+        # )
         await examples.do_transaction_requests(
             api,
             RUN_TRADES,
@@ -63,6 +63,7 @@ async def http():
             examples.OPEN_ORDERS,
             examples.ORDER_ID,
             examples.USDC_WALLET,
+            examples.MARKET,
         )
     except Exception as e:
         print(e)
@@ -86,7 +87,7 @@ async def ws():
             examples.OPEN_ORDERS,
             examples.ORDER_ID,
             examples.USDC_WALLET,
-            examples.SOL_USDC_MARKET,
+            examples.MARKET,
         )
         await examples.do_transaction_requests(
             api,
@@ -96,6 +97,7 @@ async def ws():
             examples.OPEN_ORDERS,
             examples.ORDER_ID,
             examples.USDC_WALLET,
+            examples.MARKET,
         )
         await examples.do_stream(api, RUN_SLOW_STREAMS)
 
@@ -116,7 +118,7 @@ async def grpc():
             examples.OPEN_ORDERS,
             examples.ORDER_ID,
             examples.USDC_WALLET,
-            examples.SOL_USDC_MARKET,
+            examples.MARKET,
         )
         await examples.do_transaction_requests(
             api,
@@ -126,6 +128,7 @@ async def grpc():
             examples.OPEN_ORDERS,
             examples.ORDER_ID,
             examples.USDC_WALLET,
+            examples.MARKET,
         )
         await examples.do_stream(api, RUN_SLOW_STREAMS)
     finally:

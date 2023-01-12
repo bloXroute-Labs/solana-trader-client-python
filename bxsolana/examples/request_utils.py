@@ -1,14 +1,15 @@
-import bxsolana
 from bxsolana_trader_proto import api as proto
+
+from .. import provider
 
 
 async def do_requests(
-    api: bxsolana.Provider,
-    public_key,
-    open_orders,
-    order_id,
-    usdc_wallet,
-    sol_usdc_market,
+    api: provider.Provider,
+    public_key: str,
+    open_orders: str,
+    order_id: str,
+    usdc_wallet: str,
+    sol_usdc_market: str,
 ):
     print("fetching market depth")
     print(
@@ -43,6 +44,37 @@ async def do_requests(
 
     print("fetching all tickers")
     print((await api.get_tickers(project=proto.Project.P_OPENBOOK)).to_json())
+
+    print("fetching prices")
+    print(
+        (
+            await api.get_price(
+                tokens=[
+                    "So11111111111111111111111111111111111111112",
+                    "USDC",
+                    "SOL",
+                    "USDT",
+                ]
+            )
+        ).to_json()
+    )
+
+    print("fetching pools")
+    print((await api.get_pools(projects=[proto.Project.P_RAYDIUM])).to_json())
+
+    print("fetching quotes")
+    print(
+        (
+            await api.get_quotes(
+                in_token="USDC",
+                out_token="SOL",
+                in_amount=0.01,
+                slippage=10,
+                limit=1,
+                projects=[proto.Project.P_RAYDIUM],
+            )
+        ).to_json()
+    )
 
     # trade API
     print("fetching open orders for account")
@@ -130,6 +162,7 @@ async def do_requests(
         )
     )
 
+    print("generate replace by client order id")
     print(
         (
             await api.post_replace_by_client_order_i_d(
@@ -149,6 +182,7 @@ async def do_requests(
         ).to_json()
     )
 
+    print("generate replace by order id")
     print(
         (
             await api.post_replace_order(
@@ -165,6 +199,39 @@ async def do_requests(
                 # optional, for identification
                 client_order_i_d=0,
                 order_i_d=order_id,
+            )
+        ).to_json()
+    )
+
+    print("generate trade swap")
+    print(
+        (
+            await api.post_trade_swap(
+                project=proto.Project.P_RAYDIUM,
+                owner_address=public_key,
+                in_token="SOL",
+                in_amount=0.01,
+                out_token="USDC",
+                slippage=0.01,
+            )
+        )
+    )
+
+    print("generate route swap")
+    step = proto.RouteStep(
+        in_token="USDC",
+        in_amount=0.01,
+        out_token="SOL",
+        out_amount=0.01,
+        out_amount_min=0.01,
+        project=proto.StepProject(label="Raydium", id="1234"),
+    )
+    print(
+        (
+            await api.post_route_trade_swap(
+                project=proto.Project.P_RAYDIUM,
+                owner_address=public_key,
+                steps=[step],
             )
         ).to_json()
     )

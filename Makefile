@@ -1,4 +1,5 @@
 .PHONY: all clean pkg release proto lint fmt fmt-check analyze typecheck test
+.PHONY: environment-integration
 
 all: clean pkg
 
@@ -35,3 +36,6 @@ typecheck:
 
 test:
 	python -m unittest discover test/unit
+
+environment-integration:
+	aws s3 cp s3://files.bloxroute.com/trader-api/test_state.json $(CURDIR)/test_state.json

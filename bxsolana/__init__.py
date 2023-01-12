@@ -1,4 +1,5 @@
-from bxsolana import provider
+from . import provider
+from . import examples
 
 Provider = provider.Provider
 
@@ -8,4 +9,8 @@ async def trader_api(connection_provider: Provider) -> Provider:
     return connection_provider
 
 
-_all = ["trader_api", "Provider"]
+__all__ = [
+    "examples",
+    "Provider",
+    "trader_api",
+]
