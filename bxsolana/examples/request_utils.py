@@ -11,6 +11,15 @@ async def do_requests(
     usdc_wallet: str,
     sol_usdc_market: str,
 ):
+    print("fetching market depth")
+    print(
+        (
+            await api.get_market_depth(
+                limit=1, market="SOLUSDC", project=proto.Project.P_OPENBOOK
+            )
+        ).to_json()
+    )
+
     # markets API
     print("fetching all markets")
     print((await api.get_markets()).to_json())
