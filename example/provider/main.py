@@ -19,7 +19,7 @@ if RUN_SLOW_STREAMS == "false":
 else:
     RUN_SLOW_STREAMS = True
 
-RUN_TRADES = os.environ.get("RUN_TRADES", "true")
+RUN_TRADES = os.environ.get("RUN_TRADES", "false")
 if RUN_TRADES == "false":
     RUN_TRADES = False
 else:
@@ -47,14 +47,14 @@ async def http():
 
     # either `try`/`finally` or `async with` work with each type of provider
     try:
-        # await examples.do_requests(
-        #     api,
-        #     examples.PUBLIC_KEY,
-        #     examples.OPEN_ORDERS,
-        #     examples.ORDER_ID,
-        #     examples.USDC_WALLET,
-        #     examples.MARKET,
-        # )
+        await examples.do_requests(
+            api,
+            examples.PUBLIC_KEY,
+            examples.OPEN_ORDERS,
+            examples.ORDER_ID,
+            examples.USDC_WALLET,
+            examples.MARKET,
+        )
         await examples.do_transaction_requests(
             api,
             RUN_TRADES,

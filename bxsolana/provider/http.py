@@ -111,6 +111,18 @@ class HttpProvider(Provider):
         ) as res:
             return await map_response(res, proto.GetOrderbookResponse())
 
+    async def get_market_depth(
+        self,
+        *,
+        market: str = "",
+        limit: int = 0,
+        project: proto.Project = proto.Project.P_UNKNOWN,
+    ) -> proto.GetMarketDepthResponse:
+        async with self._session.get(
+            f"{self._endpoint}/market/depth/{market}?limit={limit}&project={project.name}"
+        ) as res:
+            return await map_response(res, proto.GetMarketDepthResponse())
+
     async def get_tickers(
         self,
         *,
