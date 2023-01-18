@@ -68,6 +68,7 @@ jobs:
       - run:
           name: Testnet
           command: |
+            export PRIVATE_KEY=""
             cd ~/ws/solana-trader-client-python
             . venv/bin/activate
             API_ENV=testnet AUTH_HEADER=$AUTH_HEADER_TESTNET python example/provider/main.py
@@ -79,6 +80,7 @@ jobs:
       - run:
           name: Mainnet
           command: |
+            export PRIVATE_KEY=""
             cd ~/ws/solana-trader-client-python
             . venv/bin/activate
             API_ENV=mainnet AUTH_HEADER=$AUTH_HEADER_MAINNET python example/provider/main.py
