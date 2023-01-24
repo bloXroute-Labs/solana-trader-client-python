@@ -101,13 +101,6 @@ Run tests:
 
 ```
 $ make test
-```
-
-Regenerate protobuf files:
-
-```
-$ make proto
-```
 
 Linting:
 ```
