@@ -129,6 +129,9 @@ jobs:
 workflows:
   version: 2
   test-branch:
+    when:
+      not:
+        equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
     jobs:
       - init:
           context:
@@ -149,14 +152,9 @@ workflows:
             - slack
           requires:
             - init
-  nightly:
-      triggers:
-        - schedule:
-            cron: "0 0 12 * *"
-            filters:
-              branches:
-                only:
-                  - develop
+    nightly:
+      when:
+        equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
       jobs:
         - init:
             context:
