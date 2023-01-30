@@ -88,38 +88,38 @@ jobs:
             exit 1
             API_ENV=mainnet AUTH_HEADER=$AUTH_HEADER_MAINNET python example/provider/main.py
       - slack/notify:
-#        branch_pattern: develop
-        custom: |
-          {
-            "text": "solana-trader-client-python Build failed [develop]",
-            "blocks": [
-              {
-                "type": "header",
-                "text": {
-                  "type": "plain_text",
-                  "text": "solana-trader-client-python Build failed",
-                  "emoji": true
-                }
-              },
-              {
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": "@here The latest merge seems to have broken builds.\n\nLast commit: <https://github.com/bloXroute-Labs/solana-trader-client-python/commit/$COMMIT_HASH|$COMMIT_HASH> \nAuthor: $COMMIT_AUTHOR"
-                },
-                "accessory": {
-                  "type": "button",
+#          branch_pattern: develop
+          custom: |
+            {
+              "text": "solana-trader-client-python Build failed [develop]",
+              "blocks": [
+                {
+                  "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": "CircleCI",
+                    "text": "solana-trader-client-python Build failed",
                     "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "@here The latest merge seems to have broken builds.\n\nLast commit: <https://github.com/bloXroute-Labs/solana-trader-client-python/commit/$COMMIT_HASH|$COMMIT_HASH> \nAuthor: $COMMIT_AUTHOR"
                   },
-                  "url": "https://app.circleci.com/pipelines/github/bloXroute-Labs/solana-trader-client-python?branch=develop"
+                  "accessory": {
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "CircleCI",
+                      "emoji": true
+                    },
+                    "url": "https://app.circleci.com/pipelines/github/bloXroute-Labs/solana-trader-client-python?branch=develop"
+                  }
                 }
-              }
-            ]
-          }
-        event: fail
+              ]
+            }
+          event: fail
 workflows:
   version: 2
   test-branch:
