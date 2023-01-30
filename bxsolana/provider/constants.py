@@ -13,10 +13,14 @@ TESTNET_API_GRPC_HOST = "serum-nlb-5a2c3912804344a3.elb.us-east-1.amazonaws.com"
 TESTNET_API_GRPC_PORT = 80
 
 DEVNET_API_HTTP = (
-    "http://serum-nlb-53baf45ef9775263.elb.us-east-1.amazonaws.com"
+    "http://solana-trader-api-nlb-6b0f765f2fc759e1.elb.us-east-1.amazonaws.com"
 )
-DEVNET_API_WS = "ws://serum-nlb-53baf45ef9775263.elb.us-east-1.amazonaws.com/ws"
-DEVNET_API_GRPC_HOST = "serum-nlb-53baf45ef9775263.elb.us-east-1.amazonaws.com"
+DEVNET_API_WS = (
+    "ws://solana-trader-api-nlb-6b0f765f2fc759e1.elb.us-east-1.amazonaws.com/ws"
+)
+DEVNET_API_GRPC_HOST = (
+    "solana-trader-api-nlb-6b0f765f2fc759e1.elb.us-east-1.amazonaws.com"
+)
 DEVNET_API_GRPC_PORT = 80
 
 LOCAL_API_HTTP = "http://127.0.0.1:9000"
