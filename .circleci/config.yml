@@ -144,7 +144,9 @@ workflows:
           requires:
             - init
       - mainnet_examples:
-          context: trader-api-sdk
+          context:
+            - trader-api-sdk
+            - slack
           requires:
             - init
   nightly:
