@@ -80,6 +80,12 @@ jobs:
       - attach_workspace:
           at: ~/ws
       - run:
+          name: Export build details
+          command: |
+            echo 'export COMMIT_HASH=$(git rev-parse HEAD)' >> $BASH_ENV
+            echo 'export COMMIT_AUTHOR="$(git --no-pager log -1 --pretty=format:'%an')"' >> $BASH_ENV
+            source $BASH_ENV
+      - run:
           name: Mainnet
           command: |
             unset PRIVATE_KEY
