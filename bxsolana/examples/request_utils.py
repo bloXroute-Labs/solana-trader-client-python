@@ -224,7 +224,7 @@ async def do_requests(
         out_token="SOL",
         out_amount=0.01,
         out_amount_min=0.01,
-        project=proto.StepProject(label="Raydium", id="1234"),
+        project=proto.StepProject(label="Raydium"),
     )
     print(
         (
