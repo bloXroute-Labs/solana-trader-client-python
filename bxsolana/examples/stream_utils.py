@@ -79,3 +79,14 @@ async def do_stream(api: provider.Provider, run_slow: bool = False):
         if item_count == 1:
             item_count = 0
             break
+
+    if run_slow:
+        print("streaming Drift orderbook updates...")
+        async for response in api.get_perp_orderbooks_stream(
+            markets=["SOL-PERP"], project=proto.Project.P_DRIFT
+        ):
+            print(response.to_json())
+            item_count += 1
+            if item_count == 5:
+                item_count = 0
+                break
