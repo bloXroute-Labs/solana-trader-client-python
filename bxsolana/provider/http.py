@@ -238,7 +238,7 @@ class HttpProvider(Provider):
         market: str = "",
         limit: int = 0,
         project: proto.Project = proto.Project.P_UNKNOWN,
-    ) -> proto.GetPerpOrderbookRequest:
+    ) -> proto.GetPerpOrderbookResponse:
         async with self._session.get(
             f"{self._endpoint}/trade/perp/{market}?limit={limit}&project={project.name}"
         ) as res:
