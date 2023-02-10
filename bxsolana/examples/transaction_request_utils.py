@@ -4,6 +4,7 @@ import sys
 from typing import Tuple
 
 from bxsolana_trader_proto import api as proto
+from bxsolana_trader_proto.common import OrderType
 from solana.blockhash import Blockhash
 
 from .. import provider
@@ -31,7 +32,7 @@ async def do_transaction_requests(
             payer_address=payer_addr,
             market=market,
             side=proto.Side.S_ASK,
-            types=[proto.OrderType.OT_LIMIT],
+            types=[OrderType.OT_LIMIT],
             amount=0.1,
             price=150_000,
             project=proto.Project.P_SERUM,
@@ -64,7 +65,7 @@ async def do_transaction_requests(
             payer_address=payer_addr,
             market=market,
             side=proto.Side.S_ASK,
-            types=[proto.OrderType.OT_LIMIT],
+            types=[OrderType.OT_LIMIT],
             amount=0.1,
             price=150_000,
             project=proto.Project.P_SERUM,
@@ -86,7 +87,7 @@ async def do_transaction_requests(
             payer_address=payer_addr,
             market=market,
             side=proto.Side.S_ASK,
-            types=[proto.OrderType.OT_LIMIT],
+            types=[OrderType.OT_LIMIT],
             amount=0.1,
             price=150_000,
             project=proto.Project.P_SERUM,

@@ -2,6 +2,8 @@ import asyncio
 import os
 
 from bxsolana_trader_proto import api as proto
+from bxsolana_trader_proto.common import OrderType
+
 from bxsolana import provider, examples
 
 # TODO: Add some logic here to indicate to user if missing needed environment variables for tests
@@ -13,7 +15,7 @@ quote_token_wallet = os.getenv("QUOTE_TOKEN_WALLET")
 
 market_addr = "9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT"  # SOL/USDC
 order_side = proto.Side.S_ASK
-order_type = proto.OrderType.OT_LIMIT
+order_type = OrderType.OT_LIMIT
 order_price = 170200
 order_amount = 0.1
 

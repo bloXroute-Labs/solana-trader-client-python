@@ -1,4 +1,5 @@
 from bxsolana_trader_proto import api as proto
+from bxsolana_trader_proto.common import OrderType
 
 from .. import provider
 
@@ -113,7 +114,7 @@ async def do_requests(
                 payer_address=public_key,
                 market="SOLUSDC",
                 side=proto.Side.S_ASK,
-                type=[proto.OrderType.OT_LIMIT],
+                type=[OrderType.OT_LIMIT],
                 amount=0.1,
                 price=150_000,
                 project=proto.Project.P_OPENBOOK,
@@ -170,7 +171,7 @@ async def do_requests(
                 payer_address=public_key,
                 market="SOLUSDC",
                 side=proto.Side.S_ASK,
-                type=[proto.OrderType.OT_LIMIT],
+                type=[OrderType.OT_LIMIT],
                 amount=0.1,
                 price=150_000,
                 project=proto.Project.P_OPENBOOK,
@@ -190,7 +191,7 @@ async def do_requests(
                 payer_address=public_key,
                 market="SOLUSDC",
                 side=proto.Side.S_ASK,
-                type=[proto.OrderType.OT_LIMIT],
+                type=[OrderType.OT_LIMIT],
                 amount=0.1,
                 price=150_000,
                 project=proto.Project.P_OPENBOOK,
@@ -232,6 +233,16 @@ async def do_requests(
                 project=proto.Project.P_RAYDIUM,
                 owner_address=public_key,
                 steps=[step],
+            )
+        ).to_json()
+    )
+
+    #     DRIFT
+    print("get Drift orderbook")
+    print(
+        (
+            await api.get_perp_orderbook(
+                market="SOL-PERP", project=proto.Project.P_DRIFT
             )
         ).to_json()
     )

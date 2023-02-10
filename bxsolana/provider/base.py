@@ -3,6 +3,7 @@ from typing import List, Optional
 
 from solana import keypair
 from bxsolana_trader_proto import api
+from bxsolana_trader_proto.common import OrderType
 from .. import transaction
 
 
@@ -38,7 +39,7 @@ class Provider(api.ApiStub, ABC):
         payer_address: str,
         market: str,
         side: "api.Side",
-        types: List["api.OrderType"],
+        types: List["OrderType"],
         amount: float,
         price: float,
         open_orders_address: str = "",
@@ -181,7 +182,7 @@ class Provider(api.ApiStub, ABC):
         payer_address: str,
         market: str,
         side: "api.Side",
-        types: List["api.OrderType"],
+        types: List["OrderType"],
         amount: float,
         price: float,
         open_orders_address: str = "",
@@ -217,7 +218,7 @@ class Provider(api.ApiStub, ABC):
         payer_address: str,
         market: str,
         side: "api.Side",
-        types: List["api.OrderType"],
+        types: List["OrderType"],
         amount: float,
         price: float,
         open_orders_address: str = "",

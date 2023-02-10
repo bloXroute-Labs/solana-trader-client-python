@@ -3,6 +3,8 @@ import os
 from typing import Type, AsyncGenerator, Optional, TYPE_CHECKING, List
 
 import aiohttp
+from bxsolana_trader_proto.common import OrderType
+
 from solana import keypair
 
 from bxsolana_trader_proto import api as proto
@@ -140,7 +142,7 @@ class HttpProvider(Provider):
         market: str = "",
         status: proto.OrderStatus = proto.OrderStatus.OS_UNKNOWN,
         side: proto.Side = proto.Side.S_UNKNOWN,
-        types: List[proto.OrderType] = [],
+        types: List[OrderType] = [],
         from_: Optional[datetime.datetime] = None,
         limit: int = 0,
         direction: proto.Direction = proto.Direction.D_ASCENDING,
@@ -155,7 +157,7 @@ class HttpProvider(Provider):
         *,
         market: str = "",
         side: proto.Side = proto.Side.S_UNKNOWN,
-        types: List[proto.OrderType] = [],
+        types: List[OrderType] = [],
         from_: Optional[datetime.datetime] = None,
         limit: int = 0,
         direction: proto.Direction = proto.Direction.D_ASCENDING,
@@ -230,6 +232,18 @@ class HttpProvider(Provider):
         ) as res:
             return await map_response(res, proto.GetRecentBlockHashResponse())
 
+    async def get_perp_orderbook(
+        self,
+        *,
+        market: str = "",
+        limit: int = 0,
+        project: proto.Project = proto.Project.P_UNKNOWN,
+    ) -> proto.GetPerpOrderbookResponse:
+        async with self._session.get(
+            f"{self._endpoint}/trade/perp/{market}?limit={limit}&project={project.name}"
+        ) as res:
+            return await map_response(res, proto.GetPerpOrderbookResponse())
+
     async def post_trade_swap(
         self,
         project: proto.Project = proto.Project.P_ALL,
@@ -260,7 +274,7 @@ class HttpProvider(Provider):
         payer_address: str = "",
         market: str = "",
         side: proto.Side = proto.Side.S_UNKNOWN,
-        type: List["proto.OrderType"] = [],
+        type: List["OrderType"] = [],
         amount: float = 0,
         price: float = 0,
         open_orders_address: str = "",
@@ -392,7 +406,7 @@ class HttpProvider(Provider):
         payer_address: str = "",
         market: str = "",
         side: proto.Side = proto.Side.S_UNKNOWN,
-        type: List["proto.OrderType"] = [],
+        type: List["OrderType"] = [],
         amount: float = 0,
         price: float = 0,
         open_orders_address: str = "",
@@ -424,7 +438,7 @@ class HttpProvider(Provider):
         payer_address: str = "",
         market: str = "",
         side: "proto.Side" = proto.Side.S_UNKNOWN,
-        type: List["proto.OrderType"] = [],
+        type: List["OrderType"] = [],
         amount: float = 0,
         price: float = 0,
         open_orders_address: str = "",
