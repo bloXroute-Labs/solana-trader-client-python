@@ -104,6 +104,9 @@ async def do_requests(
     print("fetching account balance amounts")
     print((await api.get_account_balance(owner_address=public_key)).to_json())
 
+    print("fetching token accounts and balances")
+    print((await api.get_token_accounts(owner_address=public_key)).to_json())
+
     print(
         "generating unsigned order (no sign or submission) to sell 0.1 SOL for"
         " USDC at 150_000 USD/SOL"
