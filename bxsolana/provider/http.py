@@ -268,7 +268,7 @@ class HttpProvider(Provider):
         *,
         owner_address: str = "",
         project: proto.Project = proto.Project.P_DRIFT,
-        contract: PerpContract = 0,
+        contract: PerpContract = PerpContract.ALL,
         client_order_i_d: int = 0,
         order_i_d: int = 0,
     ) -> proto.PostCancelPerpOrderResponse:
@@ -289,7 +289,7 @@ class HttpProvider(Provider):
         *,
         owner_address: str = "",
         project: proto.Project = proto.Project.P_DRIFT,
-        contract: PerpContract = 0
+        contract: PerpContract = PerpContract.ALL,
     ) -> proto.PostCancelPerpOrdersResponse:
         request = proto.PostCancelPerpOrdersRequest()
         request.contract = contract
@@ -306,8 +306,8 @@ class HttpProvider(Provider):
         *,
         owner_address: str = "",
         project: proto.Project = proto.Project.P_DRIFT,
-        contracts: PerpContract = []
-    ) -> proto.PostCancelPerpOrdersResponse:
+        contracts: List[PerpContract] = []
+    ) -> proto.PostClosePerpPositionsResponse:
         request = proto.PostClosePerpPositionsRequest()
         request.contracts = contracts
         request.project = project
@@ -348,7 +348,7 @@ class HttpProvider(Provider):
         owner_address: str = "",
         amount: float = 0,
         project: proto.Project = proto.Project.P_DRIFT,
-        contract: PerpContract = 0,
+        contract: PerpContract = PerpContract.ALL,
     ) -> proto.PostDepositCollateralResponse:
         request = proto.PostDepositCollateralRequest()
         request.project = project
@@ -366,7 +366,7 @@ class HttpProvider(Provider):
         owner_address: str = "",
         amount: float = 0,
         project: proto.Project = proto.Project.P_DRIFT,
-        contract: PerpContract = 0,
+        contract: PerpContract = PerpContract.ALL,
     ) -> proto.PostWithdrawCollateralResponse:
         request = proto.PostWithdrawCollateralRequest()
         request.project = project
