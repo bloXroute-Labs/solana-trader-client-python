@@ -69,23 +69,27 @@ you can build the solana-trader-proto/python directory using these commands
 
 
 ```
-    cd ~/solana-trader-proto/
+    $ cd ~/solana-trader-proto/
     
     upgrade the version in pyproject.toml
     
    
-    make proto-build-api-python
-    cd python
+    $ make proto-build-api-python
+    $ cd python
     
     you can also push the package to pypi 
-    rm -rf python/dist/
-    python3 -m build
-    python3 -m twine upload --repository pypi dist/*
+    $ rm -rf python/dist/
+    $ python3 -m build
+    $ python3 -m twine upload --repository pypi dist/*
     
     and install the package locally now
-    python -m pip install ~/solana-trader-proto/python
+    $ python -m pip install ~/solana-trader-proto/python
     
-
+    now you can update the depdendency in solana-trader-client-python
+    update the version of bxsolana-trader-proto in setup.cfg
+    and run 
+    $ pip install -r requirements.txt
+    
 
 ```
 

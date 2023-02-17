@@ -1,5 +1,6 @@
 from bxsolana_trader_proto import api as proto
 from bxsolana_trader_proto.common import OrderType
+from bxsolana_trader_proto.common import PerpContract
 
 from .. import provider
 
@@ -125,20 +126,20 @@ async def do_requests(
             )
         ).to_json()
     )
-
-    print("generate cancel order")
-    print(
-        (
-            await api.post_cancel_order(
-                order_i_d=order_id,
-                side=proto.Side.S_ASK,
-                market_address="SOLUSDC",
-                project=proto.Project.P_OPENBOOK,
-                owner_address=public_key,
-                open_orders_address=open_orders,
-            )
-        ).to_json()
-    )
+    if order_id != "":
+        print("generate cancel order")
+        print(
+            (
+                await api.post_cancel_order(
+                    order_i_d=order_id,
+                    side=proto.Side.S_ASK,
+                    market_address="SOLUSDC",
+                    project=proto.Project.P_OPENBOOK,
+                    owner_address=public_key,
+                    open_orders_address=open_orders,
+                )
+            ).to_json()
+        )
 
     print("generate cancel order by client ID")
     print(
@@ -182,27 +183,27 @@ async def do_requests(
             )
         ).to_json()
     )
-
-    print("generate replace by order id")
-    print(
-        (
-            await api.post_replace_order(
-                owner_address=public_key,
-                payer_address=public_key,
-                market="SOLUSDC",
-                side=proto.Side.S_ASK,
-                type=[OrderType.OT_LIMIT],
-                amount=0.1,
-                price=150_000,
-                project=proto.Project.P_OPENBOOK,
-                # optional, but much faster if known
-                open_orders_address=open_orders,
-                # optional, for identification
-                client_order_i_d=0,
-                order_i_d=order_id,
-            )
-        ).to_json()
-    )
+    if order_id != "":
+        print("generate replace by order id")
+        print(
+            (
+                await api.post_replace_order(
+                    owner_address=public_key,
+                    payer_address=public_key,
+                    market="SOLUSDC",
+                    side=proto.Side.S_ASK,
+                    type=[OrderType.OT_LIMIT],
+                    amount=0.1,
+                    price=150_000,
+                    project=proto.Project.P_OPENBOOK,
+                    # optional, but much faster if known
+                    open_orders_address=open_orders,
+                    # optional, for identification
+                    client_order_i_d=0,
+                    order_i_d=order_id,
+                )
+            ).to_json()
+        )
 
     print("generate trade swap")
     print(
@@ -243,6 +244,96 @@ async def do_requests(
         (
             await api.get_perp_orderbook(
                 market="SOL-PERP", project=proto.Project.P_DRIFT
+            )
+        ).to_json()
+    )
+
+    print("get open perp orders")
+    print(
+        (
+            await api.get_open_perp_orders(
+                owner_address=public_key,
+                project=proto.Project.P_DRIFT,
+                contracts=[PerpContract.SOL_PERP, PerpContract.BTC_PERP],
+            )
+        ).to_json()
+    )
+
+    print("post cancel perp order")
+    print(
+        (
+            await api.post_cancel_perp_order(
+                project=proto.Project.P_DRIFT,
+                owner_address=public_key,
+                client_order_i_d=12,
+                order_i_d=0,
+                contract=PerpContract.SOL_PERP,
+            )
+        ).to_json()
+    )
+
+    print("post cancel perp orders")
+    print(
+        (
+            await api.post_cancel_perp_orders(
+                project=proto.Project.P_DRIFT,
+                contract=PerpContract.SOL_PERP,
+                owner_address=public_key,
+            )
+        ).to_json()
+    )
+
+    print("post create users")
+    print(
+        (
+            await api.post_create_user(
+                project=proto.Project.P_DRIFT,
+                owner_address="BgJ8uyf9yhLJaUVESRrqffzwVyQgRi9YvWmpEFaH14kx",
+            )
+        ).to_json()
+    )
+
+    print("get user")
+    print(
+        (
+            await api.get_user(
+                project=proto.Project.P_DRIFT,
+                owner_address=public_key,
+            )
+        ).to_json()
+    )
+
+    print("post deposit collateral")
+    print(
+        (
+            await api.post_deposit_collateral(
+                project=proto.Project.P_DRIFT,
+                owner_address=public_key,
+                contract=PerpContract.SOL_PERP,
+                amount=0.1,
+            )
+        ).to_json()
+    )
+
+    print("post withdraw collateral")
+    print(
+        (
+            await api.post_withdraw_collateral(
+                project=proto.Project.P_DRIFT,
+                owner_address=public_key,
+                contract=PerpContract.SOL_PERP,
+                amount=0.1,
+            )
+        ).to_json()
+    )
+
+    print("get perp positions")
+    print(
+        (
+            await api.get_perp_positions(
+                project=proto.Project.P_DRIFT,
+                owner_address=public_key,
+                contracts=[PerpContract.SOL_PERP],
             )
         ).to_json()
     )
