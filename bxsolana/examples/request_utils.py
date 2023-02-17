@@ -6,12 +6,12 @@ from .. import provider
 
 
 async def do_requests(
-        api: provider.Provider,
-        public_key: str,
-        open_orders: str,
-        order_id: str,
-        usdc_wallet: str,
-        sol_usdc_market: str,
+    api: provider.Provider,
+    public_key: str,
+    open_orders: str,
+    order_id: str,
+    usdc_wallet: str,
+    sol_usdc_market: str,
 ):
     print("fetching market depth")
     print(
@@ -251,10 +251,11 @@ async def do_requests(
     print("get open perp orders")
     print(
         (
-            await api.get_open_perp_orders(owner_address=public_key,
-                                           project=proto.Project.P_DRIFT,
-                                           contracts=[PerpContract.SOL_PERP, PerpContract.BTC_PERP]
-                                           )
+            await api.get_open_perp_orders(
+                owner_address=public_key,
+                project=proto.Project.P_DRIFT,
+                contracts=[PerpContract.SOL_PERP, PerpContract.BTC_PERP],
+            )
         ).to_json()
     )
 
@@ -309,7 +310,7 @@ async def do_requests(
                 project=proto.Project.P_DRIFT,
                 owner_address=public_key,
                 contract=PerpContract.SOL_PERP,
-                amount=0.1
+                amount=0.1,
             )
         ).to_json()
     )
@@ -321,7 +322,7 @@ async def do_requests(
                 project=proto.Project.P_DRIFT,
                 owner_address=public_key,
                 contract=PerpContract.SOL_PERP,
-                amount=0.1
+                amount=0.1,
             )
         ).to_json()
     )
@@ -332,7 +333,7 @@ async def do_requests(
             await api.get_perp_positions(
                 project=proto.Project.P_DRIFT,
                 owner_address=public_key,
-                contracts=[PerpContract.SOL_PERP]
+                contracts=[PerpContract.SOL_PERP],
             )
         ).to_json()
     )

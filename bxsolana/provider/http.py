@@ -258,8 +258,8 @@ class HttpProvider(Provider):
             params += "&contracts=" + str(contracts[i].name)
 
         async with self._session.get(
-                f"{self._endpoint}/trade/perp/open-orders?ownerAddress={owner_address}&accountAddress={account_address}"
-                f"&project={project.name}{params}"
+            f"{self._endpoint}/trade/perp/open-orders?ownerAddress={owner_address}&accountAddress={account_address}"
+            f"&project={project.name}{params}"
         ) as res:
             return await map_response(res, proto.GetOpenPerpOrdersResponse())
 
@@ -280,7 +280,7 @@ class HttpProvider(Provider):
         request.owner_address = owner_address
 
         async with self._session.post(
-                f"{self._endpoint}/trade/perp/cancelbyid", json=request.to_dict()
+            f"{self._endpoint}/trade/perp/cancelbyid", json=request.to_dict()
         ) as res:
             return await map_response(res, proto.PostCancelPerpOrderResponse())
 
@@ -297,7 +297,7 @@ class HttpProvider(Provider):
         request.owner_address = owner_address
 
         async with self._session.post(
-                f"{self._endpoint}/trade/perp/cancel", json=request.to_dict()
+            f"{self._endpoint}/trade/perp/cancel", json=request.to_dict()
         ) as res:
             return await map_response(res, proto.PostCancelPerpOrdersResponse())
 
@@ -306,7 +306,7 @@ class HttpProvider(Provider):
         *,
         owner_address: str = "",
         project: proto.Project = proto.Project.P_DRIFT,
-        contracts: List[PerpContract] = []
+        contracts: List[PerpContract] = [],
     ) -> proto.PostClosePerpPositionsResponse:
         request = proto.PostClosePerpPositionsRequest()
         request.contracts = contracts
@@ -314,12 +314,15 @@ class HttpProvider(Provider):
         request.owner_address = owner_address
 
         async with self._session.post(
-                f"{self._endpoint}/trade/perp/close", json=request.to_dict()
+            f"{self._endpoint}/trade/perp/close", json=request.to_dict()
         ) as res:
-            return await map_response(res, proto.PostClosePerpPositionsResponse())
+            return await map_response(
+                res, proto.PostClosePerpPositionsResponse()
+            )
 
     async def post_create_user(
-        self, *,
+        self,
+        *,
         owner_address: str = "",
         project: proto.Project = proto.Project.P_DRIFT,
     ) -> proto.PostCreateUserResponse:
@@ -327,7 +330,7 @@ class HttpProvider(Provider):
         request.project = project
         request.owner_address = owner_address
         async with self._session.post(
-                f"{self._endpoint}/trade/user", json=request.to_dict()
+            f"{self._endpoint}/trade/user", json=request.to_dict()
         ) as res:
             return await map_response(res, proto.PostCreateUserResponse())
 
@@ -338,7 +341,7 @@ class HttpProvider(Provider):
         project: proto.Project = proto.Project.P_DRIFT,
     ) -> proto.GetUserResponse:
         async with self._session.get(
-                f"{self._endpoint}/trade/user?ownerAddress={owner_address}&&project={project.name}"
+            f"{self._endpoint}/trade/user?ownerAddress={owner_address}&&project={project.name}"
         ) as res:
             return await map_response(res, proto.GetPerpOrderbookResponse())
 
@@ -356,9 +359,12 @@ class HttpProvider(Provider):
         request.amount = amount
         request.contract = contract
         async with self._session.post(
-                f"{self._endpoint}/trade/perp/collateral/deposit", json=request.to_dict()
+            f"{self._endpoint}/trade/perp/collateral/deposit",
+            json=request.to_dict(),
         ) as res:
-            return await map_response(res, proto.PostDepositCollateralResponse())
+            return await map_response(
+                res, proto.PostDepositCollateralResponse()
+            )
 
     async def post_withdraw_collateral(
         self,
@@ -374,25 +380,28 @@ class HttpProvider(Provider):
         request.amount = amount
         request.contract = contract
         async with self._session.post(
-                f"{self._endpoint}/trade/perp/collateral/withdraw", json=request.to_dict()
+            f"{self._endpoint}/trade/perp/collateral/withdraw",
+            json=request.to_dict(),
         ) as res:
-            return await map_response(res, proto.PostWithdrawCollateralResponse())
+            return await map_response(
+                res, proto.PostWithdrawCollateralResponse()
+            )
 
     async def get_perp_positions(
-            self,
-            *,
-            project: proto.Project = proto.Project.P_DRIFT,
-            owner_address: str = "",
-            account_address: str = "",
-            contracts: List[PerpContract] = [],
+        self,
+        *,
+        project: proto.Project = proto.Project.P_DRIFT,
+        owner_address: str = "",
+        account_address: str = "",
+        contracts: List[PerpContract] = [],
     ) -> proto.GetPerpPositionsResponse:
         params = ""
         for i in range(len(contracts)):
             params += "&contracts=" + str(contracts[i].name)
 
         async with self._session.get(
-                f"{self._endpoint}/trade/perp/positions?ownerAddress={owner_address}&accountAddress={account_address}"
-                f"&project={project.name}{params}"
+            f"{self._endpoint}/trade/perp/positions?ownerAddress={owner_address}&accountAddress={account_address}"
+            f"&project={project.name}{params}"
         ) as res:
             return await map_response(res, proto.GetPerpPositionsResponse())
 
