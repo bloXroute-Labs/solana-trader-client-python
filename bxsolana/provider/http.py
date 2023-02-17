@@ -206,6 +206,14 @@ class HttpProvider(Provider):
         ) as res:
             return await map_response(res, proto.GetAccountBalanceResponse())
 
+    async def get_token_accounts(
+        self, *, owner_address: str = ""
+    ) -> proto.GetTokenAccountsResponse:
+        async with self._session.get(
+            f"{self._endpoint}/account/token-accounts?ownerAddress={owner_address}"
+        ) as res:
+            return await map_response(res, proto.GetTokenAccountsResponse())
+
     async def get_pools(
         self, projects: List["proto.Project"] = []
     ) -> proto.GetPoolsResponse:
