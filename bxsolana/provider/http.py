@@ -12,6 +12,7 @@ from .. import transaction
 from . import constants
 from .base import Provider
 from .http_error import map_response
+from bxsolana_trader_proto.common import PerpContract
 
 if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences,PyProtectedMember
@@ -248,9 +249,169 @@ class HttpProvider(Provider):
         project: proto.Project = proto.Project.P_UNKNOWN,
     ) -> proto.GetPerpOrderbookResponse:
         async with self._session.get(
-            f"{self._endpoint}/trade/perp/{market}?limit={limit}&project={project.name}"
+            f"{self._endpoint}/trade/perp/orderbook/{market}?limit={limit}&project={project.name}"
         ) as res:
             return await map_response(res, proto.GetPerpOrderbookResponse())
+
+    async def get_open_perp_orders(
+        self,
+        *,
+        project: proto.Project = proto.Project.P_DRIFT,
+        owner_address: str = "",
+        account_address: str = "",
+        contracts: List[PerpContract] = [],
+    ) -> proto.GetOpenPerpOrdersResponse:
+        params = ""
+        for i in range(len(contracts)):
+            params += "&contracts=" + str(contracts[i].name)
+
+        async with self._session.get(
+            f"{self._endpoint}/trade/perp/open-orders?ownerAddress={owner_address}&accountAddress={account_address}"
+            f"&project={project.name}{params}"
+        ) as res:
+            return await map_response(res, proto.GetOpenPerpOrdersResponse())
+
+    async def post_cancel_perp_order(
+        self,
+        *,
+        owner_address: str = "",
+        project: proto.Project = proto.Project.P_DRIFT,
+        contract: PerpContract = PerpContract.ALL,
+        client_order_i_d: int = 0,
+        order_i_d: int = 0,
+    ) -> proto.PostCancelPerpOrderResponse:
+        request = proto.PostCancelPerpOrderRequest()
+        request.order_i_d = order_i_d
+        request.client_order_i_d = client_order_i_d
+        request.contract = contract
+        request.project = project
+        request.owner_address = owner_address
+
+        async with self._session.post(
+            f"{self._endpoint}/trade/perp/cancelbyid", json=request.to_dict()
+        ) as res:
+            return await map_response(res, proto.PostCancelPerpOrderResponse())
+
+    async def post_cancel_perp_orders(
+        self,
+        *,
+        owner_address: str = "",
+        project: proto.Project = proto.Project.P_DRIFT,
+        contract: PerpContract = PerpContract.ALL,
+    ) -> proto.PostCancelPerpOrdersResponse:
+        request = proto.PostCancelPerpOrdersRequest()
+        request.contract = contract
+        request.project = project
+        request.owner_address = owner_address
+
+        async with self._session.post(
+            f"{self._endpoint}/trade/perp/cancel", json=request.to_dict()
+        ) as res:
+            return await map_response(res, proto.PostCancelPerpOrdersResponse())
+
+    async def post_close_perp_positions(
+        self,
+        *,
+        owner_address: str = "",
+        project: proto.Project = proto.Project.P_DRIFT,
+        contracts: List[PerpContract] = [],
+    ) -> proto.PostClosePerpPositionsResponse:
+        request = proto.PostClosePerpPositionsRequest()
+        request.contracts = contracts
+        request.project = project
+        request.owner_address = owner_address
+
+        async with self._session.post(
+            f"{self._endpoint}/trade/perp/close", json=request.to_dict()
+        ) as res:
+            return await map_response(
+                res, proto.PostClosePerpPositionsResponse()
+            )
+
+    async def post_create_user(
+        self,
+        *,
+        owner_address: str = "",
+        project: proto.Project = proto.Project.P_DRIFT,
+    ) -> proto.PostCreateUserResponse:
+        request = proto.PostCreateUserRequest()
+        request.project = project
+        request.owner_address = owner_address
+        async with self._session.post(
+            f"{self._endpoint}/trade/user", json=request.to_dict()
+        ) as res:
+            return await map_response(res, proto.PostCreateUserResponse())
+
+    async def get_user(
+        self,
+        *,
+        owner_address: str = "",
+        project: proto.Project = proto.Project.P_DRIFT,
+    ) -> proto.GetUserResponse:
+        async with self._session.get(
+            f"{self._endpoint}/trade/user?ownerAddress={owner_address}&&project={project.name}"
+        ) as res:
+            return await map_response(res, proto.GetPerpOrderbookResponse())
+
+    async def post_deposit_collateral(
+        self,
+        *,
+        owner_address: str = "",
+        amount: float = 0,
+        project: proto.Project = proto.Project.P_DRIFT,
+        contract: PerpContract = PerpContract.ALL,
+    ) -> proto.PostDepositCollateralResponse:
+        request = proto.PostDepositCollateralRequest()
+        request.project = project
+        request.owner_address = owner_address
+        request.amount = amount
+        request.contract = contract
+        async with self._session.post(
+            f"{self._endpoint}/trade/perp/collateral/deposit",
+            json=request.to_dict(),
+        ) as res:
+            return await map_response(
+                res, proto.PostDepositCollateralResponse()
+            )
+
+    async def post_withdraw_collateral(
+        self,
+        *,
+        owner_address: str = "",
+        amount: float = 0,
+        project: proto.Project = proto.Project.P_DRIFT,
+        contract: PerpContract = PerpContract.ALL,
+    ) -> proto.PostWithdrawCollateralResponse:
+        request = proto.PostWithdrawCollateralRequest()
+        request.project = project
+        request.owner_address = owner_address
+        request.amount = amount
+        request.contract = contract
+        async with self._session.post(
+            f"{self._endpoint}/trade/perp/collateral/withdraw",
+            json=request.to_dict(),
+        ) as res:
+            return await map_response(
+                res, proto.PostWithdrawCollateralResponse()
+            )
+
+    async def get_perp_positions(
+        self,
+        *,
+        project: proto.Project = proto.Project.P_DRIFT,
+        owner_address: str = "",
+        account_address: str = "",
+        contracts: List[PerpContract] = [],
+    ) -> proto.GetPerpPositionsResponse:
+        params = ""
+        for i in range(len(contracts)):
+            params += "&contracts=" + str(contracts[i].name)
+
+        async with self._session.get(
+            f"{self._endpoint}/trade/perp/positions?ownerAddress={owner_address}&accountAddress={account_address}"
+            f"&project={project.name}{params}"
+        ) as res:
+            return await map_response(res, proto.GetPerpPositionsResponse())
 
     async def post_trade_swap(
         self,
