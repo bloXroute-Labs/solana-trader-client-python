@@ -1,10 +1,9 @@
-import base64
 import unittest
 
 import base58
-from solana.keypair import Keypair
+from solders.keypair import Keypair
 
-from bxsolana.transaction.deserializer import PartialTransaction
+from bxsolana import transaction
 
 # key generated for this test
 RANDOM_PRIVATE_KEY = "3KWC65p6AvMjvpR2r1qLTC4HVSH4jEFr5TMQxagMLo1o3j4yVYzKsfbB3jKtu3yGEHjx2Cc3L5t8wSo91vpjT63t"
@@ -16,10 +15,10 @@ class TestSigning(unittest.TestCase):
     def test_sign_tx(self):
         pkey_bytes = bytes(RANDOM_PRIVATE_KEY, encoding="utf-8")
         pkey_bytes_base58 = base58.b58decode(pkey_bytes)
-        kp = Keypair.from_secret_key(pkey_bytes_base58)
+        kp = Keypair.from_bytes(pkey_bytes_base58)
 
-        partial_tx = PartialTransaction.deserialize(UNSIGNED_TX_BASE64)
-        partial_tx.complete_signing(kp)
-        signed_tx_base64 = base64.b64encode(partial_tx.serialize())
+        signed_tx_base64 = transaction.sign_tx_with_private_key(
+            UNSIGNED_TX_BASE64, kp
+        )
 
         self.assertEqual(EXPECTED, signed_tx_base64)

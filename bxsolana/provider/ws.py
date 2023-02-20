@@ -3,7 +3,7 @@ import os
 from typing import AsyncGenerator, Dict, Optional, TYPE_CHECKING, Type
 
 import jsonrpc
-from solana import keypair
+from solders import keypair as kp
 from stringcase import camelcase
 
 from . import Provider, constants
@@ -22,7 +22,7 @@ class WsProvider(Provider):
     _ws: jsonrpc.WsRpcConnection
 
     _endpoint: str
-    _private_key: Optional[keypair.Keypair]
+    _private_key: Optional[kp.Keypair]
 
     # noinspection PyMissingConstructor
     def __init__(
@@ -54,7 +54,7 @@ class WsProvider(Provider):
     async def connect(self):
         await self._ws.connect()
 
-    def private_key(self) -> Optional[keypair.Keypair]:
+    def private_key(self) -> Optional[kp.Keypair]:
         return self._private_key
 
     async def close(self):

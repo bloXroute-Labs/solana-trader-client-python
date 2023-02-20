@@ -2,9 +2,9 @@ import os
 import base58
 import base64
 
-from solana import keypair as kp
+from solana.transaction import Transaction
+from solders import keypair as kp
 
-from .deserializer import PartialTransaction
 from bxsolana_trader_proto import api as proto
 
 
@@ -12,7 +12,7 @@ def load_private_key(pkey_str: str) -> kp.Keypair:
     # convert base58 private key string to a keypair
     pkey_bytes = bytes(pkey_str, encoding="utf-8")
     pkey_bytes_base58 = base58.b58decode(pkey_bytes)
-    return kp.Keypair.from_secret_key(pkey_bytes_base58)
+    return kp.Keypair.from_bytes(pkey_bytes_base58)
 
 
 def load_private_key_from_env() -> kp.Keypair:
@@ -53,11 +53,12 @@ def sign_tx_with_private_key(
     :param keypair: key pair to sign with
     :return: signed transaction
     """
-    partial_tx = PartialTransaction.deserialize(unsigned_tx_base64)
-    partial_tx.complete_signing(keypair)
+
+    tx = Transaction.deserialize(bytes(unsigned_tx_base64))
+    tx.sign_partial(keypair)
 
     # convert transaction back to base64
-    signed_tx_bytes_base64 = base64.b64encode(partial_tx.serialize())
+    signed_tx_bytes_base64 = base64.b64encode(tx.serialize())
     return signed_tx_bytes_base64.decode("utf-8")
 
 

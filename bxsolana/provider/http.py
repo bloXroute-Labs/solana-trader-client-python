@@ -5,7 +5,7 @@ from typing import Type, AsyncGenerator, Optional, TYPE_CHECKING, List
 import aiohttp
 from bxsolana_trader_proto.common import OrderType
 
-from solana import keypair
+from solders import keypair as kp
 
 from bxsolana_trader_proto import api as proto
 from .. import transaction
@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 class HttpProvider(Provider):
     _endpoint: str
     _session: aiohttp.ClientSession
-    _private_key: Optional[keypair.Keypair]
+    _private_key: Optional[kp.Keypair]
 
     # noinspection PyMissingConstructor
     def __init__(
@@ -58,7 +58,7 @@ class HttpProvider(Provider):
     async def connect(self):
         pass
 
-    def private_key(self) -> Optional[keypair.Keypair]:
+    def private_key(self) -> Optional[kp.Keypair]:
         return self._private_key
 
     async def close(self):
