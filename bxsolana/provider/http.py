@@ -661,6 +661,18 @@ class HttpProvider(Provider):
         ) as res:
             return await map_response(res, proto.PostSubmitResponse())
 
+    async def post_submit_batch(
+        self,
+        *,
+        entries: List[proto.PostSubmitRequestEntry] = [],
+        submit_strategy: proto.SubmitStrategy = proto.SubmitStrategy.P_UKNOWN,
+    ) -> proto.PostSubmitBatchResponse:
+        request = proto.PostSubmitBatchRequest(entries, submit_strategy)
+        async with self._session.post(
+            f"{self._endpoint}/trade/submit-batch", json=request.to_dict()
+        ) as res:
+            return await map_response(res, proto.PostSubmitBatchResponse())
+
     async def post_replace_by_client_order_i_d(
         self,
         *,

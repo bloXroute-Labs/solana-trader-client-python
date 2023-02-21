@@ -2,9 +2,9 @@ import os
 import base58
 import base64
 
-from solana.transaction import Transaction
+from solana import transaction as solana_tx
 from solders import keypair as kp
-from solders.transaction import Transaction as SoldersTx
+from solders import transaction as solders_tx
 
 from bxsolana_trader_proto import api as proto
 
@@ -56,17 +56,26 @@ def sign_tx_with_private_key(
     """
     b = base64.b64decode(unsigned_tx_base64)
 
-    solders_tx = SoldersTx.from_bytes(b)
+    raw_tx = solders_tx.VersionedTransaction.from_bytes(b)
 
-    message = solders_tx.message
-    signature = keypair.sign_message(bytes(message))
+    version = raw_tx.version()
+
+    # https://github.com/kevinheavey/solders/issues/43 messages to be missing a byte?
+    if str(version) == "Legacy.Legacy":
+        message_bytes = bytes(raw_tx.message)
+    else:
+        padding = 128
+        message_bytes = padding.to_bytes(1, 'big') + bytes(raw_tx.message)
+    signature = keypair.sign_message(message_bytes)
     signatures = [signature]
-    signatures.extend(list(solders_tx.signatures[1:]))
 
-    tx = Transaction.populate(message, signatures)
+    if len(raw_tx.signatures) > 1:
+        signatures.extend(list(raw_tx.signatures[1:]))
+
+    tx = solders_tx.VersionedTransaction.populate(raw_tx.message, signatures)
 
     # convert transaction back to base64
-    signed_tx_bytes_base64 = base64.b64encode(tx.serialize(False))
+    signed_tx_bytes_base64 = base64.b64encode(bytes(tx))
     return signed_tx_bytes_base64.decode("utf-8")
 
 
