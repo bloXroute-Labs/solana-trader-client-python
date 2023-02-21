@@ -4,6 +4,7 @@ import base64
 
 from solana.transaction import Transaction
 from solders import keypair as kp
+from solders.transaction import Transaction as SoldersTx
 
 from bxsolana_trader_proto import api as proto
 
@@ -53,12 +54,19 @@ def sign_tx_with_private_key(
     :param keypair: key pair to sign with
     :return: signed transaction
     """
+    b = base64.b64decode(unsigned_tx_base64)
 
-    tx = Transaction.deserialize(bytes(unsigned_tx_base64))
-    tx.sign_partial(keypair)
+    solders_tx = SoldersTx.from_bytes(b)
+
+    message = solders_tx.message
+    signature = keypair.sign_message(bytes(message))
+    signatures = [signature]
+    signatures.extend(list(solders_tx.signatures[1:]))
+
+    tx = Transaction.populate(message, signatures)
 
     # convert transaction back to base64
-    signed_tx_bytes_base64 = base64.b64encode(tx.serialize())
+    signed_tx_bytes_base64 = base64.b64encode(tx.serialize(False))
     return signed_tx_bytes_base64.decode("utf-8")
 
 
