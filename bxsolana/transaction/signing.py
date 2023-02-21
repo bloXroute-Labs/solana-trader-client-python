@@ -64,7 +64,7 @@ def sign_tx_with_private_key(
         message_bytes = bytes(raw_tx.message)
     else:
         padding = 128
-        message_bytes = padding.to_bytes(1, 'big') + bytes(raw_tx.message)
+        message_bytes = padding.to_bytes(1, "big") + bytes(raw_tx.message)
     signature = keypair.sign_message(message_bytes)
     signatures = [signature]
 
