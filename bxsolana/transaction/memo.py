@@ -35,7 +35,6 @@ def add_memo(
     *private_keys: kp.Keypair
 ) -> str:
     memo = create_trader_api_memo_instruction(memo_content)
-
     instructions.append(memo)
 
     txn_bytes = build_fully_signed_txn(
