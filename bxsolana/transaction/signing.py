@@ -2,7 +2,6 @@ import os
 import base58
 import base64
 
-from solana import transaction as solana_tx
 from solders import keypair as kp
 from solders import transaction as solders_tx
 
