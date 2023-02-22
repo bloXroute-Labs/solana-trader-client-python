@@ -63,8 +63,8 @@ def sign_tx_with_private_key(
     if str(version) == "Legacy.Legacy":
         message_bytes = bytes(raw_tx.message)
     else:
-        padding = 128
-        message_bytes = padding.to_bytes(1, "big") + bytes(raw_tx.message)
+        tx_version_byte = 128
+        message_bytes = tx_version_byte.to_bytes(1, "big") + bytes(raw_tx.message)
     signature = keypair.sign_message(message_bytes)
     signatures = [signature]
 
