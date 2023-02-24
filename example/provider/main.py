@@ -12,6 +12,7 @@ if API_ENV not in ["mainnet", "testnet", "local"]:
         ' "local)'
     )
 
+
 # trades stream is infrequent in terms of updates
 RUN_SLOW_STREAMS = os.environ.get("RUN_SLOW_STREAMS", "true")
 if RUN_SLOW_STREAMS == "false":

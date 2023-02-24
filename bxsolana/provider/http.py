@@ -249,7 +249,7 @@ class HttpProvider(Provider):
         project: proto.Project = proto.Project.P_UNKNOWN,
     ) -> proto.GetPerpOrderbookResponse:
         async with self._session.get(
-            f"{self._endpoint}/trade/perp/orderbook/{market}?limit={limit}&project={project.name}"
+            f"{self._endpoint}/market/perp/orderbook/{market}?limit={limit}&project={project.name}"
         ) as res:
             return await map_response(res, proto.GetPerpOrderbookResponse())
 
@@ -360,7 +360,7 @@ class HttpProvider(Provider):
         account_address: str = "",
         amount: float = 0,
         project: proto.Project = proto.Project.P_DRIFT,
-        typee: PerpCollateralType = PerpCollateralType.PCT_DEPOSIT,
+        type: PerpCollateralType = PerpCollateralType.PCT_DEPOSIT,
         token: PerpCollateralToken = PerpCollateralToken.PCTK_USDC,
     ) -> proto.PostManageCollateralResponse:
         request = proto.PostManageCollateralRequest()
@@ -368,7 +368,7 @@ class HttpProvider(Provider):
         request.owner_address = owner_address
         request.account_address = account_address
         request.amount = amount
-        request.type = typee
+        request.type = type
         request.token = token
         async with self._session.post(
             f"{self._endpoint}/trade/perp/managecollateral",
