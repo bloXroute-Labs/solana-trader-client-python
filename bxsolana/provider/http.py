@@ -12,7 +12,11 @@ from .. import transaction
 from . import constants
 from .base import Provider
 from .http_error import map_response
-from bxsolana_trader_proto.common import PerpContract, PerpCollateralType, PerpCollateralToken
+from bxsolana_trader_proto.common import (
+    PerpContract,
+    PerpCollateralType,
+    PerpCollateralToken,
+)
 
 if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences,PyProtectedMember
@@ -279,6 +283,7 @@ class HttpProvider(Provider):
         contract: PerpContract = PerpContract.ALL,
         client_order_i_d: int = 0,
         order_i_d: int = 0,
+        account_address: str = "",
     ) -> proto.PostCancelPerpOrderResponse:
         request = proto.PostCancelPerpOrderRequest()
         request.order_i_d = order_i_d
@@ -286,6 +291,7 @@ class HttpProvider(Provider):
         request.contract = contract
         request.project = project
         request.owner_address = owner_address
+        request.account_address = account_address
 
         async with self._session.post(
             f"{self._endpoint}/trade/perp/cancelbyid", json=request.to_dict()
@@ -298,11 +304,13 @@ class HttpProvider(Provider):
         owner_address: str = "",
         project: proto.Project = proto.Project.P_DRIFT,
         contract: PerpContract = PerpContract.ALL,
+        account_address: str = "",
     ) -> proto.PostCancelPerpOrdersResponse:
         request = proto.PostCancelPerpOrdersRequest()
         request.contract = contract
         request.project = project
         request.owner_address = owner_address
+        request.account_address = account_address
 
         async with self._session.post(
             f"{self._endpoint}/trade/perp/cancel", json=request.to_dict()
@@ -374,9 +382,7 @@ class HttpProvider(Provider):
             f"{self._endpoint}/trade/perp/managecollateral",
             json=request.to_dict(),
         ) as res:
-            return await map_response(
-                res, proto.PostManageCollateralResponse()
-            )
+            return await map_response(res, proto.PostManageCollateralResponse())
 
     async def get_perp_positions(
         self,
