@@ -1,3 +1,5 @@
+import asyncio
+
 from bxsolana_trader_proto import api as proto
 from bxsolana_trader_proto.common import OrderType
 from bxsolana_trader_proto.common import PerpContract
@@ -63,7 +65,7 @@ async def do_requests(
                 )
             ).to_json()
         )
-    except Exception:
+    except asyncio.exceptions.TimeoutError:
         print("An exception occurred")
 
     print("fetching pools")
@@ -256,7 +258,7 @@ async def do_requests(
                 )
             ).to_json()
         )
-    except Exception:
+    except asyncio.exceptions.TimeoutError:
         print("An exception occurred")
 
     print("get open perp orders")
