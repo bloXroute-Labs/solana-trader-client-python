@@ -50,18 +50,22 @@ async def do_requests(
     print((await api.get_tickers(project=proto.Project.P_OPENBOOK)).to_json())
 
     print("fetching prices")
-    print(
-        (
-            await api.get_price(
-                tokens=[
-                    "So11111111111111111111111111111111111111112",
-                    "USDC",
-                    "SOL",
-                    "USDT",
-                ]
-            )
-        ).to_json()
-    )
+    try:
+        print(
+            (
+                await api.get_price(
+                    tokens=[
+                        "So11111111111111111111111111111111111111112",
+                        "USDC",
+                        "SOL",
+                        "USDT",
+                    ]
+                )
+            ).to_json()
+        )
+    except:
+        print("An exception occurred")
+
 
     print("fetching pools")
     print((await api.get_pools(projects=[proto.Project.P_RAYDIUM])).to_json())
