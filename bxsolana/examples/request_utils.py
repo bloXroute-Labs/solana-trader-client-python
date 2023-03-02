@@ -63,9 +63,8 @@ async def do_requests(
                 )
             ).to_json()
         )
-    except:
+    except Exception:
         print("An exception occurred")
-
 
     print("fetching pools")
     print((await api.get_pools(projects=[proto.Project.P_RAYDIUM])).to_json())
@@ -248,14 +247,17 @@ async def do_requests(
     )
 
     #     DRIFT
-    print("get Drift orderbook")
-    print(
-        (
-            await api.get_perp_orderbook(
-                market="SOL-PERP", project=proto.Project.P_DRIFT
-            )
-        ).to_json()
-    )
+    try:
+        print("get Drift orderbook")
+        print(
+            (
+                await api.get_perp_orderbook(
+                    market="SOL-PERP", project=proto.Project.P_DRIFT
+                )
+            ).to_json()
+        )
+    except Exception:
+        print("An exception occurred")
 
     print("get open perp orders")
     print(
