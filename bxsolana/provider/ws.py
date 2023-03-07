@@ -91,6 +91,11 @@ class WsProvider(Provider):
             _ws_endpoint(route), request.to_dict()
         )
         async for update in self._ws.notifications_for_id(subscription_id):
+            if isinstance(update, str) and update != subscription_id:
+                raise Exception(f"string update {update} was not a subscription id")
+            if not isinstance(update, dict):
+                raise Exception(f"update {update} was not a dictionary")
+
             yield response_type().from_dict(update)
 
 
