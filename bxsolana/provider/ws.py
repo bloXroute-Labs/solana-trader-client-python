@@ -112,6 +112,7 @@ def ws_devnet() -> Provider:
 def ws_local() -> Provider:
     return WsProvider(endpoint=constants.LOCAL_API_WS)
 
+
 def _validated_response(response: Any, response_type: Type["T"]) -> "T":
     if not isinstance(response, dict):
         raise Exception(f"response {response} was not a dictionary")
