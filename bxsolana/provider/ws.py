@@ -72,8 +72,7 @@ class WsProvider(Provider):
         result = await self._ws.call(
             _ws_endpoint(route), request.to_dict(include_default_values=False)
         )
-        response = response_type().from_dict(result)
-        _validate_response(response, response_type)
+        response = _validated_response(result, response_type)
         return response
 
     async def _unary_stream(
@@ -90,8 +89,7 @@ class WsProvider(Provider):
             _ws_endpoint(route), request.to_dict()
         )
         async for update in self._ws.notifications_for_id(subscription_id):
-            response = response_type().from_dict(update)
-            _validate_response(response, response_type)
+            response = _validated_response(update, response_type)
             yield response
 
 
@@ -114,11 +112,11 @@ def ws_devnet() -> Provider:
 def ws_local() -> Provider:
     return WsProvider(endpoint=constants.LOCAL_API_WS)
 
-def _validate_response(response: Any, response_type: Type["T"]):
+def _validated_response(response: Any, response_type: Type["T"]):
     if not isinstance(response, dict):
         raise Exception(f"response {response} was not a dictionary")
 
-    message = response_type().from_dict()
+    message = response_type().from_dict(response)
     d = message.to_dict()
     if len(d) == 0:
         raise Exception(f"response {response} was not of type {T}")
