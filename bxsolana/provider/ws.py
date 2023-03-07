@@ -123,6 +123,8 @@ def _validated_response(response: Any, response_type: Type["T"]) -> "T":
         if "message" in response:
             raise Exception(response["message"])
         else:
-            raise Exception(f"response {response} was not of type {response_type}")
+            raise Exception(
+                f"response {response} was not of type {response_type}"
+            )
 
     return message
