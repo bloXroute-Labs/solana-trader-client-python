@@ -73,7 +73,7 @@ class WsProvider(Provider):
             _ws_endpoint(route), request.to_dict(include_default_values=False)
         )
         if not isinstance(result, dict):
-            raise Exception(f"response type {result} was not a dictionary")
+            raise Exception(f"response {result} was not a dictionary")
 
         return response_type().from_dict(result)
 
