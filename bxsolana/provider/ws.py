@@ -72,6 +72,9 @@ class WsProvider(Provider):
         result = await self._ws.call(
             _ws_endpoint(route), request.to_dict(include_default_values=False)
         )
+        if not isinstance(result, dict):
+            raise Exception(f"response type {result} was not a dictionary")
+
         return response_type().from_dict(result)
 
     async def _unary_stream(
