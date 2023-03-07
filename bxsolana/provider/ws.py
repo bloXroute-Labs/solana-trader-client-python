@@ -73,7 +73,7 @@ class WsProvider(Provider):
             _ws_endpoint(route), request.to_dict(include_default_values=False)
         )
         response = response_type().from_dict(result)
-        _validate_response(response)
+        _validate_response(response, response_type)
         return response
 
     async def _unary_stream(
@@ -91,8 +91,8 @@ class WsProvider(Provider):
         )
         async for update in self._ws.notifications_for_id(subscription_id):
             response = response_type().from_dict(update)
-            _validate_response(response)
-            return response
+            _validate_response(response, response_type)
+            yield response
 
 
 def _ws_endpoint(route: str) -> str:
