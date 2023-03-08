@@ -1,4 +1,3 @@
-import asyncio
 
 from bxsolana_trader_proto import api as proto
 from bxsolana_trader_proto.common import OrderType
@@ -246,8 +245,7 @@ async def do_requests(
         ).to_json()
     )
 
-    #DRIFT
-
+    # DRIFT
     print("get Drift orderbook")
     print(
         (
