@@ -52,21 +52,19 @@ async def do_requests(
     print((await api.get_tickers(project=proto.Project.P_OPENBOOK)).to_json())
 
     print("fetching prices")
-    try:
-        print(
-            (
-                await api.get_price(
-                    tokens=[
-                        "So11111111111111111111111111111111111111112",
-                        "USDC",
-                        "SOL",
-                        "USDT",
-                    ]
-                )
-            ).to_json()
-        )
-    except asyncio.exceptions.TimeoutError:
-        print("An exception occurred")
+
+    print(
+        (
+            await api.get_price(
+                tokens=[
+                    "So11111111111111111111111111111111111111112",
+                    "USDC",
+                    "SOL",
+                    "USDT",
+                ]
+            )
+        ).to_json()
+    )
 
     print("fetching pools")
     print((await api.get_pools(projects=[proto.Project.P_RAYDIUM])).to_json())
@@ -248,18 +246,16 @@ async def do_requests(
         ).to_json()
     )
 
-    #     DRIFT
-    try:
-        print("get Drift orderbook")
-        print(
-            (
-                await api.get_perp_orderbook(
-                    market="SOL-PERP", project=proto.Project.P_DRIFT
-                )
-            ).to_json()
-        )
-    except asyncio.exceptions.TimeoutError:
-        print("An exception occurred")
+    #DRIFT
+
+    print("get Drift orderbook")
+    print(
+        (
+            await api.get_perp_orderbook(
+                market="SOL-PERP", project=proto.Project.P_DRIFT
+            )
+        ).to_json()
+    )
 
     print("get open perp orders")
     print(
