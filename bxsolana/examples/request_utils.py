@@ -1,6 +1,8 @@
 from bxsolana_trader_proto import api as proto
 from bxsolana_trader_proto.common import OrderType
 from bxsolana_trader_proto.common import PerpContract
+from bxsolana_trader_proto.common import PerpCollateralType
+from bxsolana_trader_proto.common import PerpCollateralToken
 
 from .. import provider
 
@@ -48,6 +50,7 @@ async def do_requests(
     print((await api.get_tickers(project=proto.Project.P_OPENBOOK)).to_json())
 
     print("fetching prices")
+
     print(
         (
             await api.get_price(
@@ -241,7 +244,7 @@ async def do_requests(
         ).to_json()
     )
 
-    #     DRIFT
+    # DRIFT
     print("get Drift orderbook")
     print(
         (
@@ -309,11 +312,13 @@ async def do_requests(
     print("post deposit collateral")
     print(
         (
-            await api.post_deposit_collateral(
+            await api.post_manage_collateral(
                 project=proto.Project.P_DRIFT,
                 owner_address=public_key,
-                contract=PerpContract.SOL_PERP,
+                account_address="",
                 amount=0.1,
+                token=PerpCollateralToken.PCTK_USDC,
+                type=PerpCollateralType.PCT_DEPOSIT,
             )
         ).to_json()
     )
@@ -321,11 +326,13 @@ async def do_requests(
     print("post withdraw collateral")
     print(
         (
-            await api.post_withdraw_collateral(
+            await api.post_manage_collateral(
                 project=proto.Project.P_DRIFT,
                 owner_address=public_key,
-                contract=PerpContract.SOL_PERP,
+                account_address="",
                 amount=0.1,
+                token=PerpCollateralToken.PCTK_SOL,
+                type=PerpCollateralType.PCT_WITHDRAWAL,
             )
         ).to_json()
     )

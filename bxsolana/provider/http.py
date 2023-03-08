@@ -12,7 +12,11 @@ from .. import transaction
 from . import constants
 from .base import Provider
 from .http_error import map_response
-from bxsolana_trader_proto.common import PerpContract
+from bxsolana_trader_proto.common import (
+    PerpContract,
+    PerpCollateralType,
+    PerpCollateralToken,
+)
 
 if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences,PyProtectedMember
@@ -249,7 +253,7 @@ class HttpProvider(Provider):
         project: proto.Project = proto.Project.P_UNKNOWN,
     ) -> proto.GetPerpOrderbookResponse:
         async with self._session.get(
-            f"{self._endpoint}/trade/perp/orderbook/{market}?limit={limit}&project={project.name}"
+            f"{self._endpoint}/market/perp/orderbook/{market}?limit={limit}&project={project.name}"
         ) as res:
             return await map_response(res, proto.GetPerpOrderbookResponse())
 
@@ -279,6 +283,7 @@ class HttpProvider(Provider):
         contract: PerpContract = PerpContract.ALL,
         client_order_i_d: int = 0,
         order_i_d: int = 0,
+        account_address: str = "",
     ) -> proto.PostCancelPerpOrderResponse:
         request = proto.PostCancelPerpOrderRequest()
         request.order_i_d = order_i_d
@@ -286,6 +291,7 @@ class HttpProvider(Provider):
         request.contract = contract
         request.project = project
         request.owner_address = owner_address
+        request.account_address = account_address
 
         async with self._session.post(
             f"{self._endpoint}/trade/perp/cancelbyid", json=request.to_dict()
@@ -298,11 +304,13 @@ class HttpProvider(Provider):
         owner_address: str = "",
         project: proto.Project = proto.Project.P_DRIFT,
         contract: PerpContract = PerpContract.ALL,
+        account_address: str = "",
     ) -> proto.PostCancelPerpOrdersResponse:
         request = proto.PostCancelPerpOrdersRequest()
         request.contract = contract
         request.project = project
         request.owner_address = owner_address
+        request.account_address = account_address
 
         async with self._session.post(
             f"{self._endpoint}/trade/perp/cancel", json=request.to_dict()
@@ -353,47 +361,28 @@ class HttpProvider(Provider):
         ) as res:
             return await map_response(res, proto.GetPerpOrderbookResponse())
 
-    async def post_deposit_collateral(
+    async def post_manage_collateral(
         self,
         *,
         owner_address: str = "",
+        account_address: str = "",
         amount: float = 0,
         project: proto.Project = proto.Project.P_DRIFT,
-        contract: PerpContract = PerpContract.ALL,
-    ) -> proto.PostDepositCollateralResponse:
-        request = proto.PostDepositCollateralRequest()
+        type: PerpCollateralType = PerpCollateralType.PCT_DEPOSIT,
+        token: PerpCollateralToken = PerpCollateralToken.PCTK_USDC,
+    ) -> proto.PostManageCollateralResponse:
+        request = proto.PostManageCollateralRequest()
         request.project = project
         request.owner_address = owner_address
+        request.account_address = account_address
         request.amount = amount
-        request.contract = contract
+        request.type = type
+        request.token = token
         async with self._session.post(
-            f"{self._endpoint}/trade/perp/collateral/deposit",
+            f"{self._endpoint}/trade/perp/managecollateral",
             json=request.to_dict(),
         ) as res:
-            return await map_response(
-                res, proto.PostDepositCollateralResponse()
-            )
-
-    async def post_withdraw_collateral(
-        self,
-        *,
-        owner_address: str = "",
-        amount: float = 0,
-        project: proto.Project = proto.Project.P_DRIFT,
-        contract: PerpContract = PerpContract.ALL,
-    ) -> proto.PostWithdrawCollateralResponse:
-        request = proto.PostWithdrawCollateralRequest()
-        request.project = project
-        request.owner_address = owner_address
-        request.amount = amount
-        request.contract = contract
-        async with self._session.post(
-            f"{self._endpoint}/trade/perp/collateral/withdraw",
-            json=request.to_dict(),
-        ) as res:
-            return await map_response(
-                res, proto.PostWithdrawCollateralResponse()
-            )
+            return await map_response(res, proto.PostManageCollateralResponse())
 
     async def get_perp_positions(
         self,
