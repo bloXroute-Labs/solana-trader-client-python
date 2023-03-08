@@ -1,8 +1,10 @@
+import dataclasses
 import os
-from typing import Any, TYPE_CHECKING, Type, Optional, AsyncGenerator
+from typing import AsyncGenerator, Dict, Optional, TYPE_CHECKING, Type
 
 import jsonrpc
 from solana import keypair
+from stringcase import camelcase
 
 from . import Provider, constants
 from .. import transaction
@@ -13,7 +15,7 @@ if TYPE_CHECKING:
     from grpclib._protocols import IProtoMessage
 
     # noinspection PyProtectedMember
-    from betterproto import _MetadataLike, Deadline, T
+    from betterproto import ProtoClassMetadata, _MetadataLike, Deadline, T
 
 
 class WsProvider(Provider):
@@ -113,18 +115,33 @@ def ws_local() -> Provider:
     return WsProvider(endpoint=constants.LOCAL_API_WS)
 
 
-def _validated_response(response: Any, response_type: Type["T"]) -> "T":
+def _validated_response(response: Dict, response_type: Type["T"]) -> "T":
     if not isinstance(response, dict):
         raise Exception(f"response {response} was not a dictionary")
 
+    if "message" in response:
+        raise Exception(response["message"])
+
     message = response_type().from_dict(response)
-    d = message.to_dict()
-    if len(d) == 0:
-        if "message" in response:
-            raise Exception(response["message"])
-        else:
-            raise Exception(
-                f"response {response} was not of type {response_type}"
-            )
+
+    fields = list(dataclasses.fields(message))
+    default_field_types = {field.name: field.type for field in fields}
+
+    for field in default_field_types:
+        if camelcase(field) not in response:
+            raise Exception(f"response {response} was not of type {response_type}")
 
     return message
+
+
+def _betterproto(self):
+    """
+    Lazy initialize metadata for each protobuf class.
+    It may be initialized multiple times in a multi-threaded environment,
+    but that won't affect the correctness.
+    """
+    meta = getattr(self.__class__, "_betterproto_meta", None)
+    if not meta:
+        meta = ProtoClassMetadata(self.__class__)
+        self.__class__._betterproto_meta = meta
+    return meta
