@@ -1,5 +1,5 @@
 import os
-from typing import TYPE_CHECKING, Type, Optional, AsyncGenerator
+from typing import Any, TYPE_CHECKING, Type, Optional, AsyncGenerator
 
 import jsonrpc
 from solana import keypair
@@ -72,7 +72,8 @@ class WsProvider(Provider):
         result = await self._ws.call(
             _ws_endpoint(route), request.to_dict(include_default_values=False)
         )
-        return response_type().from_dict(result)
+        response = _validated_response(result, response_type)
+        return response
 
     async def _unary_stream(
         self,
@@ -88,7 +89,8 @@ class WsProvider(Provider):
             _ws_endpoint(route), request.to_dict()
         )
         async for update in self._ws.notifications_for_id(subscription_id):
-            yield response_type().from_dict(update)
+            response = _validated_response(update, response_type)
+            yield response
 
 
 def _ws_endpoint(route: str) -> str:
@@ -109,3 +111,20 @@ def ws_devnet() -> Provider:
 
 def ws_local() -> Provider:
     return WsProvider(endpoint=constants.LOCAL_API_WS)
+
+
+def _validated_response(response: Any, response_type: Type["T"]) -> "T":
+    if not isinstance(response, dict):
+        raise Exception(f"response {response} was not a dictionary")
+
+    message = response_type().from_dict(response)
+    d = message.to_dict()
+    if len(d) == 0:
+        if "message" in response:
+            raise Exception(response["message"])
+        else:
+            raise Exception(
+                f"response {response} was not of type {response_type}"
+            )
+
+    return message
