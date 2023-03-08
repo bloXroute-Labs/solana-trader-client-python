@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from grpclib._protocols import IProtoMessage
 
     # noinspection PyProtectedMember
-    from betterproto import ProtoClassMetadata, _MetadataLike, Deadline, T
+    from betterproto import _MetadataLike, Deadline, T
 
 
 class WsProvider(Provider):
@@ -132,16 +132,3 @@ def _validated_response(response: Dict, response_type: Type["T"]) -> "T":
             raise Exception(f"response {response} was not of type {response_type}")
 
     return message
-
-
-def _betterproto(self):
-    """
-    Lazy initialize metadata for each protobuf class.
-    It may be initialized multiple times in a multi-threaded environment,
-    but that won't affect the correctness.
-    """
-    meta = getattr(self.__class__, "_betterproto_meta", None)
-    if not meta:
-        meta = ProtoClassMetadata(self.__class__)
-        self.__class__._betterproto_meta = meta
-    return meta
