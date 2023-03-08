@@ -43,8 +43,9 @@ async def do_stream(api: provider.Provider, run_slow: bool = False):
         print("streaming swap events...")
         async for response in api.get_swaps_stream(
             projects=[proto.Project.P_RAYDIUM],
-            # RAY-SOL
-            pools=["AVs9TA4nWDzfPJE9gGVNJMVhcQy3V9PGazuz33BfG2RA"],
+            # RAY-SOL , ETH-SOL, SOL-USDC, SOL-USDT
+            pools=["AVs9TA4nWDzfPJE9gGVNJMVhcQy3V9PGazuz33BfG2RA", "9Hm8QX7ZhE9uB8L2arChmmagZZBtBmnzBbpfxzkQp85D",
+                   "58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2", "7XawhbbxtsRcQA8KTkHT9f9nc6d69UwqCDh6U5EEbEmX"],
             include_failed=True,
         ):
             print(response.to_json())
