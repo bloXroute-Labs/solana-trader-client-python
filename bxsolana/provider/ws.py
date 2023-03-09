@@ -125,9 +125,9 @@ def _validated_response(response: Dict, response_type: Type["T"]) -> "T":
     message = response_type().from_dict(response)
 
     fields = list(dataclasses.fields(message))
-    default_field_types = {field.name: field.type for field in fields}
+    field_names = [field.name for field in fields]
 
-    for field in default_field_types:
+    for field in field_names:
         if camelcase(field) not in response:
             raise Exception(f"response {response} was not of type {response_type}")
 
