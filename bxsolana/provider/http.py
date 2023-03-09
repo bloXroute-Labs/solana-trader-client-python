@@ -317,7 +317,6 @@ class HttpProvider(Provider):
         ) as res:
             return await map_response(res, proto.PostLiquidatePerpResponse())
 
-
     async def get_assets(
             self,
             *,
@@ -327,7 +326,7 @@ class HttpProvider(Provider):
             project: proto.Project = proto.Project.P_DRIFT,
     ) -> proto.GetAssetsResponse:
         async with self._session.get(
-                f"{self._endpoint}/trade/perp/open-orders?ownerAddress={owner_address}&accountAddress={account_address}"
+                f"{self._endpoint}/trade/perp/assets?ownerAddress={owner_address}&accountAddress={account_address}"
                 f"&project={project.name}&contract={contract.name}"
         ) as res:
             return await map_response(res, proto.GetAssetsResponse())
@@ -359,7 +358,7 @@ class HttpProvider(Provider):
     ) -> proto.GetOpenPerpOrderResponse:
         async with self._session.get(
                 f"{self._endpoint}/trade/perp/open-order-by-id?ownerAddress={owner_address}&accountAddress={account_address}"
-                f"&project={project.name}&contract={contract.name}&openOrderID={client_order_i_d}&orderID={order_i_d}"
+                f"&project={project.name}&contract={contract.name}&clientOrderID={client_order_i_d}&orderID={order_i_d}"
         ) as res:
             return await map_response(res, proto.GetOpenPerpOrderResponse())
 
