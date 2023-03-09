@@ -129,6 +129,8 @@ def _validated_response(response: Dict, response_type: Type["T"]) -> "T":
 
     for field in field_names:
         if camelcase(field) not in response:
-            raise Exception(f"response {response} was not of type {response_type}")
+            raise Exception(
+                f"response {response} was not of type {response_type}"
+            )
 
     return message
