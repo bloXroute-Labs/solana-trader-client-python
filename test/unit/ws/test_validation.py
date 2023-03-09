@@ -1,6 +1,8 @@
 import unittest
 
-from bxserum.proto import GetAccountBalanceResponse, GetServerTimeResponse, TokenBalance
+from bxserum.proto import GetAccountBalanceResponse, GetOpenOrdersResponse, GetServerTimeResponse, \
+    TokenBalance
+from bxsolana_trader_proto import GetUserResponse
 
 from bxsolana.provider.ws import _validated_response
 
@@ -43,14 +45,32 @@ class TestWSValidation(unittest.TestCase):
         except Exception as e:
             self.assertEqual(str(e), "response {'timestamp': '123'} was not of type <class 'bxserum.proto.api.GetAccountBalanceResponse'>")
 
-    def test_valid_response(self):
-        response = GetAccountBalanceResponse(tokens=[TokenBalance(symbol="SOL")])
-        response_dict = response.to_dict()
+    def test_valid_response_1(self):
+        response = GetOpenOrdersResponse(orders=[])
+        response_dict = response.to_dict(include_default_values=True)
 
         try:
-            actual_response = _validated_response(response_dict, GetAccountBalanceResponse)
-            assert isinstance(actual_response, GetAccountBalanceResponse)
+            actual_response = _validated_response(response_dict, GetOpenOrdersResponse)
             self.assertEqual(actual_response, response)
         except Exception:
             self.fail("should not have thrown exception")
 
+    def test_valid_response_2(self):
+        response = GetAccountBalanceResponse(tokens=[TokenBalance(symbol="SOL")])
+        response_dict = response.to_dict(include_default_values=True)
+
+        try:
+            actual_response = _validated_response(response_dict, GetAccountBalanceResponse)
+            self.assertEqual(actual_response, response)
+        except Exception:
+            self.fail("should not have thrown exception")
+
+    def test_valid_response_3(self):
+        response = GetUserResponse(status="good", account_number=0)
+        response_dict = response.to_dict(include_default_values=True)
+
+        try:
+            actual_response = _validated_response(response_dict, GetUserResponse)
+            self.assertEqual(actual_response, response)
+        except Exception:
+            self.fail("should not have thrown exception")

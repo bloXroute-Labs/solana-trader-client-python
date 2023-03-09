@@ -1,8 +1,10 @@
+import dataclasses
 import os
-from typing import Any, TYPE_CHECKING, Type, Optional, AsyncGenerator
+from typing import AsyncGenerator, Dict, Optional, TYPE_CHECKING, Type
 
 import jsonrpc
 from solana import keypair
+from stringcase import camelcase
 
 from . import Provider, constants
 from .. import transaction
@@ -113,16 +115,20 @@ def ws_local() -> Provider:
     return WsProvider(endpoint=constants.LOCAL_API_WS)
 
 
-def _validated_response(response: Any, response_type: Type["T"]) -> "T":
+def _validated_response(response: Dict, response_type: Type["T"]) -> "T":
     if not isinstance(response, dict):
         raise Exception(f"response {response} was not a dictionary")
 
+    if "message" in response:
+        raise Exception(response["message"])
+
     message = response_type().from_dict(response)
-    d = message.to_dict()
-    if len(d) == 0:
-        if "message" in response:
-            raise Exception(response["message"])
-        else:
+
+    fields = list(dataclasses.fields(message))
+    field_names = [field.name for field in fields]
+
+    for field in field_names:
+        if camelcase(field) not in response:
             raise Exception(
                 f"response {response} was not of type {response_type}"
             )
