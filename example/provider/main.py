@@ -5,6 +5,8 @@ import bxsolana
 from bxsolana import provider
 from bxsolana import examples
 
+os.environ["API_ENV"] = "local"
+
 API_ENV = os.environ.get("API_ENV", "testnet")
 if API_ENV not in ["mainnet", "testnet", "local"]:
     raise EnvironmentError(

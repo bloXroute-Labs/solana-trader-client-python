@@ -257,15 +257,14 @@ class HttpProvider(Provider):
         ) as res:
             return await map_response(res, proto.GetPerpOrderbookResponse())
 
-
     async def post_settle_p_n_l(
-            self,
-            *,
-            owner_address: str = "",
-            settlee_account_address: str = "",
-            contract: PerpContract = PerpContract.ALL,
-            project: proto.Project = proto.Project.P_DRIFT,
-    )-> proto.PostSettlePNLResponse:
+        self,
+        *,
+        owner_address: str = "",
+        settlee_account_address: str = "",
+        contract: PerpContract = PerpContract.ALL,
+        project: proto.Project = proto.Project.P_DRIFT,
+    ) -> proto.PostSettlePNLResponse:
         request = proto.PostSettlePNLRequest()
         request.contract = contract
         request.project = project
@@ -278,12 +277,12 @@ class HttpProvider(Provider):
             return await map_response(res, proto.PostSettlePNLResponse())
 
     async def post_settle_p_n_ls(
-            self,
-            *,
-            owner_address: str = "",
-            settlee_account_addresses: List[str] = [],
-            contract: PerpContract = PerpContract.ALL,
-            project: proto.Project = proto.Project.P_DRIFT,
+        self,
+        *,
+        owner_address: str = "",
+        settlee_account_addresses: List[str] = [],
+        contract: PerpContract = PerpContract.ALL,
+        project: proto.Project = proto.Project.P_DRIFT,
     ) -> proto.PostSettlePNLsResponse:
         request = proto.PostSettlePNLsRequest()
         request.contract = contract
@@ -297,13 +296,13 @@ class HttpProvider(Provider):
             return await map_response(res, proto.PostSettlePNLsResponse())
 
     async def post_liquidate_perp(
-            self,
-            *,
-            owner_address: str = "",
-            settlee_account_address: str = "",
-            amount: float = 0,
-            contract: PerpContract = PerpContract.ALL,
-            project: proto.Project = proto.Project.P_DRIFT,
+        self,
+        *,
+        owner_address: str = "",
+        settlee_account_address: str = "",
+        amount: float = 0,
+        contract: PerpContract = PerpContract.ALL,
+        project: proto.Project = proto.Project.P_DRIFT,
     ) -> proto.PostLiquidatePerpResponse:
         request = proto.PostLiquidatePerpRequest()
         request.amount = amount
@@ -318,16 +317,16 @@ class HttpProvider(Provider):
             return await map_response(res, proto.PostLiquidatePerpResponse())
 
     async def get_assets(
-            self,
-            *,
-            owner_address: str = "",
-            account_address: str = "",
-            contract: PerpContract = PerpContract.ALL,
-            project: proto.Project = proto.Project.P_DRIFT,
+        self,
+        *,
+        owner_address: str = "",
+        account_address: str = "",
+        contract: PerpContract = PerpContract.ALL,
+        project: proto.Project = proto.Project.P_DRIFT,
     ) -> proto.GetAssetsResponse:
         async with self._session.get(
-                f"{self._endpoint}/trade/perp/assets?ownerAddress={owner_address}&accountAddress={account_address}"
-                f"&project={project.name}&contract={contract.name}"
+            f"{self._endpoint}/trade/perp/assets?ownerAddress={owner_address}&accountAddress={account_address}"
+            f"&project={project.name}&contract={contract.name}"
         ) as res:
             return await map_response(res, proto.GetAssetsResponse())
 
@@ -342,26 +341,25 @@ class HttpProvider(Provider):
             params += "&contracts=" + str(contracts[i].name)
 
         async with self._session.get(
-                f"{self._endpoint}/trade/perp/contracts?project={project.name}{params}"
+            f"{self._endpoint}/trade/perp/contracts?project={project.name}{params}"
         ) as res:
             return await map_response(res, proto.GetPerpContractsResponse())
 
     async def get_open_perp_order(
-            self,
-            *,
-            owner_address: str = "",
-            account_address: str = "",
-            project: proto.Project = proto.Project.P_DRIFT,
-            contract: PerpContract = PerpContract.ALL,
-            order_i_d: int = 0,
-            client_order_i_d: int = 0,
+        self,
+        *,
+        owner_address: str = "",
+        account_address: str = "",
+        project: proto.Project = proto.Project.P_DRIFT,
+        contract: PerpContract = PerpContract.ALL,
+        order_i_d: int = 0,
+        client_order_i_d: int = 0,
     ) -> proto.GetOpenPerpOrderResponse:
         async with self._session.get(
-                f"{self._endpoint}/trade/perp/open-order-by-id?ownerAddress={owner_address}&accountAddress={account_address}"
-                f"&project={project.name}&contract={contract.name}&clientOrderID={client_order_i_d}&orderID={order_i_d}"
+            f"{self._endpoint}/trade/perp/open-order-by-id?ownerAddress={owner_address}&accountAddress={account_address}"
+            f"&project={project.name}&contract={contract.name}&clientOrderID={client_order_i_d}&orderID={order_i_d}"
         ) as res:
             return await map_response(res, proto.GetOpenPerpOrderResponse())
-
 
     async def get_open_perp_orders(
         self,

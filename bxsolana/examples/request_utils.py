@@ -306,7 +306,7 @@ async def do_requests(
                 owner_address=public_key,
                 settlee_account_address=public_key,
                 contract=PerpContract.SOL_PERP,
-                amount=1
+                amount=1,
             )
         ).to_json()
     )
