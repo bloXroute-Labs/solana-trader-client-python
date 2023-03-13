@@ -254,6 +254,39 @@ async def do_requests(
         ).to_json()
     )
 
+    print("get perp contracts")
+    print(
+        (
+            await api.get_perp_contracts(
+                project=proto.Project.P_DRIFT,
+                contracts=[PerpContract.SOL_PERP, PerpContract.BTC_PERP],
+            )
+        ).to_json()
+    )
+
+    print("get perp assets")
+    print(
+        (
+            await api.get_assets(
+                owner_address=public_key,
+                project=proto.Project.P_DRIFT,
+                contract=PerpContract.SOL_PERP,
+            )
+        ).to_json()
+    )
+
+    print("get open perp order")
+    print(
+        (
+            await api.get_open_perp_order(
+                owner_address=public_key,
+                project=proto.Project.P_DRIFT,
+                contract=PerpContract.SOL_PERP,
+                client_order_i_d=12,
+            )
+        ).to_json()
+    )
+
     print("get open perp orders")
     print(
         (
@@ -261,6 +294,43 @@ async def do_requests(
                 owner_address=public_key,
                 project=proto.Project.P_DRIFT,
                 contracts=[PerpContract.SOL_PERP, PerpContract.BTC_PERP],
+            )
+        ).to_json()
+    )
+
+    print("post liquidate perp")
+    print(
+        (
+            await api.post_liquidate_perp(
+                project=proto.Project.P_DRIFT,
+                owner_address=public_key,
+                settlee_account_address=public_key,
+                contract=PerpContract.SOL_PERP,
+                amount=1,
+            )
+        ).to_json()
+    )
+
+    print("post settle pnl")
+    print(
+        (
+            await api.post_settle_p_n_l(
+                project=proto.Project.P_DRIFT,
+                owner_address=public_key,
+                settlee_account_address=public_key,
+                contract=PerpContract.SOL_PERP,
+            )
+        ).to_json()
+    )
+
+    print("post settle pnls")
+    print(
+        (
+            await api.post_settle_p_n_ls(
+                project=proto.Project.P_DRIFT,
+                owner_address=public_key,
+                settlee_account_addresses=[public_key],
+                contract=PerpContract.SOL_PERP,
             )
         ).to_json()
     )
