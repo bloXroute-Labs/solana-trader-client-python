@@ -1,6 +1,6 @@
 import datetime
 import os
-from typing import Type, AsyncGenerator, Optional, TYPE_CHECKING, List
+from typing import Type, AsyncGenerator, Optional, TYPE_CHECKING, List, Any
 
 import aiohttp
 from bxsolana_trader_proto.common import OrderType
@@ -78,13 +78,9 @@ class HttpProvider(Provider):
         limit: int = 10,
         projects: List[proto.Project] = [],
     ) -> proto.GetQuotesResponse:
-        projects_str = (
-            "projects=&".join(str(project.value) for project in projects)
-            if len(projects) > 0
-            else ""
-        )
+        projects_str = serialize_projects(projects)
         async with self._session.get(
-            f"{self._endpoint}/market/quote?inToken={in_token}&outToken={out_token}&inAmount={in_amount}&slippage={slippage}&limit={limit}&projects={projects_str}"
+            f"{self._endpoint}/market/quote?inToken={in_token}&outToken={out_token}&inAmount={in_amount}&slippage={slippage}&limit={limit}&{projects_str}"
         ) as res:
             return await map_response(res, proto.GetQuotesResponse())
 
@@ -223,17 +219,16 @@ class HttpProvider(Provider):
         self, projects: List["proto.Project"] = []
     ) -> proto.GetPoolsResponse:
         params = (
-            "?" + "projects=&".join(str(project.value) for project in projects)
-            if len(projects) > 0
-            else ""
+            "?" + serialize_projects(projects)
         )
+
         async with self._session.get(
             f"{self._endpoint}/market/pools{params}"
         ) as res:
             return await map_response(res, proto.GetPoolsResponse())
 
     async def get_price(self, tokens: List[str] = []) -> proto.GetPriceResponse:
-        params = "?" + "tokens=&".join(tokens) if len(tokens) > 0 else ""
+        params = "?" + serialize_list("tokens", tokens)
         async with self._session.get(
             f"{self._endpoint}/market/price{params}"
         ) as res:
@@ -756,6 +751,19 @@ class HttpProvider(Provider):
 
         # useless line to turn function into a generator
         yield response_type()
+
+
+def serialize_list(key: str, l: List[Any]) -> str:
+    parts = []
+    for i, v in enumerate(l):
+        parts.append(f"{key}={v}")
+        if i != len(l) - 1:
+            parts.append("&")
+    return "".join(parts)
+
+
+def serialize_projects(projects: List[proto.Project]) -> str:
+    return serialize_list("projects", [project.name for project in projects])
 
 
 def http() -> Provider:
