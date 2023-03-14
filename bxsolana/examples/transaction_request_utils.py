@@ -5,7 +5,7 @@ from typing import Tuple
 
 from bxsolana_trader_proto import api as proto
 from bxsolana_trader_proto.common import OrderType
-from solana.blockhash import Blockhash
+from solders import hash as hs
 
 from .. import provider
 from .. import transaction
@@ -147,11 +147,11 @@ async def create_transaction_with_memo(api: provider.Provider):
     instruction = transaction.create_trader_api_memo_instruction("hi from dev")
 
     recent_block_hash_resp = await api.get_recent_block_hash()
-    recent_block_hash = Blockhash(recent_block_hash_resp.block_hash)
+    recent_block_hash = hs.Hash.from_string(recent_block_hash_resp.block_hash)
     instructions = [instruction]
 
     tx_serialized = transaction.build_fully_signed_txn(
-        recent_block_hash, private_key.public_key, instructions, private_key
+        recent_block_hash, private_key.pubkey(), instructions, private_key
     )
     single_memo_txn = base64.b64encode(tx_serialized).decode("utf-8")
     print("serialized memo single_memo_txn", single_memo_txn)
@@ -163,7 +163,7 @@ async def create_transaction_with_memo(api: provider.Provider):
     print("signature for single memo txn", post_submit_response.signature)
 
     double_memo_txn_signed = transaction.add_memo_to_serialized_txn(
-        single_memo_txn, "hi from dev2", private_key.public_key, private_key
+        single_memo_txn, "hi from dev2", private_key.pubkey(), private_key
     )
     print("double_memo_txn_signed", double_memo_txn_signed)
     post_submit_response = await api.post_submit(

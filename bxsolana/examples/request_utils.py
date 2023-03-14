@@ -245,14 +245,16 @@ async def do_requests(
     )
 
     # DRIFT
-    print("get Drift orderbook")
-    print(
-        (
-            await api.get_perp_orderbook(
-                market="SOL-PERP", project=proto.Project.P_DRIFT
-            )
-        ).to_json()
-    )
+
+    # endpoint disabled in v1.6.5
+    # print("get Drift orderbook")
+    # print(
+    #     (
+    #         await api.get_perp_orderbook(
+    #             market="SOL-PERP", project=proto.Project.P_DRIFT
+    #         )
+    #     ).to_json()
+    # )
 
     print("get perp contracts")
     print(

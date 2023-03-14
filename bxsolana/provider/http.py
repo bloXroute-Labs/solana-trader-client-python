@@ -1,11 +1,11 @@
 import datetime
 import os
-from typing import Type, AsyncGenerator, Optional, TYPE_CHECKING, List
+from typing import Type, AsyncGenerator, Optional, TYPE_CHECKING, List, Any
 
 import aiohttp
 from bxsolana_trader_proto.common import OrderType
 
-from solana import keypair
+from solders import keypair as kp
 
 from bxsolana_trader_proto import api as proto
 from .. import transaction
@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 class HttpProvider(Provider):
     _endpoint: str
     _session: aiohttp.ClientSession
-    _private_key: Optional[keypair.Keypair]
+    _private_key: Optional[kp.Keypair]
 
     # noinspection PyMissingConstructor
     def __init__(
@@ -58,7 +58,7 @@ class HttpProvider(Provider):
     async def connect(self):
         pass
 
-    def private_key(self) -> Optional[keypair.Keypair]:
+    def private_key(self) -> Optional[kp.Keypair]:
         return self._private_key
 
     async def close(self):
@@ -78,13 +78,9 @@ class HttpProvider(Provider):
         limit: int = 10,
         projects: List[proto.Project] = [],
     ) -> proto.GetQuotesResponse:
-        projects_str = (
-            "projects=&".join(str(project.value) for project in projects)
-            if len(projects) > 0
-            else ""
-        )
+        projects_str = serialize_projects(projects)
         async with self._session.get(
-            f"{self._endpoint}/market/quote?inToken={in_token}&outToken={out_token}&inAmount={in_amount}&slippage={slippage}&limit={limit}&projects={projects_str}"
+            f"{self._endpoint}/market/quote?inToken={in_token}&outToken={out_token}&inAmount={in_amount}&slippage={slippage}&limit={limit}&{projects_str}"
         ) as res:
             return await map_response(res, proto.GetQuotesResponse())
 
@@ -223,17 +219,16 @@ class HttpProvider(Provider):
         self, projects: List["proto.Project"] = []
     ) -> proto.GetPoolsResponse:
         params = (
-            "?" + "projects=&".join(str(project.value) for project in projects)
-            if len(projects) > 0
-            else ""
+            "?" + serialize_projects(projects)
         )
+
         async with self._session.get(
             f"{self._endpoint}/market/pools{params}"
         ) as res:
             return await map_response(res, proto.GetPoolsResponse())
 
     async def get_price(self, tokens: List[str] = []) -> proto.GetPriceResponse:
-        params = "?" + "tokens=&".join(tokens) if len(tokens) > 0 else ""
+        params = "?" + serialize_list("tokens", tokens)
         async with self._session.get(
             f"{self._endpoint}/market/price{params}"
         ) as res:
@@ -661,6 +656,18 @@ class HttpProvider(Provider):
         ) as res:
             return await map_response(res, proto.PostSubmitResponse())
 
+    async def post_submit_batch(
+        self,
+        *,
+        entries: List[proto.PostSubmitRequestEntry] = [],
+        submit_strategy: proto.SubmitStrategy = proto.SubmitStrategy.P_UKNOWN,
+    ) -> proto.PostSubmitBatchResponse:
+        request = proto.PostSubmitBatchRequest(entries, submit_strategy)
+        async with self._session.post(
+            f"{self._endpoint}/trade/submit-batch", json=request.to_dict()
+        ) as res:
+            return await map_response(res, proto.PostSubmitBatchResponse())
+
     async def post_replace_by_client_order_i_d(
         self,
         *,
@@ -744,6 +751,19 @@ class HttpProvider(Provider):
 
         # useless line to turn function into a generator
         yield response_type()
+
+
+def serialize_list(key: str, l: List[Any]) -> str:
+    parts = []
+    for i, v in enumerate(l):
+        parts.append(f"{key}={v}")
+        if i != len(l) - 1:
+            parts.append("&")
+    return "".join(parts)
+
+
+def serialize_projects(projects: List[proto.Project]) -> str:
+    return serialize_list("projects", [project.name for project in projects])
 
 
 def http() -> Provider:
