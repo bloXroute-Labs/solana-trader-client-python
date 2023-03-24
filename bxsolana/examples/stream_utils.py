@@ -1,4 +1,5 @@
 from bxsolana_trader_proto import api as proto
+from bxsolana_trader_proto.common import PerpContract
 
 from .. import provider
 
@@ -88,7 +89,7 @@ async def do_stream(api: provider.Provider, run_slow: bool = False):
     if run_slow:
         print("streaming Drift orderbook updates...")
         async for response in api.get_perp_orderbooks_stream(
-            markets=["SOL-PERP"], project=proto.Project.P_DRIFT
+            contracts=[PerpContract.SOL_PERP], project=proto.Project.P_DRIFT
         ):
             print(response.to_json())
             item_count += 1
