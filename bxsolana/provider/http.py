@@ -453,6 +453,7 @@ class HttpProvider(Provider):
         self,
         *,
         owner_address: str = "",
+        account_address: str = "",
         project: proto.Project = proto.Project.P_DRIFT,
         contracts: List[PerpContract] = [],
     ) -> proto.PostClosePerpPositionsResponse:
@@ -460,6 +461,7 @@ class HttpProvider(Provider):
         request.contracts = contracts
         request.project = project
         request.owner_address = owner_address
+        request.account_address = account_address
 
         async with self._session.post(
             f"{self._endpoint}/trade/perp/close", json=request.to_dict()
@@ -486,12 +488,13 @@ class HttpProvider(Provider):
         self,
         *,
         owner_address: str = "",
+        account_address: str = "",
         project: proto.Project = proto.Project.P_DRIFT,
     ) -> proto.GetUserResponse:
         async with self._session.get(
-            f"{self._endpoint}/trade/user?ownerAddress={owner_address}&&project={project.name}"
+            f"{self._endpoint}/trade/user?ownerAddress={owner_address}&project={project.name}&accountAddress={account_address}"
         ) as res:
-            return await map_response(res, proto.GetPerpOrderbookResponse())
+            return await map_response(res, proto.GetUserResponse())
 
     async def post_manage_collateral(
         self,
