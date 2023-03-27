@@ -329,18 +329,20 @@ async def do_requests(
         ).to_json()
     )
 
-    # print("post liquidate perp")
-    # print(
-    #     (
-    #         await api.post_liquidate_perp(
-    #             project=proto.Project.P_DRIFT,
-    #             owner_address=public_key,
-    #             settlee_account_address="9UnwdvTf5EfGeLyLrF4GZDUs7LKRUeJQzW7qsDVGQ8sS",
-    #             contract=PerpContract.SOL_PERP,
-    #             amount=1,
-    #         )
-    #     ).to_json()
-    # )
+    print("post liquidate perp")
+    print(
+        (
+            await api.post_liquidate_perp(
+                project=proto.Project.P_DRIFT,
+                owner_address=public_key,
+                settlee_account_address=(
+                    "9UnwdvTf5EfGeLyLrF4GZDUs7LKRUeJQzW7qsDVGQ8sS"
+                ),
+                contract=PerpContract.SOL_PERP,
+                amount=1,
+            )
+        ).to_json()
+    )
 
     print("post settle pnl")
     print(
