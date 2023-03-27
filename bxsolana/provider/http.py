@@ -218,9 +218,7 @@ class HttpProvider(Provider):
     async def get_pools(
         self, projects: List["proto.Project"] = []
     ) -> proto.GetPoolsResponse:
-        params = (
-            "?" + serialize_projects(projects)
-        )
+        params = "?" + serialize_projects(projects)
 
         async with self._session.get(
             f"{self._endpoint}/market/pools{params}"
@@ -243,12 +241,12 @@ class HttpProvider(Provider):
     async def get_perp_orderbook(
         self,
         *,
-        market: str = "",
+        contract: PerpContract = PerpContract.ALL,
         limit: int = 0,
         project: proto.Project = proto.Project.P_UNKNOWN,
     ) -> proto.GetPerpOrderbookResponse:
         async with self._session.get(
-            f"{self._endpoint}/market/perp/orderbook/{market}?limit={limit}&project={project.name}"
+            f"{self._endpoint}/market/perp/orderbook/{contract}?limit={limit}&project={project.name}"
         ) as res:
             return await map_response(res, proto.GetPerpOrderbookResponse())
 
@@ -753,11 +751,11 @@ class HttpProvider(Provider):
         yield response_type()
 
 
-def serialize_list(key: str, l: List[Any]) -> str:
+def serialize_list(key: str, values: List[Any]) -> str:
     parts = []
-    for i, v in enumerate(l):
+    for i, v in enumerate(values):
         parts.append(f"{key}={v}")
-        if i != len(l) - 1:
+        if i != len(values) - 1:
             parts.append("&")
     return "".join(parts)
 
