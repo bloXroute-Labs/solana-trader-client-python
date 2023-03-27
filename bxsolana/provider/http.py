@@ -13,6 +13,8 @@ from . import constants
 from .base import Provider
 from .http_error import map_response
 from bxsolana_trader_proto.common import (
+    PerpPositionSide,
+    PerpOrderType,
     PerpContract,
     PerpCollateralType,
     PerpCollateralToken,
@@ -338,6 +340,39 @@ class HttpProvider(Provider):
         ) as res:
             return await map_response(res, proto.GetPerpContractsResponse())
 
+    async def post_perp_order(
+        self,
+        *,
+        project: proto.Project = proto.Project.P_DRIFT,
+        owner_address: str = "",
+        payer_address: str = "",
+        contract: PerpContract = PerpContract.SOL_PERP,
+        account_address: str = "",
+        position_side: PerpPositionSide = PerpPositionSide.PS_LONG,
+        slippage: float = 0,
+        type: PerpOrderType = PerpOrderType.POT_LIMIT,
+        amount: float = 0,
+        price: float = 0,
+        client_order_i_d: int = 0,
+    ) -> proto.PostPerpOrderResponse:
+        request = proto.PostPerpOrderRequest()
+        request.payer_address = payer_address
+        request.position_side = position_side
+        request.slippage = slippage
+        request.type = type
+        request.amount = amount
+        request.price = price
+        request.client_order_i_d = client_order_i_d
+        request.contract = contract
+        request.project = project
+        request.owner_address = owner_address
+        request.account_address = account_address
+
+        async with self._session.post(
+            f"{self._endpoint}/trade/perp/order", json=request.to_dict()
+        ) as res:
+            return await map_response(res, proto.PostPerpOrderResponse())
+
     async def get_open_perp_order(
         self,
         *,
@@ -418,6 +453,7 @@ class HttpProvider(Provider):
         self,
         *,
         owner_address: str = "",
+        account_address: str = "",
         project: proto.Project = proto.Project.P_DRIFT,
         contracts: List[PerpContract] = [],
     ) -> proto.PostClosePerpPositionsResponse:
@@ -425,6 +461,7 @@ class HttpProvider(Provider):
         request.contracts = contracts
         request.project = project
         request.owner_address = owner_address
+        request.account_address = account_address
 
         async with self._session.post(
             f"{self._endpoint}/trade/perp/close", json=request.to_dict()
@@ -451,12 +488,13 @@ class HttpProvider(Provider):
         self,
         *,
         owner_address: str = "",
+        account_address: str = "",
         project: proto.Project = proto.Project.P_DRIFT,
     ) -> proto.GetUserResponse:
         async with self._session.get(
-            f"{self._endpoint}/trade/user?ownerAddress={owner_address}&&project={project.name}"
+            f"{self._endpoint}/trade/user?ownerAddress={owner_address}&project={project.name}&accountAddress={account_address}"
         ) as res:
-            return await map_response(res, proto.GetPerpOrderbookResponse())
+            return await map_response(res, proto.GetUserResponse())
 
     async def post_manage_collateral(
         self,

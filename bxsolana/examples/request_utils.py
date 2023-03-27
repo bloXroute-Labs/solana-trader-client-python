@@ -1,5 +1,7 @@
 from bxsolana_trader_proto import api as proto
 from bxsolana_trader_proto.common import OrderType
+from bxsolana_trader_proto.common import PerpPositionSide
+from bxsolana_trader_proto.common import PerpOrderType
 from bxsolana_trader_proto.common import PerpContract
 from bxsolana_trader_proto.common import PerpCollateralType
 from bxsolana_trader_proto.common import PerpCollateralToken
@@ -255,6 +257,24 @@ async def do_requests(
         ).to_json()
     )
 
+    print("post perp order")
+    print(
+        (
+            await api.post_perp_order(
+                project=proto.Project.P_DRIFT,
+                owner_address=public_key,
+                payer_address=public_key,
+                contract=PerpContract.SOL_PERP,
+                position_side=PerpPositionSide.PS_LONG,
+                slippage=0,
+                type=PerpOrderType.POT_LIMIT,
+                amount=0,
+                price=12000,
+                client_order_i_d=12,
+            )
+        ).to_json()
+    )
+
     print("get perp contracts")
     print(
         (
@@ -299,13 +319,25 @@ async def do_requests(
         ).to_json()
     )
 
+    print("get user ")
+    print(
+        (
+            await api.get_user(
+                project=proto.Project.P_DRIFT,
+                owner_address=public_key,
+            )
+        ).to_json()
+    )
+
     print("post liquidate perp")
     print(
         (
             await api.post_liquidate_perp(
                 project=proto.Project.P_DRIFT,
                 owner_address=public_key,
-                settlee_account_address=public_key,
+                settlee_account_address=(
+                    "9UnwdvTf5EfGeLyLrF4GZDUs7LKRUeJQzW7qsDVGQ8sS"
+                ),
                 contract=PerpContract.SOL_PERP,
                 amount=1,
             )
@@ -318,7 +350,9 @@ async def do_requests(
             await api.post_settle_p_n_l(
                 project=proto.Project.P_DRIFT,
                 owner_address=public_key,
-                settlee_account_address=public_key,
+                settlee_account_address=(
+                    "9UnwdvTf5EfGeLyLrF4GZDUs7LKRUeJQzW7qsDVGQ8sS"
+                ),
                 contract=PerpContract.SOL_PERP,
             )
         ).to_json()
@@ -330,7 +364,9 @@ async def do_requests(
             await api.post_settle_p_n_ls(
                 project=proto.Project.P_DRIFT,
                 owner_address=public_key,
-                settlee_account_addresses=[public_key],
+                settlee_account_addresses=[
+                    "9UnwdvTf5EfGeLyLrF4GZDUs7LKRUeJQzW7qsDVGQ8sS"
+                ],
                 contract=PerpContract.SOL_PERP,
             )
         ).to_json()
@@ -349,6 +385,17 @@ async def do_requests(
         ).to_json()
     )
 
+    print("post close perp orders")
+    print(
+        (
+            await api.post_close_perp_positions(
+                project=proto.Project.P_DRIFT,
+                owner_address=public_key,
+                contracts=[PerpContract.SOL_PERP],
+            )
+        ).to_json()
+    )
+
     print("post cancel perp orders")
     print(
         (
@@ -360,22 +407,12 @@ async def do_requests(
         ).to_json()
     )
 
-    print("post create users")
+    print("post create user")
     print(
         (
             await api.post_create_user(
                 project=proto.Project.P_DRIFT,
                 owner_address="BgJ8uyf9yhLJaUVESRrqffzwVyQgRi9YvWmpEFaH14kx",
-            )
-        ).to_json()
-    )
-
-    print("get user")
-    print(
-        (
-            await api.get_user(
-                project=proto.Project.P_DRIFT,
-                owner_address=public_key,
             )
         ).to_json()
     )
