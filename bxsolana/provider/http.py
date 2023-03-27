@@ -346,7 +346,7 @@ class HttpProvider(Provider):
         project: proto.Project = proto.Project.P_DRIFT,
         owner_address: str = "",
         payer_address: str = "",
-        contract: PerpContract = 0,
+        contract: PerpContract = PerpContract.SOL_PERP,
         account_address: str = "",
         position_side: PerpPositionSide = PerpPositionSide.PS_LONG,
         slippage: float = 0,
