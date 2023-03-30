@@ -291,7 +291,6 @@ async def do_requests(
             await api.get_assets(
                 owner_address=public_key,
                 project=proto.Project.P_DRIFT,
-                contract=PerpContract.SOL_PERP,
             )
         ).to_json()
     )
@@ -422,8 +421,7 @@ async def do_requests(
         (
             await api.post_manage_collateral(
                 project=proto.Project.P_DRIFT,
-                owner_address=public_key,
-                account_address="",
+                account_address="9UnwdvTf5EfGeLyLrF4GZDUs7LKRUeJQzW7qsDVGQ8sS",
                 amount=0.1,
                 token=PerpCollateralToken.PCTK_USDC,
                 type=PerpCollateralType.PCT_DEPOSIT,
@@ -436,8 +434,7 @@ async def do_requests(
         (
             await api.post_manage_collateral(
                 project=proto.Project.P_DRIFT,
-                owner_address=public_key,
-                account_address="",
+                account_address="9UnwdvTf5EfGeLyLrF4GZDUs7LKRUeJQzW7qsDVGQ8sS",
                 amount=0.1,
                 token=PerpCollateralToken.PCTK_SOL,
                 type=PerpCollateralType.PCT_WITHDRAWAL,

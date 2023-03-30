@@ -316,12 +316,11 @@ class HttpProvider(Provider):
         *,
         owner_address: str = "",
         account_address: str = "",
-        contract: PerpContract = PerpContract.ALL,
         project: proto.Project = proto.Project.P_DRIFT,
     ) -> proto.GetAssetsResponse:
         async with self._session.get(
             f"{self._endpoint}/trade/perp/assets?ownerAddress={owner_address}&accountAddress={account_address}"
-            f"&project={project.name}&contract={contract.name}"
+            f"&project={project.name}"
         ) as res:
             return await map_response(res, proto.GetAssetsResponse())
 
@@ -499,7 +498,6 @@ class HttpProvider(Provider):
     async def post_manage_collateral(
         self,
         *,
-        owner_address: str = "",
         account_address: str = "",
         amount: float = 0,
         project: proto.Project = proto.Project.P_DRIFT,
@@ -508,7 +506,6 @@ class HttpProvider(Provider):
     ) -> proto.PostManageCollateralResponse:
         request = proto.PostManageCollateralRequest()
         request.project = project
-        request.owner_address = owner_address
         request.account_address = account_address
         request.amount = amount
         request.type = type
