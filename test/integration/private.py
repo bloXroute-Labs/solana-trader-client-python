@@ -4,6 +4,7 @@ import random
 
 import aiohttp
 import jsonrpc
+from bxsolana_trader_proto.common import OrderType
 from grpclib import GRPCError
 from solana import keypair
 
@@ -23,7 +24,7 @@ async def test_submit_cancel_order(t: unittest.TestCase, p: provider.Provider):
         public_key,
         "SOLUSDC",
         proto.Side.S_ASK,
-        [proto.OrderType.OT_LIMIT],
+        [OrderType.OT_LIMIT],
         0.1,
         10_000,
         open_orders_address,
@@ -46,7 +47,7 @@ async def test_submit_cancel_order(t: unittest.TestCase, p: provider.Provider):
             public_key,
             "SOLUSDC",
             proto.Side.S_BID,
-            [proto.OrderType.OT_LIMIT],
+            [OrderType.OT_LIMIT],
             0.1,
             10_000,
         )
@@ -71,7 +72,7 @@ async def test_submit_cancel_order(t: unittest.TestCase, p: provider.Provider):
             public_key,
             "SOLUSDC",
             proto.Side.S_ASK,
-            [proto.OrderType.OT_LIMIT],
+            [OrderType.OT_LIMIT],
             0.000001,
             10_000,
         )
@@ -97,7 +98,7 @@ async def test_submit_cancel_order(t: unittest.TestCase, p: provider.Provider):
             public_key,
             "SOLUSDC",
             proto.Side.S_ASK,
-            [proto.OrderType.OT_LIMIT],
+            [OrderType.OT_LIMIT],
             0.1,
             10_000,
             str(kp.public_key),

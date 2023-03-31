@@ -2,7 +2,7 @@ import os
 from typing import TYPE_CHECKING, Optional
 
 from grpclib import client
-from solana import keypair
+from solders import keypair as kp
 
 from .. import transaction
 from . import constants
@@ -21,7 +21,7 @@ class GrpcProvider(Provider):
     _port: int
     _auth_header: str
     _use_ssl: bool
-    _private_key: Optional[keypair.Keypair]
+    _private_key: Optional[kp.Keypair]
 
     def __init__(
         self,
@@ -67,7 +67,7 @@ class GrpcProvider(Provider):
             )
             self.metadata = {"authorization": self._auth_header}
 
-    def private_key(self) -> Optional[keypair.Keypair]:
+    def private_key(self) -> Optional[kp.Keypair]:
         return self._private_key
 
     async def close(self):

@@ -1,8 +1,10 @@
+import dataclasses
 import os
-from typing import TYPE_CHECKING, Type, Optional, AsyncGenerator
+from typing import AsyncGenerator, Dict, Optional, TYPE_CHECKING, Type
 
 import jsonrpc
-from solana import keypair
+from solders import keypair as kp
+from stringcase import camelcase
 
 from . import Provider, constants
 from .. import transaction
@@ -20,7 +22,7 @@ class WsProvider(Provider):
     _ws: jsonrpc.WsRpcConnection
 
     _endpoint: str
-    _private_key: Optional[keypair.Keypair]
+    _private_key: Optional[kp.Keypair]
 
     # noinspection PyMissingConstructor
     def __init__(
@@ -52,7 +54,7 @@ class WsProvider(Provider):
     async def connect(self):
         await self._ws.connect()
 
-    def private_key(self) -> Optional[keypair.Keypair]:
+    def private_key(self) -> Optional[kp.Keypair]:
         return self._private_key
 
     async def close(self):
@@ -72,7 +74,8 @@ class WsProvider(Provider):
         result = await self._ws.call(
             _ws_endpoint(route), request.to_dict(include_default_values=False)
         )
-        return response_type().from_dict(result)
+        response = _validated_response(result, response_type)
+        return response
 
     async def _unary_stream(
         self,
@@ -88,7 +91,8 @@ class WsProvider(Provider):
             _ws_endpoint(route), request.to_dict()
         )
         async for update in self._ws.notifications_for_id(subscription_id):
-            yield response_type().from_dict(update)
+            response = _validated_response(update, response_type)
+            yield response
 
 
 def _ws_endpoint(route: str) -> str:
@@ -109,3 +113,24 @@ def ws_devnet() -> Provider:
 
 def ws_local() -> Provider:
     return WsProvider(endpoint=constants.LOCAL_API_WS)
+
+
+def _validated_response(response: Dict, response_type: Type["T"]) -> "T":
+    if not isinstance(response, dict):
+        raise Exception(f"response {response} was not a dictionary")
+
+    if "message" in response:
+        raise Exception(response["message"])
+
+    message = response_type().from_dict(response)
+
+    fields = list(dataclasses.fields(message))
+    field_names = [field.name for field in fields]
+
+    for field in field_names:
+        if camelcase(field) not in response:
+            raise Exception(
+                f"response {response} was not of type {response_type}"
+            )
+
+    return message

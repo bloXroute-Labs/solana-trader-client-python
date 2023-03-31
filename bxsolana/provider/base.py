@@ -1,8 +1,10 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
-from solana import keypair
 from bxsolana_trader_proto import api
+from bxsolana_trader_proto.common import OrderType
+from solders import keypair as kp
+
 from .. import transaction
 
 
@@ -19,14 +21,14 @@ class Provider(api.ApiStub, ABC):
         pass
 
     @abstractmethod
-    def private_key(self) -> Optional[keypair.Keypair]:
+    def private_key(self) -> Optional[kp.Keypair]:
         pass
 
     @abstractmethod
     async def close(self):
         pass
 
-    def require_private_key(self) -> keypair.Keypair:
+    def require_private_key(self) -> kp.Keypair:
         kp = self.private_key()
         if kp is None:
             raise EnvironmentError("private key has not been set in provider")
@@ -38,7 +40,7 @@ class Provider(api.ApiStub, ABC):
         payer_address: str,
         market: str,
         side: "api.Side",
-        types: List["api.OrderType"],
+        types: List["OrderType"],
         amount: float,
         price: float,
         open_orders_address: str = "",
@@ -181,7 +183,7 @@ class Provider(api.ApiStub, ABC):
         payer_address: str,
         market: str,
         side: "api.Side",
-        types: List["api.OrderType"],
+        types: List["OrderType"],
         amount: float,
         price: float,
         open_orders_address: str = "",
@@ -217,7 +219,7 @@ class Provider(api.ApiStub, ABC):
         payer_address: str,
         market: str,
         side: "api.Side",
-        types: List["api.OrderType"],
+        types: List["OrderType"],
         amount: float,
         price: float,
         open_orders_address: str = "",
