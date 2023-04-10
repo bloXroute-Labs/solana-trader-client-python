@@ -17,7 +17,6 @@ async def do_requests(
     usdc_wallet: str,
     sol_usdc_market: str,
 ):
-
     print("fetching market depth")
     print(
         (
@@ -450,7 +449,9 @@ async def do_requests(
                 amount=0.1,
                 token=PerpCollateralToken.PCTK_SOL,
                 type=PerpCollateralType.PCT_TRANSFER,
-                to_account_address="AbnwAQGrYnvktT4ihhX5np8RbgtfXJfPwpgMJnCFa4MT",
+                to_account_address=(
+                    "AbnwAQGrYnvktT4ihhX5np8RbgtfXJfPwpgMJnCFa4MT"
+                ),
             )
         ).to_json()
     )
