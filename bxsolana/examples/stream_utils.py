@@ -92,7 +92,7 @@ async def do_stream(api: provider.Provider, run_slow: bool = False):
         ):
             print(response.to_json())
             item_count += 1
-            if item_count == 5:
+            if item_count == 1:
                 item_count = 0
                 break
 
