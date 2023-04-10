@@ -70,29 +70,41 @@ async def do_stream(api: provider.Provider, run_slow: bool = False):
                 item_count = 0
                 break
 
-    print("streaming price streams...")
-    async for response in api.get_prices_stream(
-        projects=[proto.Project.P_RAYDIUM],
-        tokens=[
-            "So11111111111111111111111111111111111111112",
-            "USDC",
-            "SOL",
-            "USDT",
-        ],
-    ):
-        print(response.to_json())
-        item_count += 1
-        if item_count == 1:
-            item_count = 0
-            break
+    if run_slow:
+        print("streaming price streams...")
+        async for response in api.get_prices_stream(
+            projects=[proto.Project.P_RAYDIUM],
+            tokens=[
+                "So11111111111111111111111111111111111111112",
+                "USDC",
+                "SOL",
+                "USDT",
+            ],
+        ):
+            print(response.to_json())
+            item_count += 1
+            if item_count == 1:
+                item_count = 0
+                break
 
     if run_slow:
         print("streaming Drift orderbook updates...")
         async for response in api.get_perp_orderbooks_stream(
-            contracts=[PerpContract.SOL_PERP], project=proto.Project.P_DRIFT
+            contracts=[PerpContract.ALL], project=proto.Project.P_DRIFT
         ):
             print(response.to_json())
             item_count += 1
             if item_count == 5:
+                item_count = 0
+                break
+
+    if run_slow:
+        print("streaming Drift trade updates...")
+        async for response in api.get_perp_trades_stream(
+            contracts=[PerpContract.ALL], project=proto.Project.P_DRIFT
+        ):
+            print(response.to_json())
+            item_count += 1
+            if item_count == 1:
                 item_count = 0
                 break

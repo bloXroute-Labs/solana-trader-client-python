@@ -330,12 +330,8 @@ class HttpProvider(Provider):
         project: proto.Project = proto.Project.P_DRIFT,
         contracts: List[PerpContract] = [],
     ) -> proto.GetPerpContractsResponse:
-        params = ""
-        for i in range(len(contracts)):
-            params += "&contracts=" + str(contracts[i].name)
-
         async with self._session.get(
-            f"{self._endpoint}/trade/perp/contracts?project={project.name}{params}"
+            f"{self._endpoint}/market/perp/contracts?project={project.name}"
         ) as res:
             return await map_response(res, proto.GetPerpContractsResponse())
 
@@ -503,10 +499,12 @@ class HttpProvider(Provider):
         project: proto.Project = proto.Project.P_DRIFT,
         type: PerpCollateralType = PerpCollateralType.PCT_DEPOSIT,
         token: PerpCollateralToken = PerpCollateralToken.PCTK_USDC,
+        to_account_address: str = "",
     ) -> proto.PostManageCollateralResponse:
         request = proto.PostManageCollateralRequest()
         request.project = project
         request.account_address = account_address
+        request.to_account_address = to_account_address
         request.amount = amount
         request.type = type
         request.token = token

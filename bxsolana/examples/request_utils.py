@@ -247,6 +247,15 @@ async def do_requests(
     )
 
     # DRIFT
+    print("get user")
+    print(
+        (
+            await api.get_user(
+                project=proto.Project.P_DRIFT,
+                owner_address=public_key,
+            )
+        ).to_json()
+    )
 
     print("get Drift orderbook")
     print(
@@ -280,7 +289,6 @@ async def do_requests(
         (
             await api.get_perp_contracts(
                 project=proto.Project.P_DRIFT,
-                contracts=[PerpContract.SOL_PERP, PerpContract.BTC_PERP],
             )
         ).to_json()
     )
@@ -314,16 +322,6 @@ async def do_requests(
                 owner_address=public_key,
                 project=proto.Project.P_DRIFT,
                 contracts=[PerpContract.SOL_PERP, PerpContract.BTC_PERP],
-            )
-        ).to_json()
-    )
-
-    print("get user ")
-    print(
-        (
-            await api.get_user(
-                project=proto.Project.P_DRIFT,
-                owner_address=public_key,
             )
         ).to_json()
     )
@@ -438,6 +436,22 @@ async def do_requests(
                 amount=0.1,
                 token=PerpCollateralToken.PCTK_SOL,
                 type=PerpCollateralType.PCT_WITHDRAWAL,
+            )
+        ).to_json()
+    )
+
+    print("post transfer collateral")
+    print(
+        (
+            await api.post_manage_collateral(
+                project=proto.Project.P_DRIFT,
+                account_address="9UnwdvTf5EfGeLyLrF4GZDUs7LKRUeJQzW7qsDVGQ8sS",
+                amount=0.1,
+                token=PerpCollateralToken.PCTK_SOL,
+                type=PerpCollateralType.PCT_TRANSFER,
+                to_account_address=(
+                    "AbnwAQGrYnvktT4ihhX5np8RbgtfXJfPwpgMJnCFa4MT"
+                ),
             )
         ).to_json()
     )
