@@ -14,6 +14,7 @@ from .base import Provider
 from .http_error import map_response
 from bxsolana_trader_proto.common import (
     PerpPositionSide,
+    PostOnlyParams,
     PerpOrderType,
     PerpContract,
     PerpCollateralType,
@@ -349,6 +350,7 @@ class HttpProvider(Provider):
         amount: float = 0,
         price: float = 0,
         client_order_i_d: int = 0,
+        post_only: PostOnlyParams = PostOnlyParams.PO_NONE,
     ) -> proto.PostPerpOrderResponse:
         request = proto.PostPerpOrderRequest()
         request.payer_address = payer_address
