@@ -7,9 +7,7 @@ from bxsolana_trader_proto.common import OrderType
 
 from solders import keypair as kp
 
-from bxsolana_trader_proto import (
-    api as proto,
-)
+from bxsolana_trader_proto import api as proto
 from .. import transaction
 from . import constants
 from .base import Provider
