@@ -107,7 +107,7 @@ class HttpProvider(Provider):
         market: str = "",
         position_side: str = "",
         slippage: float = 0,
-        typee: str = "",
+        type: str = "",
         amount: float = 0,
         price: float = 0,
         client_order_i_d: int = 0,
@@ -120,7 +120,7 @@ class HttpProvider(Provider):
         request.account_address = account_address
         request.position_side = position_side
         request.slippage = slippage
-        request.type = typee
+        request.type = type
         request.amount = amount
         request.price = price
         request.client_order_i_d = client_order_i_d
@@ -548,10 +548,16 @@ class HttpProvider(Provider):
         *,
         owner_address: str = "",
         project: proto.Project = proto.Project.P_DRIFT,
+        action: str = "CREATE",
+        sub_account_i_d: int = 0,
+        account_name: str = "",
     ) -> proto.PostCreateUserResponse:
         request = proto.PostCreateUserRequest()
         request.project = project
         request.owner_address = owner_address
+        request.action = action
+        request.sub_account_i_d = sub_account_i_d
+        request.account_name = account_name
         async with self._session.post(
             f"{self._endpoint}/trade/user", json=request.to_dict()
         ) as res:
