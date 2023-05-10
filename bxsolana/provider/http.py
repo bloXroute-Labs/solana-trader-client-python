@@ -7,7 +7,10 @@ from bxsolana_trader_proto.common import OrderType
 
 from solders import keypair as kp
 
-from bxsolana_trader_proto import api as proto
+from bxsolana_trader_proto import (
+    api as proto,
+    PostDriftEnableMarginTradingResponse,
+)
 from .. import transaction
 from . import constants
 from .base import Provider
@@ -43,6 +46,7 @@ class HttpProvider(Provider):
         private_key: Optional[str] = None,
     ):
         self._endpoint = f"{endpoint}/api/v1"
+        self._endpointV2 = f"{endpoint}/api/v2"
 
         if auth_header is None:
             auth_header = os.environ["AUTH_HEADER"]
@@ -66,6 +70,78 @@ class HttpProvider(Provider):
 
     async def close(self):
         await self._session.close()
+
+    # Beginning of V2
+    async def get_drift_markets(
+        self, metadata: bool = False
+    ) -> proto.GetDriftMarketsResponse:
+        async with self._session.get(
+            f"{self._endpointV2}/drift/markets={metadata}"
+        ) as res:
+            return await map_response(res, proto.GetDriftMarketsResponse())
+
+    async def post_drift_enable_margin_trading(
+        self,
+        *,
+        owner_address: str = "",
+        account_address: str = "",
+        enable_margin: bool = False,
+    ) -> PostDriftEnableMarginTradingResponse:
+        request = proto.PostDriftEnableMarginTradingRequest()
+
+        request.owner_address = owner_address
+        request.account_address = account_address
+        request.enable_margin = enable_margin
+        async with self._session.post(
+            f"{self._endpointV2}/drift/enable-margin", json=request.to_dict()
+        ) as res:
+            return await map_response(
+                res, proto.PostDriftEnableMarginTradingResponse()
+            )
+
+    async def post_drift_margin_order(
+        self,
+        *,
+        owner_address: str = "",
+        account_address: str = "",
+        market: str = "",
+        position_side: str = "",
+        slippage: float = 0,
+        typee: str = "",
+        amount: float = 0,
+        price: float = 0,
+        client_order_i_d: int = 0,
+        post_only: PostOnlyParams = PostOnlyParams.PO_NONE,
+    ) -> proto.PostDriftMarginOrderResponse:
+        request = proto.PostDriftMarginOrderRequest()
+
+        request.owner_address = owner_address
+        request.market = market
+        request.account_address = account_address
+        request.position_side = position_side
+        request.slippage = slippage
+        request.type = typee
+        request.amount = amount
+        request.price = price
+        request.client_order_i_d = client_order_i_d
+        request.post_only = post_only
+
+        async with self._session.post(
+            f"{self._endpointV2}/drift/margin-place", json=request.to_dict()
+        ) as res:
+            return await map_response(res, proto.PostDriftMarginOrderResponse())
+
+    async def get_drift_margin_orderbook(
+        self, *, market: str = "", limit: int = 0, metadata: bool = False
+    ) -> proto.GetDriftMarginOrderbookResponse:
+        async with self._session.get(
+            f"{self._endpointV2}/drift/margin-orderbooks/{market}?limit=/{limit}&metadata={metadata}"
+        ) as res:
+            return await map_response(
+                res, proto.GetDriftMarginOrderbookResponse()
+            )
+
+    # End of V2
 
     async def get_markets(self) -> proto.GetMarketsResponse:
         async with self._session.get(f"{self._endpoint}/market/markets") as res:

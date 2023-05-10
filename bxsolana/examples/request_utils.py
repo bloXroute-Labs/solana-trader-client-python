@@ -5,6 +5,7 @@ from bxsolana_trader_proto.common import PerpOrderType
 from bxsolana_trader_proto.common import PerpContract
 from bxsolana_trader_proto.common import PerpCollateralType
 from bxsolana_trader_proto.common import PerpCollateralToken
+from bxsolana_trader_proto.common import PostOnlyParams
 
 from .. import provider
 
@@ -247,6 +248,43 @@ async def do_requests(
     )
 
     # DRIFT
+    print("post Drift margin trading flag")
+    print(
+        (
+            await api.post_drift_enable_margin_trading(
+                owner_address=public_key, enable_margin=True
+            )
+        ).to_json()
+    )
+
+    print("post Drift Margin order")
+    print(
+        (
+            await api.post_drift_margin_order(
+                owner_address=public_key,
+                market="SOL",
+                position_side="LONG",
+                slippage=10,
+                type="MARKET",  # or Limit
+                amount=10,
+                client_order_i_d=12,
+                post_only=PostOnlyParams.PO_NONE,
+            )
+        ).to_json()
+    )
+
+    print("get Drift markets")
+    print((await api.get_drift_markets(metadata=True)).to_json())
+
+    print("get Drift margin orderbook")
+    print(
+        (
+            await api.get_drift_margin_orderbook(
+                market="SOL", limit=2, metadata=True
+            )
+        ).to_json()
+    )
+
     print("get user")
     print(
         (
