@@ -9,7 +9,6 @@ from solders import keypair as kp
 
 from bxsolana_trader_proto import (
     api as proto,
-    PostDriftEnableMarginTradingResponse,
 )
 from .. import transaction
 from . import constants
@@ -86,7 +85,7 @@ class HttpProvider(Provider):
         owner_address: str = "",
         account_address: str = "",
         enable_margin: bool = False,
-    ) -> PostDriftEnableMarginTradingResponse:
+    ) -> proto.PostDriftEnableMarginTradingResponse:
         request = proto.PostDriftEnableMarginTradingRequest()
 
         request.owner_address = owner_address
