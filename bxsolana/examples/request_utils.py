@@ -393,7 +393,9 @@ async def do_requests(
     print(
         (
             await api.get_drift_market_depth(
-                contract="SOL_PERP", limit=3
+                get_drift_market_depth_request=proto.GetDriftMarketDepthRequest(
+                    contract="SOL_PERP", limit=3
+                )
             )
         ).to_json()
     )

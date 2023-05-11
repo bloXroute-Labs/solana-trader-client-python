@@ -343,14 +343,17 @@ class HttpProvider(Provider):
         ) as res:
             return await map_response(res, proto.GetPerpOrderbookResponse())
 
-    async def get_perp_market_depth(
+    async def get_drift_market_depth(
         self,
+        get_drift_market_depth_request: proto.GetDriftMarketDepthRequest,
         *,
-        contract: "",
-        limit: int = 0,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
     ) -> proto.GetDriftMarketDepthResponse:
         async with self._session.get(
-            f"{self._endpointV2}/drift/market-depth/{contract}?limit={limit}"
+            f"{self._endpointV2}/drift/market-depth/{get_drift_market_depth_request.contract}?"
+            f"limit={get_drift_market_depth_request.limit}"
         ) as res:
             return await map_response(res, proto.GetDriftMarketDepthResponse())
 
