@@ -10,9 +10,9 @@ async def do_stream(api: provider.Provider, run_slow: bool = False):
     if run_slow:
         print("streaming orderbook updates...")
         async for response in api.get_orderbooks_stream(
-                get_orderbooks_request=proto.GetOrderbooksRequest(
-                    markets=["SOLUSDC"], project=proto.Project.P_OPENBOOK
-                )
+            get_orderbooks_request=proto.GetOrderbooksRequest(
+                markets=["SOLUSDC"], project=proto.Project.P_OPENBOOK
+            )
         ):
             print(response.to_json())
             item_count += 1
@@ -59,7 +59,8 @@ async def do_stream(api: provider.Provider, run_slow: bool = False):
                     "7XawhbbxtsRcQA8KTkHT9f9nc6d69UwqCDh6U5EEbEmX",
                 ],
                 include_failed=True,
-        )):
+            )
+        ):
             print(response.to_json())
             item_count += 1
             if item_count == 1:
@@ -90,7 +91,8 @@ async def do_stream(api: provider.Provider, run_slow: bool = False):
                     "SOL",
                     "USDT",
                 ],
-            )):
+            )
+        ):
             print(response.to_json())
             item_count += 1
             if item_count == 1:

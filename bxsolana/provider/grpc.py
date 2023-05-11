@@ -1,5 +1,5 @@
 import os
-from typing import TYPE_CHECKING, Optional
+from typing import Optional
 
 from grpclib import client
 from solders import keypair as kp
@@ -7,10 +7,6 @@ from solders import keypair as kp
 from .. import transaction
 from . import constants
 from .base import Provider
-
-if TYPE_CHECKING:
-    # noinspection PyProtectedMember
-    from betterproto import _MetadataLike, Deadline
 
 
 class GrpcProvider(Provider):
@@ -32,8 +28,6 @@ class GrpcProvider(Provider):
         use_ssl: bool = False,
         *,
         timeout: Optional[float] = None,
-        deadline: Optional["Deadline"] = None,
-        metadata: Optional["_MetadataLike"] = None,
     ):
         self._host = host
         self._port = port
@@ -56,8 +50,6 @@ class GrpcProvider(Provider):
             # pyre-ignore[6]: overriding to force context manager hooks
             None,
             timeout=timeout,
-            deadline=deadline,
-            metadata=metadata,
         )
 
     async def connect(self):

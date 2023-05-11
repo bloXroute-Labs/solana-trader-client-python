@@ -5,8 +5,12 @@ import bxsolana
 from bxsolana import provider
 from bxsolana import examples
 
-os.environ["AUTH_HEADER"] = "ZDIxYzE0NmItZWYxNi00ZmFmLTg5YWUtMzYwMTk4YzUyZmM4OjEwOWE5MzEzZDc2Yjg3MzczYjdjZDdhNmZkZGE3ZDg5"
-os.environ["PRIVATE_KEY"] = "4L8TAcxCw2K6Urnh3S8VDZQ9oLVsDRZaxyAznNmmENGJdwvC6BztptSuRb34k79CyrMr2HbhPBuagrpjyAPhAU1N"
+os.environ[
+    "AUTH_HEADER"
+] = "ZDIxYzE0NmItZWYxNi00ZmFmLTg5YWUtMzYwMTk4YzUyZmM4OjEwOWE5MzEzZDc2Yjg3MzczYjdjZDdhNmZkZGE3ZDg5"
+os.environ[
+    "PRIVATE_KEY"
+] = "4L8TAcxCw2K6Urnh3S8VDZQ9oLVsDRZaxyAznNmmENGJdwvC6BztptSuRb34k79CyrMr2HbhPBuagrpjyAPhAU1N"
 os.environ["PUBLIC_KEY"] = "CmRWsBCWMVuQ1jp3b1gumr9bHsy6a3jNyJEpQAGKH6BJ"
 os.environ["API_ENV"] = "local"
 
@@ -32,8 +36,8 @@ if RUN_TRADES == "false":
 else:
     RUN_TRADES = True
 
-async def main():
 
+async def main():
     await http()
     await ws()
     await grpc()

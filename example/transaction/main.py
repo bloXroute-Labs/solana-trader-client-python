@@ -57,7 +57,7 @@ async def ws():
                 market_addr=market_addr,
             )
 
-            await examples.replace_order_by_client_order_i_d(
+            await examples.replace_order_by_client_order_id(
                 api,
                 owner_addr=public_key,
                 payer_addr=public_key,
@@ -100,7 +100,7 @@ async def grpc():
             market_addr=market_addr,
         )
 
-        await examples.replace_order_by_client_order_i_d(
+        await examples.replace_order_by_client_order_id(
             api,
             owner_addr=public_key,
             payer_addr=public_key,
@@ -128,7 +128,7 @@ async def http():
             market_addr=market_addr,
         )
 
-        await examples.replace_order_by_client_order_i_d(
+        await examples.replace_order_by_client_order_id(
             api,
             owner_addr=public_key,
             payer_addr=public_key,

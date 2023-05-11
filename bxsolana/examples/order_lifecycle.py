@@ -25,7 +25,9 @@ async def order_lifecycle(
     print("order lifecycle test\n")
 
     oss = p2.get_order_status_stream(
-        market=market_addr, owner_address=owner_addr
+        get_order_status_stream_request=proto.GetOrderStatusStreamRequest(
+            market=market_addr, owner_address=owner_addr
+        )
     )
 
     # pyre-ignore[6]:
