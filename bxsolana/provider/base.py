@@ -50,28 +50,32 @@ class Provider(api.ApiStub, ABC):
     ) -> str:
         pk = self.require_private_key()
         order = await self.post_order(
-            owner_address=owner_address,
-            payer_address=payer_address,
-            market=market,
-            side=side,
-            type=types,
-            amount=amount,
-            price=price,
-            open_orders_address=open_orders_address,
-            client_order_i_d=client_order_id,
-            project=project,
+            post_order_request=api.PostOrderRequest(
+                owner_address=owner_address,
+                payer_address=payer_address,
+                market=market,
+                side=side,
+                type=types,
+                amount=amount,
+                price=price,
+                open_orders_address=open_orders_address,
+                client_order_id=client_order_id,
+                project=project,
+            )
         )
         signed_tx = transaction.sign_tx_message_with_private_key(
             order.transaction, pk
         )
         result = await self.post_submit(
-            transaction=signed_tx, skip_pre_flight=skip_pre_flight
+            post_submit_request=api.PostSubmitRequest(
+                transaction=signed_tx, skip_pre_flight=skip_pre_flight
+            )
         )
         return result.signature
 
     async def submit_cancel_order(
         self,
-        order_i_d: str = "",
+        order_id: str = "",
         side: api.Side = api.Side.S_UNKNOWN,
         market_address: str = "",
         owner_address: str = "",
@@ -81,24 +85,28 @@ class Provider(api.ApiStub, ABC):
     ) -> str:
         pk = self.require_private_key()
         order = await self.post_cancel_order(
-            order_i_d=order_i_d,
-            side=side,
-            market_address=market_address,
-            owner_address=owner_address,
-            open_orders_address=open_orders_address,
-            project=project,
+            post_cancel_order_request=api.PostCancelOrderRequest(
+                order_id=order_id,
+                side=side,
+                market_address=market_address,
+                owner_address=owner_address,
+                open_orders_address=open_orders_address,
+                project=project,
+            )
         )
         signed_tx = transaction.sign_tx_message_with_private_key(
             order.transaction, pk
         )
         result = await self.post_submit(
-            transaction=signed_tx, skip_pre_flight=skip_pre_flight
+            post_submit_request=api.PostSubmitRequest(
+                transaction=signed_tx, skip_pre_flight=skip_pre_flight
+            )
         )
         return result.signature
 
-    async def submit_cancel_by_client_order_i_d(
+    async def submit_cancel_by_client_order_id(
         self,
-        client_order_i_d: int = 0,
+        client_order_id: int = 0,
         market_address: str = "",
         owner_address: str = "",
         open_orders_address: str = "",
@@ -106,18 +114,22 @@ class Provider(api.ApiStub, ABC):
         skip_pre_flight: bool = True,
     ) -> str:
         pk = self.require_private_key()
-        order = await self.post_cancel_by_client_order_i_d(
-            client_order_i_d=client_order_i_d,
-            market_address=market_address,
-            owner_address=owner_address,
-            open_orders_address=open_orders_address,
-            project=project,
+        order = await self.post_cancel_by_client_order_id(
+            post_cancel_by_client_order_id_request=api.PostCancelByClientOrderIdRequest(
+                client_order_id=client_order_id,
+                market_address=market_address,
+                owner_address=owner_address,
+                open_orders_address=open_orders_address,
+                project=project,
+            )
         )
         signed_tx = transaction.sign_tx_message_with_private_key(
             order.transaction, pk
         )
         result = await self.post_submit(
-            transaction=signed_tx, skip_pre_flight=skip_pre_flight
+            post_submit_request=api.PostSubmitRequest(
+                transaction=signed_tx, skip_pre_flight=skip_pre_flight
+            )
         )
         return result.signature
 
@@ -134,17 +146,21 @@ class Provider(api.ApiStub, ABC):
 
         pk = self.require_private_key()
         response = await self.post_cancel_all(
-            market=market,
-            owner_address=owner_address,
-            open_orders_addresses=open_orders_addresses,
-            project=project,
+            post_cancel_all_request=api.PostCancelAllRequest(
+                market=market,
+                owner_address=owner_address,
+                open_orders_addresses=open_orders_addresses,
+                project=project,
+            )
         )
 
         signatures = []
         for tx in response.transactions:
             signed_tx = transaction.sign_tx_message_with_private_key(tx, pk)
             result = await self.post_submit(
-                transaction=signed_tx, skip_pre_flight=skip_pre_flight
+                post_submit_request=api.PostSubmitRequest(
+                    transaction=signed_tx, skip_pre_flight=skip_pre_flight
+                )
             )
             signatures.append(result.signature)
 
@@ -162,22 +178,26 @@ class Provider(api.ApiStub, ABC):
     ) -> str:
         pk = self.require_private_key()
         response = await self.post_settle(
-            owner_address=owner_address,
-            market=market,
-            base_token_wallet=base_token_wallet,
-            quote_token_wallet=quote_token_wallet,
-            open_orders_address=open_orders_address,
-            project=project,
+            post_settle_request=api.PostSettleRequest(
+                owner_address=owner_address,
+                market=market,
+                base_token_wallet=base_token_wallet,
+                quote_token_wallet=quote_token_wallet,
+                open_orders_address=open_orders_address,
+                project=project,
+            )
         )
         signed_tx = transaction.sign_tx_message_with_private_key(
             response.transaction, pk
         )
         result = await self.post_submit(
-            transaction=signed_tx, skip_pre_flight=skip_pre_flight
+            post_submit_request=api.PostSubmitRequest(
+                transaction=signed_tx, skip_pre_flight=skip_pre_flight
+            )
         )
         return result.signature
 
-    async def submit_replace_by_client_order_i_d(
+    async def submit_replace_by_client_order_id(
         self,
         owner_address: str,
         payer_address: str,
@@ -187,34 +207,38 @@ class Provider(api.ApiStub, ABC):
         amount: float,
         price: float,
         open_orders_address: str = "",
-        client_order_i_d: int = 0,
+        client_order_id: int = 0,
         project: api.Project = api.Project.P_UNKNOWN,
         skip_pre_flight: bool = False,
     ) -> str:
         pk = self.require_private_key()
-        order = await self.post_replace_by_client_order_i_d(
-            owner_address=owner_address,
-            payer_address=payer_address,
-            market=market,
-            side=side,
-            type=types,
-            amount=amount,
-            price=price,
-            open_orders_address=open_orders_address,
-            client_order_i_d=client_order_i_d,
-            project=project,
+        order = await self.post_replace_by_client_order_id(
+            post_order_request=api.PostOrderRequest(
+                owner_address=owner_address,
+                payer_address=payer_address,
+                market=market,
+                side=side,
+                type=types,
+                amount=amount,
+                price=price,
+                open_orders_address=open_orders_address,
+                client_order_id=client_order_id,
+                project=project,
+            )
         )
         signed_tx = transaction.sign_tx_message_with_private_key(
             order.transaction, pk
         )
         result = await self.post_submit(
-            transaction=signed_tx, skip_pre_flight=skip_pre_flight
+            post_submit_request=api.PostSubmitRequest(
+                transaction=signed_tx, skip_pre_flight=skip_pre_flight
+            )
         )
         return result.signature
 
     async def submit_replace_order(
         self,
-        order_i_d: str,
+        order_id: str,
         owner_address: str,
         payer_address: str,
         market: str,
@@ -229,23 +253,27 @@ class Provider(api.ApiStub, ABC):
     ) -> str:
         pk = self.require_private_key()
         order = await self.post_replace_order(
-            owner_address=owner_address,
-            payer_address=payer_address,
-            market=market,
-            side=side,
-            type=types,
-            amount=amount,
-            price=price,
-            open_orders_address=open_orders_address,
-            client_order_i_d=client_order_id,
-            order_i_d=order_i_d,
-            project=project,
+            post_replace_order_request=api.PostReplaceOrderRequest(
+                owner_address=owner_address,
+                payer_address=payer_address,
+                market=market,
+                side=side,
+                type=types,
+                amount=amount,
+                price=price,
+                open_orders_address=open_orders_address,
+                client_order_id=client_order_id,
+                order_id=order_id,
+                project=project,
+            )
         )
         signed_tx = transaction.sign_tx_message_with_private_key(
             order.transaction, pk
         )
         result = await self.post_submit(
-            transaction=signed_tx, skip_pre_flight=skip_pre_flight
+            post_submit_request=api.PostSubmitRequest(
+                transaction=signed_tx, skip_pre_flight=skip_pre_flight
+            )
         )
         return result.signature
 
@@ -263,12 +291,14 @@ class Provider(api.ApiStub, ABC):
     ) -> api.PostSubmitBatchResponse:
         pk = self.require_private_key()
         result = await self.post_trade_swap(
-            project=project,
-            owner_address=owner_address,
-            in_token=in_token,
-            out_token=out_token,
-            in_amount=in_amount,
-            slippage=slippage,
+            trade_swap_request=api.TradeSwapRequest(
+                project=project,
+                owner_address=owner_address,
+                in_token=in_token,
+                out_token=out_token,
+                in_amount=in_amount,
+                slippage=slippage,
+            )
         )
 
         signed_txs: List[api.PostSubmitRequestEntry] = []
@@ -281,7 +311,9 @@ class Provider(api.ApiStub, ABC):
             )
 
         return await self.post_submit_batch(
-            entries=signed_txs, submit_strategy=submit_strategy
+            post_submit_batch_request=api.PostSubmitBatchRequest(
+                entries=signed_txs, submit_strategy=submit_strategy
+            )
         )
 
     async def submit_post_route_trade_swap(
@@ -295,7 +327,9 @@ class Provider(api.ApiStub, ABC):
     ) -> api.PostSubmitBatchResponse:
         pk = self.require_private_key()
         result = await self.post_route_trade_swap(
-            project=project, owner_address=owner_address, steps=steps
+            route_trade_swap_request=api.RouteTradeSwapRequest(
+                project=project, owner_address=owner_address, steps=steps
+            )
         )
 
         signed_txs: List[api.PostSubmitRequestEntry] = []
@@ -308,7 +342,9 @@ class Provider(api.ApiStub, ABC):
             )
 
         return await self.post_submit_batch(
-            entries=signed_txs, submit_strategy=submit_strategy
+            post_submit_batch_request=api.PostSubmitBatchRequest(
+                entries=signed_txs, submit_strategy=submit_strategy
+            )
         )
 
 

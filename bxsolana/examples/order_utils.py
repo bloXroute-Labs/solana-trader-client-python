@@ -6,7 +6,6 @@ from bxsolana_trader_proto import api as proto
 from bxsolana import provider
 from bxsolana.transaction import signing
 
-
 crank_timeout = 60
 
 
@@ -25,23 +24,27 @@ async def place_order(
 
     client_order_id = random.randint(0, 1000000)
     post_order_response = await p.post_order(
-        owner_address=owner_addr,
-        payer_address=payer_addr,
-        market=market_addr,
-        side=order_side,
-        type=[order_type],
-        amount=order_amount,
-        price=order_price,
-        open_orders_address=open_orders_addr,
-        client_order_i_d=client_order_id,
+        post_order_request=proto.PostOrderRequest(
+            owner_address=owner_addr,
+            payer_address=payer_addr,
+            market=market_addr,
+            side=order_side,
+            type=[order_type],
+            amount=order_amount,
+            price=order_price,
+            open_orders_address=open_orders_addr,
+            client_order_id=client_order_id,
+        )
     )
     print("place order transaction created successfully")
 
     signed_tx = signing.sign_tx(post_order_response.transaction.content)
 
     post_submit_response = await p.post_submit(
-        transaction=proto.TransactionMessage(content=signed_tx),
-        skip_pre_flight=True,
+        post_submit_request=proto.PostSubmitRequest(
+            transaction=proto.TransactionMessage(content=signed_tx),
+            skip_pre_flight=True,
+        )
     )
 
     print(
@@ -61,19 +64,23 @@ async def cancel_order(
 ):
     print("starting cancel order")
 
-    cancel_order_response = await p.post_cancel_by_client_order_i_d(
-        client_order_i_d=client_order_id,
-        market_address=market_addr,
-        owner_address=owner_addr,
-        open_orders_address=open_orders_addr,
+    cancel_order_response = await p.post_cancel_by_client_order_id(
+        post_cancel_by_client_order_id_request=proto.PostCancelByClientOrderIdRequest(
+            client_order_id=client_order_id,
+            market_address=market_addr,
+            owner_address=owner_addr,
+            open_orders_address=open_orders_addr,
+        )
     )
     print("cancel order transaction created successfully")
 
     signed_tx = signing.sign_tx(cancel_order_response.transaction.content)
 
     post_submit_response = await p.post_submit(
-        transaction=proto.TransactionMessage(content=signed_tx),
-        skip_pre_flight=True,
+        post_submit_request=proto.PostSubmitRequest(
+            transaction=proto.TransactionMessage(content=signed_tx),
+            skip_pre_flight=True,
+        )
     )
     print(
         f"cancelling order with clientOrderID {client_order_id.__str__()},"
@@ -92,19 +99,23 @@ async def settle_funds(
     print("starting settle funds")
 
     post_settle_response = await p.post_settle(
-        owner_address=owner_addr,
-        market=market_addr,
-        base_token_wallet=base_token_wallet,
-        quote_token_wallet=quote_token_wallet,
-        open_orders_address=open_orders_addr,
+        post_settle_request=proto.PostSettleRequest(
+            owner_address=owner_addr,
+            market=market_addr,
+            base_token_wallet=base_token_wallet,
+            quote_token_wallet=quote_token_wallet,
+            open_orders_address=open_orders_addr,
+        )
     )
     print("settle transaction created successfully")
 
     signed_settle_tx = signing.sign_tx(post_settle_response.transaction.content)
 
     post_submit_response = await p.post_submit(
-        transaction=proto.TransactionMessage(content=signed_settle_tx),
-        skip_pre_flight=True,
+        post_submit_request=proto.PostSubmitRequest(
+            transaction=proto.TransactionMessage(content=signed_settle_tx),
+            skip_pre_flight=True,
+        )
     )
 
     print(
@@ -156,14 +167,18 @@ async def cancel_all_orders(
     print(f"waiting {crank_timeout}s for place orders to be cranked")
     time.sleep(crank_timeout)
 
-    o = await p.get_open_orders(market=market_addr, address=owner_addr)
+    o = await p.get_open_orders(
+        get_open_orders_request=proto.GetOpenOrdersRequest(
+            market=market_addr, address=owner_addr
+        )
+    )
     found1 = False
     found2 = False
 
     for order in o.orders:
-        if order.client_order_i_d == str(client_order_id_1):
+        if order.client_order_id == str(client_order_id_1):
             found1 = True
-        elif order.client_order_i_d == str(client_order_id_2):
+        elif order.client_order_id == str(client_order_id_2):
             found2 = True
 
     if not found1 or not found2:
@@ -175,7 +190,11 @@ async def cancel_all_orders(
     print(f"\nwaiting {crank_timeout}s for cancel order(s) to be cranked")
     time.sleep(crank_timeout)
 
-    o = await p.get_open_orders(market=market_addr, address=owner_addr)
+    o = await p.get_open_orders(
+        get_open_orders_request=proto.GetOpenOrdersRequest(
+            market=market_addr, address=owner_addr
+        )
+    )
     if len(o.orders) != 0:
         print(f"{len(o.orders)} orders in orderbook not cancelled")
     else:
@@ -193,9 +212,11 @@ async def cancel_all(
         open_orders_addresses.append(open_orders_addr)
 
     cancel_all_response = await p.post_cancel_all(
-        market=market_addr,
-        owner_address=owner_addr,
-        open_orders_addresses=open_orders_addresses,
+        post_cancel_all_request=proto.PostCancelAllRequest(
+            market=market_addr,
+            owner_address=owner_addr,
+            open_orders_addresses=open_orders_addresses,
+        )
     )
     print("cancel all transaction created successfully")
 
@@ -203,8 +224,10 @@ async def cancel_all(
     for transaction in cancel_all_response.transactions:
         signed_tx = signing.sign_tx(transaction.content)
         post_submit_response = await p.post_submit(
-            transaction=proto.TransactionMessage(content=signed_tx),
-            skip_pre_flight=True,
+            post_submit_request=proto.PostSubmitRequest(
+                transaction=proto.TransactionMessage(content=signed_tx),
+                skip_pre_flight=True,
+            )
         )
         signatures.append(post_submit_response.signature)
 
@@ -212,7 +235,7 @@ async def cancel_all(
     print(f"cancelling all orders, response signature(s): {signatures_string}")
 
 
-async def replace_order_by_client_order_i_d(
+async def replace_order_by_client_order_id(
     p: provider.Provider,
     owner_addr,
     payer_addr,
@@ -226,24 +249,28 @@ async def replace_order_by_client_order_i_d(
     print("starting replace order by client order ID")
 
     client_order_id = random.randint(0, 1000000)
-    post_order_response = await p.post_replace_by_client_order_i_d(
-        owner_address=owner_addr,
-        payer_address=payer_addr,
-        market=market_addr,
-        side=order_side,
-        type=[order_type],
-        amount=order_amount,
-        price=order_price,
-        open_orders_address=open_orders_addr,
-        client_order_i_d=client_order_id,
+    post_order_response = await p.post_replace_by_client_order_id(
+        post_order_request=proto.PostOrderRequest(
+            owner_address=owner_addr,
+            payer_address=payer_addr,
+            market=market_addr,
+            side=order_side,
+            type=[order_type],
+            amount=order_amount,
+            price=order_price,
+            open_orders_address=open_orders_addr,
+            client_order_id=client_order_id,
+        )
     )
     print("replace order transaction created successfully")
 
     signed_tx = signing.sign_tx(post_order_response.transaction.content)
 
     post_submit_response = await p.post_submit(
-        transaction=proto.TransactionMessage(content=signed_tx),
-        skip_pre_flight=True,
+        post_submit_request=proto.PostSubmitRequest(
+            transaction=proto.TransactionMessage(content=signed_tx),
+            skip_pre_flight=True,
+        )
     )
     print(
         f"replacing order with clientOrderID {client_order_id.__str__()},"

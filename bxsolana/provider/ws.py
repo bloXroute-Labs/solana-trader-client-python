@@ -9,13 +9,16 @@ from stringcase import camelcase
 from . import Provider, constants
 from .. import transaction
 
+from grpclib.metadata import Deadline
+from grpclib.metadata import _MetadataLike as MetadataLike
+
 if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences,PyProtectedMember
     # pyre-ignore[21]: module is too hard to find
     from grpclib._protocols import IProtoMessage
 
     # noinspection PyProtectedMember
-    from betterproto import _MetadataLike, Deadline, T
+    from betterproto import T
 
 
 class WsProvider(Provider):
@@ -69,11 +72,16 @@ class WsProvider(Provider):
         *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
-        metadata: Optional["_MetadataLike"] = None,
+        metadata: Optional["MetadataLike"] = None,
     ) -> "T":
-        result = await self._ws.call(
-            _ws_endpoint(route), request.to_dict(include_default_values=False)
-        )
+        request_dict = request.to_dict(include_default_values=False)
+        if "clientOrderId" in request_dict:
+            request_dict["clientOrderID"] = request_dict.pop("clientOrderId")
+
+        if "orderId" in request_dict:
+            request_dict["orderID"] = request_dict.pop("orderId")
+
+        result = await self._ws.call(_ws_endpoint(route), request_dict)
         response = _validated_response(result, response_type)
         return response
 
@@ -85,7 +93,7 @@ class WsProvider(Provider):
         *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
-        metadata: Optional["_MetadataLike"] = None,
+        metadata: Optional["MetadataLike"] = None,
     ) -> AsyncGenerator["T", None]:
         subscription_id = await self._ws.subscribe(
             _ws_endpoint(route), request.to_dict()

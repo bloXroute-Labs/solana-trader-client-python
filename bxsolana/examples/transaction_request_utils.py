@@ -60,7 +60,7 @@ async def do_transaction_requests(
         " SOL for USDC at 150_000 USD/SOL"
     )
     print(
-        await api.submit_replace_by_client_order_i_d(
+        await api.submit_replace_by_client_order_id(
             owner_address=owner_addr,
             payer_address=payer_addr,
             market=market,
@@ -72,7 +72,7 @@ async def do_transaction_requests(
             # optional, but much faster if known
             open_orders_address=open_orders_addr,
             # optional, for identification
-            client_order_i_d=client_order_id,
+            client_order_id=client_order_id,
             skip_pre_flight=True,
         )
     )
@@ -95,7 +95,7 @@ async def do_transaction_requests(
             open_orders_address=open_orders_addr,
             # optional, for identification
             client_order_id=0,
-            order_i_d=order_id,
+            order_id=order_id,
         )
     )
 
@@ -103,7 +103,7 @@ async def do_transaction_requests(
     print("submit cancel order")
     print(
         await api.submit_cancel_order(
-            order_i_d=order_id,
+            order_id=order_id,
             side=proto.Side.S_ASK,
             market_address=market,
             owner_address=owner_addr,
@@ -115,8 +115,8 @@ async def do_transaction_requests(
     # cancel by client order ID example: comment out if want to try replace example
     print("submit cancel order by client ID")
     print(
-        await api.submit_cancel_by_client_order_i_d(
-            client_order_i_d=client_order_id,
+        await api.submit_cancel_by_client_order_id(
+            client_order_id=client_order_id,
             market_address=market,
             owner_address=owner_addr,
             project=proto.Project.P_SERUM,
@@ -146,7 +146,9 @@ async def create_transaction_with_memo(api: provider.Provider):
 
     instruction = transaction.create_trader_api_memo_instruction("hi from dev")
 
-    recent_block_hash_resp = await api.get_recent_block_hash()
+    recent_block_hash_resp = await api.get_recent_block_hash(
+        get_recent_block_hash_request=proto.GetRecentBlockHashRequest()
+    )
     recent_block_hash = hs.Hash.from_string(recent_block_hash_resp.block_hash)
     instructions = [instruction]
 
@@ -157,8 +159,10 @@ async def create_transaction_with_memo(api: provider.Provider):
     print("serialized memo single_memo_txn", single_memo_txn)
 
     post_submit_response = await api.post_submit(
-        transaction=proto.TransactionMessage(single_memo_txn),
-        skip_pre_flight=True,
+        post_submit_request=proto.PostSubmitRequest(
+            transaction=proto.TransactionMessage(single_memo_txn),
+            skip_pre_flight=True,
+        )
     )
     print("signature for single memo txn", post_submit_response.signature)
 
@@ -167,7 +171,9 @@ async def create_transaction_with_memo(api: provider.Provider):
     )
     print("double_memo_txn_signed", double_memo_txn_signed)
     post_submit_response = await api.post_submit(
-        transaction=proto.TransactionMessage(double_memo_txn_signed),
-        skip_pre_flight=True,
+        post_submit_request=proto.PostSubmitRequest(
+            transaction=proto.TransactionMessage(double_memo_txn_signed),
+            skip_pre_flight=True,
+        )
     )
     print("signature for double memo tx", post_submit_response.signature)
