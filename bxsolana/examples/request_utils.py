@@ -26,7 +26,7 @@ async def do_requests(
             )
         ).to_json()
     )
-
+    return
     # markets API
     print("fetching all markets")
     print((await api.get_markets()).to_json())
