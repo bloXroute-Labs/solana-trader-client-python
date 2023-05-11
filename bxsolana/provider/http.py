@@ -477,8 +477,8 @@ class HttpProvider(Provider):
         request_dict = post_cancel_perp_order_request.to_dict()
         if "clientOrderId" in request_dict:
             request_dict["clientOrderID"] = request_dict.pop("clientOrderId")
-        if "OrderId" in request_dict:
-            request_dict["OrderID"] = request_dict.pop("OrderId")
+        if "orderID" in request_dict:
+            request_dict["orderID"] = request_dict.pop("orderID")
 
         async with self._session.post(
             f"{self._endpoint}/trade/perp/cancelbyid", json=request_dict
@@ -613,8 +613,8 @@ class HttpProvider(Provider):
         metadata: Optional["MetadataLike"] = None,
     ) -> proto.PostCancelOrderResponse:
         request_dict = post_cancel_order_request.to_dict()
-        if "OrderId" in request_dict:
-            request_dict["OrderID"] = request_dict.pop("OrderId")
+        if "orderID" in request_dict:
+            request_dict["orderID"] = request_dict.pop("orderID")
         async with self._session.post(
             f"{self._endpoint}/trade/cancel",
             json=request_dict,
@@ -719,8 +719,8 @@ class HttpProvider(Provider):
         metadata: Optional["MetadataLike"] = None,
     ) -> proto.PostOrderResponse:
         request_dict = post_replace_order_request.to_dict()
-        if "OrderId" in request_dict:
-            request_dict["OrderID"] = request_dict.pop("OrderId")
+        if "orderID" in request_dict:
+            request_dict["orderID"] = request_dict.pop("orderID")
 
         async with self._session.post(
             f"{self._endpoint}/trade/replace",
