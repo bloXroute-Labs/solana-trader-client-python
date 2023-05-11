@@ -389,6 +389,15 @@ async def do_requests(
         ).to_json()
     )
 
+    print("get Drift market depth")
+    print(
+        (
+            await api.get_drift_market_depth(
+                contract="SOL_PERP", limit=3
+            )
+        ).to_json()
+    )
+
     print("post perp order")
     print(
         (

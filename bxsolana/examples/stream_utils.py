@@ -137,3 +137,14 @@ async def do_stream(api: provider.Provider, run_slow: bool = False):
             if item_count == 1:
                 item_count = 0
                 break
+
+    if run_slow:
+        print("streaming Drift market depth updates...")
+        async for response in api.get_drift_market_depths_stream(
+            contracts=["SOL_PERP", "ETH_PERP"], limit=3
+        ):
+            print(response.to_json())
+            item_count += 1
+            if item_count == 2:
+                item_count = 0
+                break

@@ -24,6 +24,7 @@ if TYPE_CHECKING:
 
 class HttpProvider(Provider):
     _endpoint: str
+    _endpointV2: str
     _session: aiohttp.ClientSession
     _private_key: Optional[kp.Keypair]
 
@@ -341,6 +342,17 @@ class HttpProvider(Provider):
             f"limit={get_perp_orderbook_request.limit}&project={get_perp_orderbook_request.project.name}"
         ) as res:
             return await map_response(res, proto.GetPerpOrderbookResponse())
+
+    async def get_perp_market_depth(
+        self,
+        *,
+        contract: "",
+        limit: int = 0,
+    ) -> proto.GetDriftMarketDepthResponse:
+        async with self._session.get(
+            f"{self._endpointV2}/drift/market-depth/{contract}?limit={limit}"
+        ) as res:
+            return await map_response(res, proto.GetDriftMarketDepthResponse())
 
     async def post_settle_pnl(
         self,
