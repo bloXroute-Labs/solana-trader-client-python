@@ -724,7 +724,7 @@ class HttpProvider(Provider):
 
         async with self._session.post(
             f"{self._endpoint}/trade/replace",
-            json=post_replace_order_request.to_dict(),
+            json=request_dict,
         ) as res:
             return await map_response(res, proto.PostOrderResponse())
 
