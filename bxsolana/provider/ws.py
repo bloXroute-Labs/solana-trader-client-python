@@ -71,8 +71,13 @@ class WsProvider(Provider):
         deadline: Optional["Deadline"] = None,
         metadata: Optional["_MetadataLike"] = None,
     ) -> "T":
+
+        request_dict = request.to_dict(include_default_values=False)
+        if "clientOrderId" in request_dict:
+            request_dict["clientOrderID"] = request_dict.pop("clientOrderId")
+
         result = await self._ws.call(
-            _ws_endpoint(route), request.to_dict(include_default_values=False)
+            _ws_endpoint(route), request_dict
         )
         response = _validated_response(result, response_type)
         return response

@@ -105,8 +105,10 @@ class HttpProvider(Provider):
             deadline: Optional["Deadline"] = None,
             metadata: Optional["MetadataLike"] = None
     ) -> proto.PostDriftMarginOrderResponse:
+        request_dict = post_drift_margin_order_request.to_dict()
+        request_dict["clientOrderID"] = request_dict.pop("clientOrderId")
         async with self._session.post(
-                f"{self._endpointV2}/drift/margin-place", json=post_drift_margin_order_request.to_dict()
+                f"{self._endpointV2}/drift/margin-place", json=request_dict
         ) as res:
             return await map_response(res, proto.PostDriftMarginOrderResponse())
 
@@ -120,7 +122,7 @@ class HttpProvider(Provider):
     ) -> proto.GetDriftMarginOrderbookResponse:
         async with self._session.get(
                 f"{self._endpointV2}/drift/margin-orderbooks/{get_drift_margin_orderbook_request.market}?"
-                f"limit=/{get_drift_margin_orderbook_request.limit}&metadata={get_drift_margin_orderbook_request.metadata}"
+                f"limit={get_drift_margin_orderbook_request.limit}&metadata={get_drift_margin_orderbook_request.metadata}"
         ) as res:
             return await map_response(
                 res, proto.GetDriftMarginOrderbookResponse()
@@ -414,8 +416,11 @@ class HttpProvider(Provider):
             deadline: Optional["Deadline"] = None,
             metadata: Optional["MetadataLike"] = None
     ) -> proto.PostPerpOrderResponse:
+        request_dict = post_perp_order_request.to_dict()
+        request_dict["clientOrderID"] = request_dict.pop("clientOrderId")
+
         async with self._session.post(
-                f"{self._endpoint}/trade/perp/order", json=post_perp_order_request.to_dict()
+                f"{self._endpoint}/trade/perp/order", json=request_dict
         ) as res:
             return await map_response(res, proto.PostPerpOrderResponse())
 
@@ -462,8 +467,11 @@ class HttpProvider(Provider):
             deadline: Optional["Deadline"] = None,
             metadata: Optional["MetadataLike"] = None
     ) -> proto.PostCancelPerpOrderResponse:
+        request_dict = post_cancel_perp_order_request.to_dict()
+        request_dict["clientOrderID"] = request_dict.pop("clientOrderId")
+
         async with self._session.post(
-                f"{self._endpoint}/trade/perp/cancelbyid", json=post_cancel_perp_order_request.to_dict()
+                f"{self._endpoint}/trade/perp/cancelbyid", json=request_dict
         ) as res:
             return await map_response(res, proto.PostCancelPerpOrderResponse())
 
@@ -602,8 +610,10 @@ class HttpProvider(Provider):
             deadline: Optional["Deadline"] = None,
             metadata: Optional["MetadataLike"] = None
     ) -> proto.PostCancelOrderResponse:
+        request_dict = post_cancel_by_client_order_id_request.to_dict()
+        request_dict["clientOrderID"] = request_dict.pop("clientOrderId")
         async with self._session.post(
-                f"{self._endpoint}/trade/cancelbyid", json=post_cancel_by_client_order_id_request.to_dict()
+                f"{self._endpoint}/trade/cancelbyid", json=request_dict
         ) as res:
             return await map_response(res, proto.PostCancelOrderResponse())
 
@@ -671,8 +681,10 @@ class HttpProvider(Provider):
             deadline: Optional["Deadline"] = None,
             metadata: Optional["MetadataLike"] = None
     ) -> proto.PostOrderResponse:
+        request_dict = post_order_request.to_dict()
+        request_dict["clientOrderID"] = request_dict.pop("clientOrderId")
         async with self._session.post(
-                f"{self._endpoint}/trade/replacebyclientid", json=post_order_request.to_dict()
+                f"{self._endpoint}/trade/replacebyclientid", json=request_dict
         ) as res:
             return await map_response(res, proto.PostOrderResponse())
 

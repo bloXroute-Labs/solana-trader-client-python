@@ -298,7 +298,7 @@ async def do_requests(
     )
 
     print("get Drift markets")
-    print((await api.get_drift_markets(metadata=True)).to_json())
+    print((await api.get_drift_markets(get_drift_markets_request=proto.GetDriftMarketsRequest(metadata=True))).to_json())
 
     print("get Drift margin orderbook")
     print(
@@ -487,6 +487,7 @@ async def do_requests(
         (
             await api.post_create_user(post_create_user_request=proto.PostCreateUserRequest(
                 project=proto.Project.P_DRIFT,
+                action="CREATE",
                 owner_address="BgJ8uyf9yhLJaUVESRrqffzwVyQgRi9YvWmpEFaH14kx",
             ))
         ).to_json()

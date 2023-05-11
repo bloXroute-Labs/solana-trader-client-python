@@ -16,7 +16,7 @@ async def do_stream(api: provider.Provider, run_slow: bool = False):
         ):
             print(response.to_json())
             item_count += 1
-            if item_count == 2:
+            if item_count == 1:
                 item_count = 0
                 break
 
@@ -29,7 +29,7 @@ async def do_stream(api: provider.Provider, run_slow: bool = False):
         ):
             print(response.to_json())
             item_count += 1
-            if item_count == 2:
+            if item_count == 1:
                 item_count = 0
                 break
 
@@ -42,7 +42,7 @@ async def do_stream(api: provider.Provider, run_slow: bool = False):
         ):
             print(response.to_json())
             item_count += 1
-            if item_count == 2:
+            if item_count == 1:
                 item_count = 0
                 break
 
@@ -62,7 +62,7 @@ async def do_stream(api: provider.Provider, run_slow: bool = False):
         )):
             print(response.to_json())
             item_count += 1
-            if item_count == 2:
+            if item_count == 1:
                 item_count = 0
                 break
 
@@ -75,7 +75,7 @@ async def do_stream(api: provider.Provider, run_slow: bool = False):
         ):
             print(response.to_json())
             item_count += 1
-            if item_count == 2:
+            if item_count == 1:
                 item_count = 0
                 break
 
@@ -93,7 +93,7 @@ async def do_stream(api: provider.Provider, run_slow: bool = False):
             )):
             print(response.to_json())
             item_count += 1
-            if item_count == 2:
+            if item_count == 1:
                 item_count = 0
                 break
 
@@ -106,7 +106,7 @@ async def do_stream(api: provider.Provider, run_slow: bool = False):
         ):
             print(response.to_json())
             item_count += 1
-            if item_count == 2:
+            if item_count == 1:
                 item_count = 0
                 break
 
@@ -119,7 +119,7 @@ async def do_stream(api: provider.Provider, run_slow: bool = False):
         ):
             print(response.to_json())
             item_count += 1
-            if item_count == 2:
+            if item_count == 1:
                 item_count = 0
                 break
 
@@ -127,11 +127,11 @@ async def do_stream(api: provider.Provider, run_slow: bool = False):
         print("streaming Drift margin orderbook updates...")
         async for response in api.get_drift_margin_orderbooks_stream(
             get_drift_margin_orderbooks_request=proto.GetDriftMarginOrderbooksRequest(
-                markets=["SOL", "BTC", "ETH"], metadata=True, limit=1
+                markets=["SOL"], metadata=True, limit=1
             )
         ):
             print(response.to_json())
             item_count += 1
-            if item_count == 2:
+            if item_count == 1:
                 item_count = 0
                 break
