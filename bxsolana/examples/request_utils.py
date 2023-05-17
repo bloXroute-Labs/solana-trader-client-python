@@ -407,7 +407,6 @@ async def do_requests(
                 post_perp_order_request=proto.PostPerpOrderRequest(
                     project=proto.Project.P_DRIFT,
                     owner_address=public_key,
-                    payer_address=public_key,
                     contract=PerpContract.SOL_PERP,
                     position_side=PerpPositionSide.PS_LONG,
                     slippage=0,

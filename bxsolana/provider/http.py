@@ -155,8 +155,8 @@ class HttpProvider(Provider):
 
     async def post_route_trade_swap(
         self,
-        *,
         route_trade_swap_request: proto.RouteTradeSwapRequest,
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
@@ -169,8 +169,8 @@ class HttpProvider(Provider):
 
     async def get_orderbook(
         self,
-        *,
         get_orderbook_request: proto.GetOrderbookRequest,
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
@@ -183,8 +183,8 @@ class HttpProvider(Provider):
 
     async def get_market_depth(
         self,
-        *,
         get_market_depth_request: proto.GetMarketDepthRequest,
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
@@ -197,8 +197,8 @@ class HttpProvider(Provider):
 
     async def get_tickers(
         self,
-        *,
         get_tickers_request: proto.GetTickersRequest,
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
@@ -210,8 +210,8 @@ class HttpProvider(Provider):
 
     async def get_orders(
         self,
-        *,
         get_orders_request: proto.GetOrdersRequest,
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
@@ -220,8 +220,8 @@ class HttpProvider(Provider):
 
     async def get_open_orders(
         self,
-        *,
         get_open_orders_request: proto.GetOpenOrdersRequest,
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
@@ -237,8 +237,8 @@ class HttpProvider(Provider):
 
     async def get_order_by_id(
         self,
-        *,
         get_order_by_id_request: proto.GetOrderByIdRequest,
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
@@ -248,8 +248,8 @@ class HttpProvider(Provider):
 
     async def get_unsettled(
         self,
-        *,
         get_unsettled_request: proto.GetUnsettledRequest,
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
@@ -263,8 +263,8 @@ class HttpProvider(Provider):
 
     async def get_account_balance(
         self,
-        *,
         get_account_balance_request: proto.GetAccountBalanceRequest,
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
@@ -276,8 +276,8 @@ class HttpProvider(Provider):
 
     async def get_token_accounts(
         self,
-        *,
         get_token_accounts_request: proto.GetTokenAccountsRequest,
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
@@ -289,8 +289,8 @@ class HttpProvider(Provider):
 
     async def get_pools(
         self,
-        *,
         get_pools_request: proto.GetPoolsRequest,
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
@@ -304,8 +304,8 @@ class HttpProvider(Provider):
 
     async def get_price(
         self,
-        *,
         get_price_request: proto.GetPriceRequest,
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
@@ -318,8 +318,8 @@ class HttpProvider(Provider):
 
     async def get_recent_block_hash(
         self,
-        *,
         get_recent_block_hash_request: proto.GetRecentBlockHashRequest,
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
@@ -331,8 +331,8 @@ class HttpProvider(Provider):
 
     async def get_perp_orderbook(
         self,
-        *,
         get_perp_orderbook_request: proto.GetPerpOrderbookRequest,
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
@@ -359,8 +359,8 @@ class HttpProvider(Provider):
 
     async def post_settle_pnl(
         self,
-        *,
         post_settle_pnl_request: proto.PostSettlePnlRequest,
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
@@ -373,8 +373,8 @@ class HttpProvider(Provider):
 
     async def post_settle_pn_ls(
         self,
-        *,
         post_settle_pn_ls_request: proto.PostSettlePnLsRequest,
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
@@ -401,8 +401,8 @@ class HttpProvider(Provider):
 
     async def get_assets(
         self,
-        *,
         get_assets_request: proto.GetAssetsRequest,
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
@@ -416,8 +416,8 @@ class HttpProvider(Provider):
 
     async def get_perp_contracts(
         self,
-        *,
         get_perp_contracts_request: proto.GetPerpContractsRequest,
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
@@ -429,8 +429,8 @@ class HttpProvider(Provider):
 
     async def post_perp_order(
         self,
-        *,
         post_perp_order_request: proto.PostPerpOrderRequest,
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
@@ -446,8 +446,8 @@ class HttpProvider(Provider):
 
     async def get_open_perp_order(
         self,
-        *,
         get_open_perp_order_request: proto.GetOpenPerpOrderRequest,
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
@@ -462,8 +462,8 @@ class HttpProvider(Provider):
 
     async def get_open_perp_orders(
         self,
-        *,
         get_open_perp_orders_request: proto.GetOpenPerpOrdersRequest,
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
@@ -483,8 +483,8 @@ class HttpProvider(Provider):
 
     async def post_cancel_perp_order(
         self,
-        *,
         post_cancel_perp_order_request: proto.PostCancelPerpOrderRequest,
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
@@ -502,8 +502,8 @@ class HttpProvider(Provider):
 
     async def post_cancel_perp_orders(
         self,
-        *,
         post_cancel_perp_orders_request: proto.PostCancelPerpOrdersRequest,
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
@@ -516,8 +516,8 @@ class HttpProvider(Provider):
 
     async def post_close_perp_positions(
         self,
-        *,
         post_close_perp_positions_request: proto.PostClosePerpPositionsRequest,
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
@@ -532,8 +532,8 @@ class HttpProvider(Provider):
 
     async def post_create_user(
         self,
-        *,
         post_create_user_request: proto.PostCreateUserRequest,
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
@@ -546,8 +546,8 @@ class HttpProvider(Provider):
 
     async def get_user(
         self,
-        *,
         get_user_request: proto.GetUserRequest,
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
@@ -560,8 +560,8 @@ class HttpProvider(Provider):
 
     async def post_manage_collateral(
         self,
-        *,
         post_manage_collateral_request: proto.PostManageCollateralRequest,
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
@@ -574,8 +574,8 @@ class HttpProvider(Provider):
 
     async def get_perp_positions(
         self,
-        *,
         get_perp_positions_request: proto.GetPerpPositionsRequest,
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
@@ -595,8 +595,8 @@ class HttpProvider(Provider):
 
     async def post_trade_swap(
         self,
-        *,
         trade_swap_request: proto.TradeSwapRequest,
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
@@ -608,8 +608,8 @@ class HttpProvider(Provider):
 
     async def post_order(
         self,
-        *,
         post_order_request: proto.PostOrderRequest,
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
@@ -621,8 +621,8 @@ class HttpProvider(Provider):
 
     async def post_cancel_order(
         self,
-        *,
         post_cancel_order_request: proto.PostCancelOrderRequest,
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
@@ -638,8 +638,8 @@ class HttpProvider(Provider):
 
     async def post_cancel_by_client_order_id(
         self,
-        *,
         post_cancel_by_client_order_id_request: proto.PostCancelByClientOrderIdRequest,
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
@@ -681,8 +681,8 @@ class HttpProvider(Provider):
 
     async def post_submit(
         self,
-        *,
         post_submit_request: proto.PostSubmitRequest,
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
@@ -697,8 +697,8 @@ class HttpProvider(Provider):
 
     async def post_submit_batch(
         self,
-        *,
         post_submit_batch_request: proto.PostSubmitBatchRequest,
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
@@ -727,8 +727,8 @@ class HttpProvider(Provider):
 
     async def post_replace_order(
         self,
-        *,
         post_replace_order_request: proto.PostReplaceOrderRequest,
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
