@@ -315,6 +315,40 @@ async def do_requests(
     )
 
     # DRIFT
+    print("post Drift modify order")
+    print(
+        (
+            await api.post_modify_drift_order(
+                post_modify_drift_order_request=proto.PostModifyDriftOrderRequest(
+                    owner_address=public_key,
+                    new_position_side="long",
+                    order_id=1,
+                )
+            )
+        ).to_json()
+    )
+    print("post Drift get open margin orders")
+    print(
+        (
+            await api.get_drift_open_margin_orders(
+                get_drift_open_margin_orders_request=proto.GetDriftOpenMarginOrdersRequest(
+                    owner_address=public_key, markets=["SOL"]
+                )
+            )
+        ).to_json()
+    )
+
+    print("post Drift cancel margin orders")
+    print(
+        (
+            await api.post_cancel_drift_margin_order(
+                post_cancel_drift_margin_order_request=proto.PostCancelDriftMarginOrderRequest(
+                    owner_address=public_key
+                )
+            )
+        ).to_json()
+    )
+
     print("post Drift margin trading flag")
     print(
         (
