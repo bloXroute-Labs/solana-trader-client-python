@@ -1,10 +1,10 @@
 import dataclasses
 import os
+import re
 from typing import AsyncGenerator, Dict, Optional, TYPE_CHECKING, Type
 
 import jsonrpc
 from solders import keypair as kp
-from stringcase import camelcase
 
 from . import Provider, constants
 from .. import transaction
@@ -142,3 +142,24 @@ def _validated_response(response: Dict, response_type: Type["T"]) -> "T":
             )
 
     return message
+
+
+def camelcase(string):
+    """Convert string into camel case.
+
+    Args:
+        string: String to convert.
+
+    Returns:
+        string: Camel case string.
+
+    """
+
+    string = re.sub(r"\w[\s\W]+\w", "", str(string))
+    if not string:
+        return string
+    return (string[0]).lower() + re.sub(
+        r"[\-_\.\s]([a-z])",
+        lambda matched: str(matched.group(1)).upper(),
+        string[1:],
+    )
