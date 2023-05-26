@@ -24,7 +24,7 @@ if TYPE_CHECKING:
 
 class HttpProvider(Provider):
     _endpoint: str
-    _endpointV2: str
+    _endpoint_v2: str
     _session: aiohttp.ClientSession
     _private_key: Optional[kp.Keypair]
 
@@ -36,7 +36,7 @@ class HttpProvider(Provider):
         private_key: Optional[str] = None,
     ):
         self._endpoint = f"{endpoint}/api/v1"
-        self._endpointV2 = f"{endpoint}/api/v2"
+        self._endpoint_v2 = f"{endpoint}/api/v2"
 
         if auth_header is None:
             auth_header = os.environ["AUTH_HEADER"]
@@ -62,6 +62,61 @@ class HttpProvider(Provider):
         await self._session.close()
 
     # Beginning of V2
+    async def post_cancel_drift_margin_order(
+        self,
+        post_cancel_drift_margin_order_request: proto.PostCancelDriftMarginOrderRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.PostCancelDriftMarginOrderResponse:
+        async with self._session.post(
+            f"{self._endpoint_v2}/drift/margin-cancel",
+            json=post_cancel_drift_margin_order_request.to_dict(),
+        ) as res:
+            return await map_response(
+                res, proto.PostCancelDriftMarginOrderResponse()
+            )
+
+    async def get_drift_open_margin_orders(
+        self,
+        get_drift_open_margin_orders_request: proto.GetDriftOpenMarginOrdersRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.GetDriftOpenMarginOrdersResponse:
+        params = ""
+        for i in range(len(get_drift_open_margin_orders_request.markets)):
+            params += "&markets=" + str(
+                get_drift_open_margin_orders_request.markets[i]
+            )
+
+        async with self._session.get(
+            f"{self._endpoint_v2}/drift/margin-open-orders?ownerAddress={get_drift_open_margin_orders_request.owner_address}"
+            f"&accountAddress={get_drift_open_margin_orders_request.account_address}{params}"
+        ) as res:
+            return await map_response(
+                res, proto.GetDriftOpenMarginOrdersResponse()
+            )
+
+    async def post_modify_drift_order(
+        self,
+        post_modify_drift_order_request: proto.PostModifyDriftOrderRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.PostModifyDriftOrderResponse:
+        request_dict = post_modify_drift_order_request.to_dict()
+        if "orderId" in request_dict:
+            request_dict["orderID"] = request_dict.pop("orderId")
+        async with self._session.post(
+            f"{self._endpoint_v2}/drift/modify-order",
+            json=request_dict,
+        ) as res:
+            return await map_response(res, proto.PostModifyDriftOrderResponse())
+
     async def get_drift_markets(
         self,
         get_drift_markets_request: proto.GetDriftMarketsRequest,
@@ -71,7 +126,7 @@ class HttpProvider(Provider):
         metadata: Optional["MetadataLike"] = None,
     ) -> proto.GetDriftMarketsResponse:
         async with self._session.get(
-            f"{self._endpointV2}/drift/markets?metadata={get_drift_markets_request.metadata}"
+            f"{self._endpoint_v2}/drift/markets?metadata={get_drift_markets_request.metadata}"
         ) as res:
             return await map_response(res, proto.GetDriftMarketsResponse())
 
@@ -84,7 +139,7 @@ class HttpProvider(Provider):
         metadata: Optional["MetadataLike"] = None,
     ) -> proto.PostDriftEnableMarginTradingResponse:
         async with self._session.post(
-            f"{self._endpointV2}/drift/enable-margin",
+            f"{self._endpoint_v2}/drift/enable-margin",
             json=post_drift_enable_margin_trading_request.to_dict(),
         ) as res:
             return await map_response(
@@ -104,7 +159,7 @@ class HttpProvider(Provider):
             request_dict["clientOrderID"] = request_dict.pop("clientOrderId")
 
         async with self._session.post(
-            f"{self._endpointV2}/drift/margin-place", json=request_dict
+            f"{self._endpoint_v2}/drift/margin-place", json=request_dict
         ) as res:
             return await map_response(res, proto.PostDriftMarginOrderResponse())
 
@@ -117,7 +172,7 @@ class HttpProvider(Provider):
         metadata: Optional["MetadataLike"] = None,
     ) -> proto.GetDriftMarginOrderbookResponse:
         async with self._session.get(
-            f"{self._endpointV2}/drift/margin-orderbooks/{get_drift_margin_orderbook_request.market}?"
+            f"{self._endpoint_v2}/drift/margin-orderbooks/{get_drift_margin_orderbook_request.market}?"
             f"limit={get_drift_margin_orderbook_request.limit}&metadata={get_drift_margin_orderbook_request.metadata}"
         ) as res:
             return await map_response(
@@ -352,7 +407,7 @@ class HttpProvider(Provider):
         metadata: Optional["MetadataLike"] = None,
     ) -> proto.GetDriftMarketDepthResponse:
         async with self._session.get(
-            f"{self._endpointV2}/drift/market-depth/{get_drift_market_depth_request.contract}?"
+            f"{self._endpoint_v2}/drift/market-depth/{get_drift_market_depth_request.contract}?"
             f"limit={get_drift_market_depth_request.limit}"
         ) as res:
             return await map_response(res, proto.GetDriftMarketDepthResponse())
