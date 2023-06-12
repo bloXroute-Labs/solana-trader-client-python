@@ -1,7 +1,7 @@
-_mainnet_virginia = "virginia.solana.dex.blxrbdnc.om"
-_mainnet_ny = "ny.solana.dex.blxrbdnc.om"
-_mainnet_frankfurt = "frankfurt.solana.dex.blxrbdnc.om"
-_mainnet_uk = "uk.solana.dex.blxrbdnc.om"
+_mainnet_virginia = "virginia.solana.dex.blxrbdn.com"
+_mainnet_ny = "ny.solana.dex.blxrbdn.com"
+_mainnet_frankfurt = "frankfurt.solana.dex.blxrbdn.com"
+_mainnet_uk = "uk.solana.dex.blxrbdn.com"
 _testnet = "serum-nlb-5a2c3912804344a3.elb.us-east-1.amazonaws.com"
 _devnet = "solana-trader-api-nlb-6b0f765f2fc759e1.elb.us-east-1.amazonaws.com"
 
