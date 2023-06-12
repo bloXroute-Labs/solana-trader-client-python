@@ -31,7 +31,7 @@ class HttpProvider(Provider):
     # noinspection PyMissingConstructor
     def __init__(
         self,
-        endpoint: str = constants.MAINNET_API_HTTP,
+        endpoint: str = constants.MAINNET_API_VIRGINIA_HTTP,
         auth_header: Optional[str] = None,
         private_key: Optional[str] = None,
     ):
