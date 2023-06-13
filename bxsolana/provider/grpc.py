@@ -21,7 +21,7 @@ class GrpcProvider(Provider):
 
     def __init__(
         self,
-        host: str = constants.MAINNET_API_GRPC_HOST,
+        host: str = constants.MAINNET_API_VIRGINIA_GRPC_HOST,
         port: int = constants.MAINNET_API_GRPC_PORT,
         private_key: Optional[str] = None,
         auth_header: Optional[str] = None,
