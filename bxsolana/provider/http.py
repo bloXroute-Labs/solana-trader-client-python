@@ -68,7 +68,7 @@ class HttpProvider(Provider):
         *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
-        metadata: Optional["MetadataLike"] = None
+        metadata: Optional["MetadataLike"] = None,
     ) -> proto.GetDriftPerpPositionsResponse:
         params = ""
         for i in range(len(get_drift_perp_positions_request.contracts)):
@@ -90,7 +90,7 @@ class HttpProvider(Provider):
         *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
-        metadata: Optional["MetadataLike"] = None
+        metadata: Optional["MetadataLike"] = None,
     ) -> proto.GetDriftPerpOpenOrdersResponse:
         params = ""
         for i in range(len(get_drift_perp_open_orders_request.contracts)):
@@ -112,7 +112,7 @@ class HttpProvider(Provider):
         *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
-        metadata: Optional["MetadataLike"] = None
+        metadata: Optional["MetadataLike"] = None,
     ) -> proto.PostDriftCancelPerpOrderResponse:
         async with self._session.post(
             f"{self._endpoint_v2}/drift/perp-cancel",
