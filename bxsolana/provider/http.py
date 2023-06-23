@@ -62,6 +62,66 @@ class HttpProvider(Provider):
         await self._session.close()
 
     # Beginning of V2
+    async def get_drift_perp_positions(
+        self,
+        get_drift_perp_positions_request: proto.GetDriftPerpPositionsRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> proto.GetDriftPerpPositionsResponse:
+        params = ""
+        for i in range(len(get_drift_perp_positions_request.contracts)):
+            params += "&contracts=" + str(
+                get_drift_perp_positions_request.contracts[i]
+            )
+
+        async with self._session.get(
+            f"{self._endpoint_v2}/drift/perp-positions?ownerAddress={get_drift_perp_positions_request.owner_address}"
+            f"&accountAddress={get_drift_perp_positions_request.account_address}{params}"
+        ) as res:
+            return await map_response(
+                res, proto.GetDriftPerpOpenOrdersResponse()
+            )
+
+    async def get_drift_perp_open_orders(
+        self,
+        get_drift_perp_open_orders_request: proto.GetDriftPerpOpenOrdersRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> proto.GetDriftPerpOpenOrdersResponse:
+        params = ""
+        for i in range(len(get_drift_perp_open_orders_request.contracts)):
+            params += "&contracts=" + str(
+                get_drift_perp_open_orders_request.contracts[i]
+            )
+
+        async with self._session.get(
+            f"{self._endpoint_v2}/drift/perp-open-orders?ownerAddress={get_drift_perp_open_orders_request.owner_address}"
+            f"&accountAddress={get_drift_perp_open_orders_request.account_address}{params}"
+        ) as res:
+            return await map_response(
+                res, proto.GetDriftPerpOpenOrdersResponse()
+            )
+
+    async def post_drift_cancel_perp_order(
+        self,
+        post_drift_cancel_perp_order_request: proto.PostDriftCancelPerpOrderRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> proto.PostDriftCancelPerpOrderResponse:
+        async with self._session.post(
+            f"{self._endpoint_v2}/drift/perp-cancel",
+            json=post_drift_cancel_perp_order_request.to_dict(),
+        ) as res:
+            return await map_response(
+                res, proto.PostCancelDriftMarginOrderResponse()
+            )
+
     async def post_cancel_drift_margin_order(
         self,
         post_cancel_drift_margin_order_request: proto.PostCancelDriftMarginOrderRequest,
@@ -178,6 +238,20 @@ class HttpProvider(Provider):
             return await map_response(
                 res, proto.GetDriftMarginOrderbookResponse()
             )
+
+    async def get_drift_market_depth(
+        self,
+        get_drift_market_depth_request: proto.GetDriftMarketDepthRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.GetDriftMarketDepthResponse:
+        async with self._session.get(
+            f"{self._endpoint_v2}/drift/market-depth/{get_drift_market_depth_request.contract}?"
+            f"limit={get_drift_market_depth_request.limit}"
+        ) as res:
+            return await map_response(res, proto.GetDriftMarketDepthResponse())
 
     # End of V2
 
@@ -397,20 +471,6 @@ class HttpProvider(Provider):
             f"limit={get_perp_orderbook_request.limit}&project={get_perp_orderbook_request.project.name}"
         ) as res:
             return await map_response(res, proto.GetPerpOrderbookResponse())
-
-    async def get_drift_market_depth(
-        self,
-        get_drift_market_depth_request: proto.GetDriftMarketDepthRequest,
-        *,
-        timeout: Optional[float] = None,
-        deadline: Optional["Deadline"] = None,
-        metadata: Optional["MetadataLike"] = None,
-    ) -> proto.GetDriftMarketDepthResponse:
-        async with self._session.get(
-            f"{self._endpoint_v2}/drift/market-depth/{get_drift_market_depth_request.contract}?"
-            f"limit={get_drift_market_depth_request.limit}"
-        ) as res:
-            return await map_response(res, proto.GetDriftMarketDepthResponse())
 
     async def post_settle_pnl(
         self,

@@ -315,6 +315,39 @@ async def do_requests(
     )
 
     # DRIFT
+    print("post Drift get open margin orders")
+    print(
+        (
+            await api.get_drift_perp_positions(
+                get_drift_perp_positions_request=proto.GetDriftPerpPositionsRequest(
+                    owner_address=public_key, contracts=["SOL_PERP"]
+                )
+            )
+        ).to_json()
+    )
+
+    print("post Drift get perp open orders")
+    print(
+        (
+            await api.get_drift_perp_open_orders(
+                get_drift_perp_open_orders_request=proto.GetDriftPerpOpenOrdersRequest(
+                    owner_address=public_key, contracts=["SOL_PERP"]
+                )
+            )
+        ).to_json()
+    )
+
+    print("post Drift cancel perp order")
+    print(
+        (
+            await api.post_drift_cancel_perp_order(
+                post_drift_cancel_perp_order_request=proto.PostDriftCancelPerpOrderRequest(
+                    owner_address=public_key, contract="SOL_PERP"
+                )
+            )
+        ).to_json()
+    )
+
     print("post Drift modify order")
     print(
         (
