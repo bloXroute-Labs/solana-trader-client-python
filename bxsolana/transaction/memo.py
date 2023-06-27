@@ -1,11 +1,9 @@
 import base64
-from typing import List
 
-from solders import keypair as kp
 from solders import pubkey as pk
-from solders import hash as hs
 from solders import instruction as inst
-from solana import transaction as solana_transaction
+from solders import transaction as solders_tx
+from solders import message as solders_msg
 
 BxMemoMarkerMsg = "Powered by bloXroute Trader Api"
 TraderAPIMemoProgram = pk.Pubkey.from_string(
@@ -27,57 +25,62 @@ def create_trader_api_memo_instruction(
     return instruction
 
 
-def add_memo(
-    instructions: List[inst.Instruction],
-    memo_content: str,
-    blockhash: hs.Hash,
-    owner: pk.Pubkey,
-    *private_keys: kp.Keypair
-) -> str:
-    memo = create_trader_api_memo_instruction(memo_content)
-    instructions.append(memo)
+def create_compiled_memo_instruction(
+    program_id_index: int,
+) -> inst.CompiledInstruction:
+    data = bytes(BxMemoMarkerMsg, "utf-8")
+    instruction = inst.CompiledInstruction(program_id_index, data, bytes([]))
 
-    txn_bytes = build_fully_signed_txn(
-        blockhash, owner, instructions, *private_keys
-    )
-    return base64.b64encode(txn_bytes).decode("utf-8")
+    return instruction
+
+
+def add_memo(
+    tx: solders_tx.VersionedTransaction,
+) -> solders_tx.VersionedTransaction:
+    instructions = tx.message.instructions
+    accounts = tx.message.account_keys
+    msg = tx.message
+
+    cutoff = len(tx.message.account_keys)
+
+    for i in range(len(instructions)):
+        idxs = list(instructions[i].accounts)
+        for j in range(len(idxs)):
+            if idxs[j] >= cutoff:
+                idxs[j] = idxs[j] + 1
+
+    memo = create_compiled_memo_instruction(cutoff)
+
+    accounts.append(TraderAPIMemoProgram)
+    instructions.append(memo)
+    if isinstance(msg, solders_msg.MessageV0):
+        message = solders_msg.MessageV0(
+            msg.header,
+            accounts,
+            msg.recent_blockhash,
+            instructions,
+            msg.address_table_lookups,
+        )
+        return solders_tx.VersionedTransaction.populate(message, tx.signatures)
+    else:
+        message = solders_msg.Message.new_with_compiled_instructions(
+            msg.header.num_required_signatures,
+            msg.header.num_readonly_signed_accounts,
+            msg.header.num_readonly_unsigned_accounts,
+            accounts,
+            msg.recent_blockhash,
+            instructions,
+        )
+        return solders_tx.VersionedTransaction.populate(message, tx.signatures)
 
 
 # add_memo_to_serialized_txn adds memo instruction to a serialized transaction, it's primarily used if the user
 # doesn't want to interact with Trader-API directly
-def add_memo_to_serialized_txn(
-    tx_base64: str,
-    memo_content: str,
-    owner: pk.Pubkey,
-    *private_keys: kp.Keypair
-) -> str:
-    tx_bytes = bytes(tx_base64, encoding="utf-8")
-    tx_bytes_base64 = base64.b64decode(tx_bytes)
+def add_memo_to_serialized_txn(tx_base64: str) -> str:
+    b = base64.b64decode(tx_base64)
 
-    tx = solana_transaction.Transaction.deserialize(tx_bytes_base64)
-    recent_block_hash = tx.recent_blockhash
-    if recent_block_hash is None:
-        raise Exception("serialized transaction did not contain block hash")
+    raw_tx = solders_tx.VersionedTransaction.from_bytes(b)
 
-    return add_memo(
-        list(tx.instructions),
-        memo_content,
-        recent_block_hash,
-        owner,
-        *private_keys
-    )
+    tx = add_memo(raw_tx)
 
-
-def build_fully_signed_txn(
-    recent_block_hash: hs.Hash,
-    owner: pk.Pubkey,
-    instructions: List[inst.Instruction],
-    *private_keys: kp.Keypair
-) -> bytes:
-    tx = solana_transaction.Transaction(recent_blockhash=recent_block_hash)
-    tx.instructions = instructions
-
-    tx.fee_payer = owner
-    tx.sign(*private_keys)
-
-    return tx.serialize()
+    return base64.b64encode(bytes(tx)).decode("utf-8")
