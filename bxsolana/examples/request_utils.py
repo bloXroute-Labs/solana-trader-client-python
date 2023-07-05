@@ -308,6 +308,7 @@ async def do_requests(
                 route_trade_swap_request=proto.RouteTradeSwapRequest(
                     project=proto.Project.P_RAYDIUM,
                     owner_address=public_key,
+                    slippage=0.1,
                     steps=[step],
                 )
             )
