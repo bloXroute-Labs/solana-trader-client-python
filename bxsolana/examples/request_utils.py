@@ -463,8 +463,8 @@ async def do_requests(
             await api.get_drift_open_margin_order(
                 get_drift_open_margin_order_request=proto.GetDriftOpenMarginOrderRequest(
                     owner_address=public_key,
-                    client_order_id=12,
-                    order_id=1,
+                    client_order_id=13,
+                    order_id=8,
                 )
             )
         ).to_json()
