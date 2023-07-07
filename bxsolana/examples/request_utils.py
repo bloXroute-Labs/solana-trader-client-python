@@ -315,7 +315,7 @@ async def do_requests(
     )
 
     # DRIFT
-    print("post drift close perp positions")
+    print("post Drift close perp positions")
     print(
         (
             await api.post_close_drift_perp_positions(
@@ -327,7 +327,7 @@ async def do_requests(
         ).to_json()
     )
 
-    print("post drift create user")
+    print("post Drift create user")
     print(
         (
             await api.post_create_drift_user(
@@ -341,7 +341,7 @@ async def do_requests(
         ).to_json()
     )
 
-    print("post drift deposit collateral")
+    print("post Drift deposit collateral")
     print(
         (
             await api.post_drift_manage_collateral(
@@ -357,7 +357,7 @@ async def do_requests(
         ).to_json()
     )
 
-    print("post drift settle pnl")
+    print("post Drift settle pnl")
     print(
         (
             await api.post_drift_settle_pnl(
@@ -372,7 +372,7 @@ async def do_requests(
         ).to_json()
     )
 
-    print("post drift settle pnls")
+    print("post Drift settle pnls")
     print(
         (
             await api.post_drift_settle_pn_ls(
@@ -387,7 +387,7 @@ async def do_requests(
         ).to_json()
     )
 
-    print("post drift liquidate perp")
+    print("post Drift liquidate perp")
     print(
         (
             await api.post_liquidate_drift_perp(
@@ -414,7 +414,7 @@ async def do_requests(
         ).to_json()
     )
 
-    print("get drift user")
+    print("get Drift user")
     print(
         (
             await api.get_drift_user(
@@ -425,7 +425,7 @@ async def do_requests(
         ).to_json()
     )
 
-    print("get drift assets")
+    print("get Drift assets")
     print(
         (
             await api.get_drift_assets(
@@ -436,7 +436,7 @@ async def do_requests(
         ).to_json()
     )
 
-    print("get drift perp contracts")
+    print("get Drift perp contracts")
     print(
         (
             await api.get_drift_perp_contracts(
