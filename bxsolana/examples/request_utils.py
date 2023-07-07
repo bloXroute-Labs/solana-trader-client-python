@@ -78,7 +78,6 @@ async def do_requests(
                 get_price_request=proto.GetPriceRequest(
                     tokens=[
                         "So11111111111111111111111111111111111111112",
-                        "USDC",
                         "SOL",
                         "USDT",
                     ]
@@ -103,7 +102,7 @@ async def do_requests(
         (
             await api.get_quotes(
                 get_quotes_request=proto.GetQuotesRequest(
-                    in_token="USDC",
+                    in_token="USDT",
                     out_token="SOL",
                     in_amount=0.01,
                     slippage=10,
@@ -286,7 +285,7 @@ async def do_requests(
                     owner_address=public_key,
                     in_token="SOL",
                     in_amount=0.01,
-                    out_token="USDC",
+                    out_token="USDT",
                     slippage=0.01,
                 )
             )
@@ -295,7 +294,7 @@ async def do_requests(
 
     print("generate route swap")
     step = proto.RouteStep(
-        in_token="USDC",
+        in_token="USDT",
         in_amount=0.01,
         out_token="SOL",
         out_amount=0.01,
@@ -316,7 +315,161 @@ async def do_requests(
     )
 
     # DRIFT
-    print("post Drift get open margin orders")
+    print("post Drift close perp positions")
+    print(
+        (
+            await api.post_close_drift_perp_positions(
+                post_close_drift_perp_positions_request=proto.PostCloseDriftPerpPositionsRequest(
+                    owner_address=public_key,
+                    contracts=["SOL_PERP"],
+                )
+            )
+        ).to_json()
+    )
+
+    print("post Drift create user")
+    print(
+        (
+            await api.post_create_drift_user(
+                post_create_drift_user_request=proto.PostCreateDriftUserRequest(
+                    action="CREATE",
+                    owner_address=(
+                        "BgJ8uyf9yhLJaUVESRrqffzwVyQgRi9YvWmpEFaH14kx"
+                    ),
+                )
+            )
+        ).to_json()
+    )
+
+    print("post Drift deposit collateral")
+    print(
+        (
+            await api.post_drift_manage_collateral(
+                post_drift_manage_collateral_request=proto.PostDriftManageCollateralRequest(
+                    account_address=(
+                        "9UnwdvTf5EfGeLyLrF4GZDUs7LKRUeJQzW7qsDVGQ8sS"
+                    ),
+                    amount=0.1,
+                    token="USDC",
+                    type="DEPOSIT",
+                )
+            )
+        ).to_json()
+    )
+
+    print("post Drift settle pnl")
+    print(
+        (
+            await api.post_drift_settle_pnl(
+                post_drift_settle_pnl_request=proto.PostDriftSettlePnlRequest(
+                    owner_address=public_key,
+                    settlee_account_address=(
+                        "9UnwdvTf5EfGeLyLrF4GZDUs7LKRUeJQzW7qsDVGQ8sS"
+                    ),
+                    contract="SOL_PERP",
+                )
+            )
+        ).to_json()
+    )
+
+    print("post Drift settle pnls")
+    print(
+        (
+            await api.post_drift_settle_pn_ls(
+                post_drift_settle_pn_ls_request=proto.PostDriftSettlePnLsRequest(
+                    owner_address=public_key,
+                    settlee_account_addresses=[
+                        "9UnwdvTf5EfGeLyLrF4GZDUs7LKRUeJQzW7qsDVGQ8sS"
+                    ],
+                    contract="SOL_PERP",
+                )
+            )
+        ).to_json()
+    )
+
+    print("post Drift liquidate perp")
+    print(
+        (
+            await api.post_liquidate_drift_perp(
+                post_liquidate_drift_perp_request=proto.PostLiquidateDriftPerpRequest(
+                    owner_address=public_key,
+                    settlee_account_address=(
+                        "9UnwdvTf5EfGeLyLrF4GZDUs7LKRUeJQzW7qsDVGQ8sS"
+                    ),
+                    contract="SOL_PERP",
+                    amount=1,
+                )
+            )
+        ).to_json()
+    )
+
+    print("get Drift perp orderbook")
+    print(
+        (
+            await api.get_drift_perp_orderbook(
+                get_drift_perp_orderbook_request=proto.GetDriftPerpOrderbookRequest(
+                    contract="SOL_PERP",
+                )
+            )
+        ).to_json()
+    )
+
+    print("get Drift user")
+    print(
+        (
+            await api.get_drift_user(
+                get_drift_user_request=proto.GetDriftUserRequest(
+                    owner_address=public_key
+                )
+            )
+        ).to_json()
+    )
+
+    print("get Drift assets")
+    print(
+        (
+            await api.get_drift_assets(
+                get_drift_assets_request=proto.GetDriftAssetsRequest(
+                    owner_address=public_key,
+                )
+            )
+        ).to_json()
+    )
+
+    print("get Drift perp contracts")
+    print(
+        (
+            await api.get_drift_perp_contracts(
+                get_drift_perp_contracts_request=proto.GetDriftPerpContractsRequest()
+            )
+        ).to_json()
+    )
+
+    print("post Drift get perp open order")
+    print(
+        (
+            await api.get_drift_open_perp_order(
+                get_drift_open_perp_order_request=proto.GetDriftOpenPerpOrderRequest(
+                    owner_address=public_key, client_order_id=12, order_id=1
+                )
+            )
+        ).to_json()
+    )
+
+    print("post Drift get open margin order")
+    print(
+        (
+            await api.get_drift_open_margin_order(
+                get_drift_open_margin_order_request=proto.GetDriftOpenMarginOrderRequest(
+                    owner_address=public_key,
+                    client_order_id=13,
+                    order_id=8,
+                )
+            )
+        ).to_json()
+    )
+
+    print("post Drift get open perp positions")
     print(
         (
             await api.get_drift_perp_positions(
@@ -330,8 +483,8 @@ async def do_requests(
     print("post Drift get perp open orders")
     print(
         (
-            await api.get_drift_perp_open_orders(
-                get_drift_perp_open_orders_request=proto.GetDriftPerpOpenOrdersRequest(
+            await api.get_drift_open_perp_orders(
+                get_drift_open_perp_orders_request=proto.GetDriftOpenPerpOrdersRequest(
                     owner_address=public_key, contracts=["SOL_PERP"]
                 )
             )
@@ -445,7 +598,7 @@ async def do_requests(
         ).to_json()
     )
 
-    print("get Drift orderbook")
+    print("get Drift perp orderbook")
     print(
         (
             await api.get_perp_orderbook(
@@ -517,7 +670,6 @@ async def do_requests(
                 get_open_perp_order_request=proto.GetOpenPerpOrderRequest(
                     owner_address=public_key,
                     project=proto.Project.P_DRIFT,
-                    contract=PerpContract.SOL_PERP,
                     client_order_id=12,
                 )
             )
@@ -601,7 +753,7 @@ async def do_requests(
         ).to_json()
     )
 
-    print("post close perp orders")
+    print("post close perp positions")
     print(
         (
             await api.post_close_perp_positions(

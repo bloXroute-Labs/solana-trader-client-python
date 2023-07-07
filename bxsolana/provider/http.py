@@ -62,6 +62,191 @@ class HttpProvider(Provider):
         await self._session.close()
 
     # Beginning of V2
+    async def post_close_drift_perp_positions(
+        self,
+        post_close_drift_perp_positions_request: proto.PostCloseDriftPerpPositionsRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.PostCloseDriftPerpPositionsResponse:
+        async with self._session.post(
+            f"{self._endpoint_v2}/drift/perp/close",
+            json=post_close_drift_perp_positions_request.to_dict(),
+        ) as res:
+            return await map_response(
+                res, proto.PostCloseDriftPerpPositionsResponse()
+            )
+
+    async def post_create_drift_user(
+        self,
+        post_create_drift_user_request: proto.PostCreateDriftUserRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.PostCreateDriftUserResponse:
+        async with self._session.post(
+            f"{self._endpoint_v2}/drift/user",
+            json=post_create_drift_user_request.to_dict(),
+        ) as res:
+            return await map_response(res, proto.PostCreateDriftUserResponse())
+
+    async def post_drift_manage_collateral(
+        self,
+        post_drift_manage_collateral_request: proto.PostDriftManageCollateralRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.PostDriftManageCollateralResponse:
+        async with self._session.post(
+            f"{self._endpoint_v2}/drift/manage-collateral",
+            json=post_drift_manage_collateral_request.to_dict(),
+        ) as res:
+            return await map_response(
+                res, proto.PostDriftManageCollateralResponse()
+            )
+
+    async def post_drift_settle_pnl(
+        self,
+        post_drift_settle_pnl_request: proto.PostDriftSettlePnlRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.PostDriftSettlePnlResponse:
+        async with self._session.post(
+            f"{self._endpoint_v2}/drift/perp/settle-pnl",
+            json=post_drift_settle_pnl_request.to_dict(),
+        ) as res:
+            return await map_response(res, proto.PostDriftSettlePnlResponse())
+
+    async def post_drift_settle_pn_ls(
+        self,
+        post_drift_settle_pn_ls_request: proto.PostDriftSettlePnLsRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.PostDriftSettlePnLsResponse:
+        async with self._session.post(
+            f"{self._endpoint_v2}/drift/perp/settle-pnls",
+            json=post_drift_settle_pn_ls_request.to_dict(),
+        ) as res:
+            return await map_response(res, proto.PostDriftSettlePnLsResponse())
+
+    async def post_liquidate_drift_perp(
+        self,
+        post_liquidate_drift_perp_request: proto.PostLiquidateDriftPerpRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.PostLiquidateDriftPerpResponse:
+        async with self._session.post(
+            f"{self._endpoint_v2}/drift/perp/liquidate",
+            json=post_liquidate_drift_perp_request.to_dict(),
+        ) as res:
+            return await map_response(
+                res, proto.PostLiquidateDriftPerpResponse()
+            )
+
+    async def get_drift_perp_orderbook(
+        self,
+        get_drift_perp_orderbook_request: proto.GetDriftPerpOrderbookRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.GetDriftPerpOrderbookResponse:
+        async with self._session.get(
+            f"{self._endpoint_v2}/drift/perp/orderbook/{get_drift_perp_orderbook_request.contract}"
+            f"?limit={get_drift_perp_orderbook_request.limit}"
+        ) as res:
+            return await map_response(
+                res, proto.GetDriftPerpOrderbookResponse()
+            )
+
+    async def get_drift_user(
+        self,
+        get_drift_user_request: proto.GetDriftUserRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.GetDriftUserResponse:
+        async with self._session.get(
+            f"{self._endpoint_v2}/drift/user?ownerAddress={get_drift_user_request.owner_address}"
+            f"&accountAddress={get_drift_user_request.account_address}"
+        ) as res:
+            return await map_response(res, proto.GetDriftUserResponse())
+
+    async def get_drift_assets(
+        self,
+        get_drift_assets_request: proto.GetDriftAssetsRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.GetDriftAssetsResponse:
+        async with self._session.get(
+            f"{self._endpoint_v2}/drift/assets?ownerAddress={get_drift_assets_request.owner_address}"
+            f"&accountAddress={get_drift_assets_request.account_address}"
+        ) as res:
+            return await map_response(res, proto.GetDriftAssetsResponse())
+
+    async def get_drift_perp_contracts(
+        self,
+        get_drift_perp_contracts_request: proto.GetDriftPerpContractsRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.GetDriftPerpContractsResponse:
+        async with self._session.get(
+            f"{self._endpoint_v2}/drift/perp/contracts"
+        ) as res:
+            return await map_response(
+                res, proto.GetDriftPerpContractsResponse()
+            )
+
+    async def get_drift_open_perp_order(
+        self,
+        get_drift_open_perp_order_request: proto.GetDriftOpenPerpOrderRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.GetDriftOpenPerpOrderResponse:
+        async with self._session.get(
+            f"{self._endpoint_v2}/drift/perp/open-order?ownerAddress={get_drift_open_perp_order_request.owner_address}"
+            f"&accountAddress={get_drift_open_perp_order_request.account_address}"
+            f"&clientOrderID={get_drift_open_perp_order_request.client_order_id}"
+            f"&orderID={get_drift_open_perp_order_request.order_id}"
+        ) as res:
+            return await map_response(
+                res, proto.GetDriftOpenPerpOrderResponse()
+            )
+
+    async def get_drift_open_margin_order(
+        self,
+        get_drift_open_margin_order_request: proto.GetDriftOpenMarginOrderRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.GetDriftOpenMarginOrderResponse:
+        async with self._session.get(
+            f"{self._endpoint_v2}/drift/margin/open-order?ownerAddress={get_drift_open_margin_order_request.owner_address}"
+            f"&accountAddress={get_drift_open_margin_order_request.account_address}"
+            f"&clientOrderID={get_drift_open_margin_order_request.client_order_id}"
+            f"&orderID={get_drift_open_margin_order_request.order_id}"
+        ) as res:
+            return await map_response(
+                res, proto.GetDriftOpenMarginOrderResponse()
+            )
+
     async def get_drift_perp_positions(
         self,
         get_drift_perp_positions_request: proto.GetDriftPerpPositionsRequest,
@@ -77,33 +262,33 @@ class HttpProvider(Provider):
             )
 
         async with self._session.get(
-            f"{self._endpoint_v2}/drift/perp-positions?ownerAddress={get_drift_perp_positions_request.owner_address}"
+            f"{self._endpoint_v2}/drift/perp/positions?ownerAddress={get_drift_perp_positions_request.owner_address}"
             f"&accountAddress={get_drift_perp_positions_request.account_address}{params}"
         ) as res:
             return await map_response(
-                res, proto.GetDriftPerpOpenOrdersResponse()
+                res, proto.GetDriftOpenPerpOrdersResponse()
             )
 
-    async def get_drift_perp_open_orders(
+    async def get_drift_open_perp_orders(
         self,
-        get_drift_perp_open_orders_request: proto.GetDriftPerpOpenOrdersRequest,
+        get_drift_open_perp_orders_request: proto.GetDriftOpenPerpOrdersRequest,
         *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
-    ) -> proto.GetDriftPerpOpenOrdersResponse:
+    ) -> proto.GetDriftOpenPerpOrdersResponse:
         params = ""
-        for i in range(len(get_drift_perp_open_orders_request.contracts)):
+        for i in range(len(get_drift_open_perp_orders_request.contracts)):
             params += "&contracts=" + str(
-                get_drift_perp_open_orders_request.contracts[i]
+                get_drift_open_perp_orders_request.contracts[i]
             )
 
         async with self._session.get(
-            f"{self._endpoint_v2}/drift/perp-open-orders?ownerAddress={get_drift_perp_open_orders_request.owner_address}"
-            f"&accountAddress={get_drift_perp_open_orders_request.account_address}{params}"
+            f"{self._endpoint_v2}/drift/perp/open-orders?ownerAddress={get_drift_open_perp_orders_request.owner_address}"
+            f"&accountAddress={get_drift_open_perp_orders_request.account_address}{params}"
         ) as res:
             return await map_response(
-                res, proto.GetDriftPerpOpenOrdersResponse()
+                res, proto.GetDriftOpenPerpOrdersResponse()
             )
 
     async def post_drift_cancel_perp_order(
@@ -115,7 +300,7 @@ class HttpProvider(Provider):
         metadata: Optional["MetadataLike"] = None,
     ) -> proto.PostDriftCancelPerpOrderResponse:
         async with self._session.post(
-            f"{self._endpoint_v2}/drift/perp-cancel",
+            f"{self._endpoint_v2}/drift/perp/cancel",
             json=post_drift_cancel_perp_order_request.to_dict(),
         ) as res:
             return await map_response(
@@ -131,7 +316,7 @@ class HttpProvider(Provider):
         metadata: Optional["MetadataLike"] = None,
     ) -> proto.PostCancelDriftMarginOrderResponse:
         async with self._session.post(
-            f"{self._endpoint_v2}/drift/margin-cancel",
+            f"{self._endpoint_v2}/drift/margin/cancel",
             json=post_cancel_drift_margin_order_request.to_dict(),
         ) as res:
             return await map_response(
@@ -153,7 +338,7 @@ class HttpProvider(Provider):
             )
 
         async with self._session.get(
-            f"{self._endpoint_v2}/drift/margin-open-orders?ownerAddress={get_drift_open_margin_orders_request.owner_address}"
+            f"{self._endpoint_v2}/drift/margin/open-orders?ownerAddress={get_drift_open_margin_orders_request.owner_address}"
             f"&accountAddress={get_drift_open_margin_orders_request.account_address}{params}"
         ) as res:
             return await map_response(
@@ -199,7 +384,7 @@ class HttpProvider(Provider):
         metadata: Optional["MetadataLike"] = None,
     ) -> proto.PostDriftEnableMarginTradingResponse:
         async with self._session.post(
-            f"{self._endpoint_v2}/drift/enable-margin",
+            f"{self._endpoint_v2}/drift/margin-enable",
             json=post_drift_enable_margin_trading_request.to_dict(),
         ) as res:
             return await map_response(
@@ -219,7 +404,7 @@ class HttpProvider(Provider):
             request_dict["clientOrderID"] = request_dict.pop("clientOrderId")
 
         async with self._session.post(
-            f"{self._endpoint_v2}/drift/margin-place", json=request_dict
+            f"{self._endpoint_v2}/drift/margin/place", json=request_dict
         ) as res:
             return await map_response(res, proto.PostDriftMarginOrderResponse())
 
@@ -232,7 +417,7 @@ class HttpProvider(Provider):
         metadata: Optional["MetadataLike"] = None,
     ) -> proto.GetDriftMarginOrderbookResponse:
         async with self._session.get(
-            f"{self._endpoint_v2}/drift/margin-orderbooks/{get_drift_margin_orderbook_request.market}?"
+            f"{self._endpoint_v2}/drift/margin/orderbooks/{get_drift_margin_orderbook_request.market}?"
             f"limit={get_drift_margin_orderbook_request.limit}&metadata={get_drift_margin_orderbook_request.metadata}"
         ) as res:
             return await map_response(
@@ -248,7 +433,7 @@ class HttpProvider(Provider):
         metadata: Optional["MetadataLike"] = None,
     ) -> proto.GetDriftMarketDepthResponse:
         async with self._session.get(
-            f"{self._endpoint_v2}/drift/market-depth/{get_drift_market_depth_request.contract}?"
+            f"{self._endpoint_v2}/drift/perp/market-depth/{get_drift_market_depth_request.contract}?"
             f"limit={get_drift_market_depth_request.limit}"
         ) as res:
             return await map_response(res, proto.GetDriftMarketDepthResponse())
@@ -570,7 +755,7 @@ class HttpProvider(Provider):
         async with self._session.get(
             f"{self._endpoint}/trade/perp/open-order-by-id?ownerAddress={get_open_perp_order_request.owner_address}"
             f"&accountAddress={get_open_perp_order_request.account_address}"
-            f"&project={get_open_perp_order_request.project.name}&contract={get_open_perp_order_request.contract.name}"
+            f"&project={get_open_perp_order_request.project.name}"
             f"&clientOrderID={get_open_perp_order_request.client_order_id}&orderID={get_open_perp_order_request.order_id}"
         ) as res:
             return await map_response(res, proto.GetOpenPerpOrderResponse())
