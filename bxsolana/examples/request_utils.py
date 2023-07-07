@@ -78,7 +78,6 @@ async def do_requests(
                 get_price_request=proto.GetPriceRequest(
                     tokens=[
                         "So11111111111111111111111111111111111111112",
-                        "USDC",
                         "SOL",
                         "USDT",
                     ]
@@ -103,7 +102,7 @@ async def do_requests(
         (
             await api.get_quotes(
                 get_quotes_request=proto.GetQuotesRequest(
-                    in_token="USDC",
+                    in_token="USDT",
                     out_token="SOL",
                     in_amount=0.01,
                     slippage=10,
@@ -286,7 +285,7 @@ async def do_requests(
                     owner_address=public_key,
                     in_token="SOL",
                     in_amount=0.01,
-                    out_token="USDC",
+                    out_token="USDT",
                     slippage=0.01,
                 )
             )
@@ -295,7 +294,7 @@ async def do_requests(
 
     print("generate route swap")
     step = proto.RouteStep(
-        in_token="USDC",
+        in_token="USDT",
         in_amount=0.01,
         out_token="SOL",
         out_amount=0.01,
@@ -351,7 +350,7 @@ async def do_requests(
                         "9UnwdvTf5EfGeLyLrF4GZDUs7LKRUeJQzW7qsDVGQ8sS"
                     ),
                     amount=0.1,
-                    token="USDC",
+                    token="USDT",
                     type="DEPOSIT",
                 )
             )
