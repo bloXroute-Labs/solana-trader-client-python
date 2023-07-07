@@ -350,7 +350,7 @@ async def do_requests(
                         "9UnwdvTf5EfGeLyLrF4GZDUs7LKRUeJQzW7qsDVGQ8sS"
                     ),
                     amount=0.1,
-                    token="USDT",
+                    token="USDC",
                     type="DEPOSIT",
                 )
             )
