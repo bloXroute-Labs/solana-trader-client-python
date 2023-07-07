@@ -161,8 +161,8 @@ class HttpProvider(Provider):
         metadata: Optional["MetadataLike"] = None,
     ) -> proto.GetDriftPerpOrderbookResponse:
         async with self._session.get(
-            f"{self._endpoint_v2}/drift/perp/orderbook?contract={get_drift_perp_orderbook_request.contract}"
-            f"&limit={get_drift_perp_orderbook_request.limit}"
+            f"{self._endpoint_v2}/drift/perp/orderbook/{get_drift_perp_orderbook_request.contract}"
+            f"?limit={get_drift_perp_orderbook_request.limit}"
         ) as res:
             return await map_response(
                 res, proto.GetDriftPerpOrderbookResponse()
