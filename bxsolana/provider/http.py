@@ -438,6 +438,161 @@ class HttpProvider(Provider):
         ) as res:
             return await map_response(res, proto.GetDriftMarketDepthResponse())
 
+    # Openbook V2
+
+    async def get_markets_v2(
+        self,
+        get_markets_request_v2: proto.GetMarketsRequestV2,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.GetMarketsResponseV2:
+        async with self._session.get(
+            f"{self._endpoint_v2}/openbook/markets"
+        ) as res:
+            return await map_response(res, proto.GetMarketsResponseV2())
+
+    async def get_orderbook_v2(
+        self,
+        get_orderbook_request_v2: proto.GetOrderbookRequestV2,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.GetOrderbookResponseV2:
+        async with self._session.get(
+            f"{self._endpoint_v2}/openbook/orderbooks/{get_orderbook_request_v2.market}?"
+            f"limit={get_orderbook_request_v2.limit}"
+        ) as res:
+            return await map_response(res, proto.GetOrderbookResponseV2())
+
+    async def get_market_depth_v2(
+        self,
+        get_market_depth_request_v2: proto.GetMarketDepthRequestV2,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.GetMarketDepthResponseV2:
+        async with self._session.get(
+            f"{self._endpoint_v2}/openbook/depth/{get_market_depth_request_v2.market}?limit={get_market_depth_request_v2.limit}"
+        ) as res:
+            return await map_response(res, proto.GetMarketDepthResponseV2())
+
+    async def get_tickers_v2(
+        self,
+        get_tickers_request_v2: proto.GetTickersRequestV2,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.GetTickersResponseV2:
+        async with self._session.get(
+            f"{self._endpoint_v2}/openbook/tickers/{get_tickers_request_v2.market}"
+        ) as res:
+            return await map_response(res, proto.GetTickersResponseV2())
+
+    async def get_open_orders_v2(
+        self,
+        get_open_orders_request_v2: proto.GetOpenOrdersRequestV2,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.GetOpenOrdersResponse:
+        async with self._session.get(
+            f"{self._endpoint_v2}/openbook/open-orders/{get_open_orders_request_v2.market}"
+            f"?address={get_open_orders_request_v2.address}"
+            f"&openOrdersAddress={get_open_orders_request_v2.open_orders_address}"
+            f"&orderID={get_open_orders_request_v2.order_id}"
+            f"&clientOrderID={get_open_orders_request_v2.client_order_id}"
+        ) as res:
+            return await map_response(res, proto.GetOpenOrdersResponse())
+
+    async def get_unsettled_v2(
+        self,
+        get_unsettled_request_v2: proto.GetUnsettledRequestV2,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.GetUnsettledResponse:
+        async with self._session.get(
+            f"{self._endpoint_v2}/openbook/unsettled/{get_unsettled_request_v2.market}?"
+            f"ownerAddress={get_unsettled_request_v2.owner_address}&"
+        ) as res:
+            return await map_response(res, proto.GetUnsettledResponse())
+
+    async def post_order_v2(
+        self,
+        post_order_request_v2: proto.PostOrderRequestV2,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.PostOrderResponse:
+        async with self._session.post(
+            f"{self._endpoint_v2}/openbook/place",
+            json=post_order_request_v2.to_dict(),
+        ) as res:
+            return await map_response(res, proto.PostOrderResponse())
+
+    async def post_cancel_order_v2(
+        self,
+        post_cancel_order_request_v2: proto.PostCancelOrderRequestV2,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.PostCancelOrderResponseV2:
+        request_dict = post_cancel_order_request_v2.to_dict()
+        if "orderId" in request_dict:
+            request_dict["orderID"] = request_dict.pop("orderId")
+        if "clientOrderId" in request_dict:
+            request_dict["clientOrderID"] = request_dict.pop("clientOrderId")
+        async with self._session.post(
+            f"{self._endpoint_v2}/openbook/cancel",
+            json=request_dict,
+        ) as res:
+            return await map_response(res, proto.PostCancelOrderResponseV2())
+
+    async def post_settle_v2(
+        self,
+        post_settle_request_v2: proto.PostSettleRequestV2,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.PostSettleResponse:
+        async with self._session.post(
+            f"{self._endpoint_v2}/openbook/settle",
+            json=post_settle_request_v2.to_dict(),
+        ) as res:
+            return await map_response(res, proto.PostSettleResponse())
+
+    async def post_replace_order_v2(
+        self,
+        post_replace_order_request_v2: proto.PostReplaceOrderRequestV2,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.PostOrderResponse:
+        request_dict = post_replace_order_request_v2.to_dict()
+        if "orderId" in request_dict:
+            request_dict["orderID"] = request_dict.pop("orderId")
+        if "clientOrderId" in request_dict:
+                request_dict["clientOrderID"] = request_dict.pop("clientOrderId")
+
+        async with self._session.post(
+            f"{self._endpoint_v2}/openbook/replace",
+            json=request_dict,
+        ) as res:
+            return await map_response(res, proto.PostOrderResponse())
+
+    # End of Openbook V2
+
     # End of V2
 
     async def get_markets(

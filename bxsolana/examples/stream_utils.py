@@ -87,7 +87,6 @@ async def do_stream(api: provider.Provider, run_slow: bool = False):
                 projects=[proto.Project.P_RAYDIUM],
                 tokens=[
                     "So11111111111111111111111111111111111111112",
-                    "USDC",
                     "SOL",
                     "USDT",
                 ],

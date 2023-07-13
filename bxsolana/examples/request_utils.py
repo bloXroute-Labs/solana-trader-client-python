@@ -1,5 +1,4 @@
 from bxsolana_trader_proto import api as proto
-from bxsolana_trader_proto.common import OrderType
 from bxsolana_trader_proto.common import PerpPositionSide
 from bxsolana_trader_proto.common import PerpOrderType
 from bxsolana_trader_proto.common import PerpContract
@@ -21,9 +20,9 @@ async def do_requests(
     print("fetching market depth")
     print(
         (
-            await api.get_market_depth(
-                get_market_depth_request=proto.GetMarketDepthRequest(
-                    limit=1, market="SOLUSDC", project=proto.Project.P_OPENBOOK
+            await api.get_market_depth_v2(
+                get_market_depth_request_v2=proto.GetMarketDepthRequestV2(
+                    limit=1, market="SOLUSDC"
                 )
             )
         ).to_json()
@@ -33,16 +32,18 @@ async def do_requests(
     print("fetching all markets")
     print(
         (
-            await api.get_markets(get_markets_request=proto.GetMarketsRequest())
+            await api.get_markets_v2(
+                get_markets_request_v2=proto.GetMarketsRequestV2()
+            )
         ).to_json()
     )
 
     print("fetching SOL/USDC orderbook")
     print(
         (
-            await api.get_orderbook(
-                get_orderbook_request=proto.GetOrderbookRequest(
-                    market="SOLUSDC", project=proto.Project.P_OPENBOOK
+            await api.get_orderbook_v2(
+                get_orderbook_request_v2=proto.GetOrderbookRequestV2(
+                    market="SOLUSDC"
                 )
             )
         ).to_json()
@@ -51,9 +52,9 @@ async def do_requests(
     print("fetching SOL/USDC ticker")
     print(
         (
-            await api.get_tickers(
-                get_tickers_request=proto.GetTickersRequest(
-                    market="SOLUSDC", project=proto.Project.P_OPENBOOK
+            await api.get_tickers_v2(
+                get_tickers_request_v2=proto.GetTickersRequestV2(
+                    market="SOLUSDC"
                 )
             )
         ).to_json()
@@ -62,10 +63,8 @@ async def do_requests(
     print("fetching all tickers")
     print(
         (
-            await api.get_tickers(
-                get_tickers_request=proto.GetTickersRequest(
-                    project=proto.Project.P_OPENBOOK
-                )
+            await api.get_tickers_v2(
+                get_tickers_request_v2=proto.GetTickersRequestV2()
             )
         ).to_json()
     )
@@ -117,11 +116,12 @@ async def do_requests(
     print("fetching open orders for account")
     print(
         (
-            await api.get_open_orders(
-                get_open_orders_request=proto.GetOpenOrdersRequest(
+            await api.get_open_orders_v2(
+                get_open_orders_request_v2=proto.GetOpenOrdersRequestV2(
+                    order_id="",
+                    client_order_id=0,
                     market="SOLUSDC",
                     address=public_key,
-                    project=proto.Project.P_OPENBOOK,
                     limit=0,
                 )
             )
@@ -131,11 +131,10 @@ async def do_requests(
     print("fetching unsettled amounts")
     print(
         (
-            await api.get_unsettled(
-                get_unsettled_request=proto.GetUnsettledRequest(
+            await api.get_unsettled_v2(
+                get_unsettled_request_v2=proto.GetUnsettledRequestV2(
                     market="SOLUSDC",
                     owner_address=public_key,
-                    project=proto.Project.P_OPENBOOK,
                 )
             )
         ).to_json()
@@ -169,16 +168,14 @@ async def do_requests(
     )
     print(
         (
-            await api.post_order(
-                post_order_request=proto.PostOrderRequest(
+            await api.post_order_v2(
+                post_order_request_v2=proto.PostOrderRequestV2(
                     owner_address=public_key,
                     payer_address=public_key,
                     market="SOLUSDC",
                     side=proto.Side.S_ASK,
-                    type=[OrderType.OT_LIMIT],
                     amount=0.1,
                     price=150_000,
-                    project=proto.Project.P_OPENBOOK,
                     # optional, but much faster if known
                     open_orders_address=open_orders,
                     # optional, for identification
@@ -191,14 +188,14 @@ async def do_requests(
         print("generate cancel order")
         print(
             (
-                await api.post_cancel_order(
-                    post_cancel_order_request=proto.PostCancelOrderRequest(
+                await api.post_cancel_order_v2(
+                    post_cancel_order_request_v2=proto.PostCancelOrderRequestV2(
                         order_id=order_id,
                         side=proto.Side.S_ASK,
                         market_address="SOLUSDC",
-                        project=proto.Project.P_OPENBOOK,
                         owner_address=public_key,
                         open_orders_address=open_orders,
+                        client_order_id=0,
                     )
                 )
             ).to_json()
@@ -206,12 +203,11 @@ async def do_requests(
 
     print("generate cancel order by client ID")
     print(
-        await api.post_cancel_by_client_order_id(
-            post_cancel_by_client_order_id_request=proto.PostCancelByClientOrderIdRequest(
+        await api.post_cancel_order_v2(
+            post_cancel_order_request_v2=proto.PostCancelOrderRequestV2(
                 client_order_id=123,
                 market_address=sol_usdc_market,
                 owner_address=public_key,
-                project=proto.Project.P_OPENBOOK,
                 open_orders_address=open_orders,
             )
         )
@@ -219,13 +215,12 @@ async def do_requests(
 
     print("generate settle order")
     print(
-        await api.post_settle(
-            post_settle_request=proto.PostSettleRequest(
+        await api.post_settle_v2(
+            post_settle_request_v2=proto.PostSettleRequestV2(
                 owner_address=public_key,
                 market="SOLUSDC",
                 base_token_wallet=public_key,
                 quote_token_wallet=usdc_wallet,
-                project=proto.Project.P_OPENBOOK,
                 open_orders_address=open_orders,
             )
         )
@@ -234,16 +229,14 @@ async def do_requests(
     print("generate replace by client order id")
     print(
         (
-            await api.post_replace_by_client_order_id(
-                post_order_request=proto.PostOrderRequest(
+            await api.post_replace_order_v2(
+                post_replace_order_request_v2=proto.PostReplaceOrderRequestV2(
                     owner_address=public_key,
                     payer_address=public_key,
                     market="SOLUSDC",
                     side=proto.Side.S_ASK,
-                    type=[OrderType.OT_LIMIT],
                     amount=0.1,
                     price=150_000,
-                    project=proto.Project.P_OPENBOOK,
                     # optional, but much faster if known
                     open_orders_address=open_orders,
                     # optional, for identification
@@ -256,16 +249,14 @@ async def do_requests(
         print("generate replace by order id")
         print(
             (
-                await api.post_replace_order(
-                    post_replace_order_request=proto.PostReplaceOrderRequest(
+                await api.post_replace_order_v2(
+                    post_replace_order_request_v2=proto.PostReplaceOrderRequestV2(
                         owner_address=public_key,
                         payer_address=public_key,
                         market="SOLUSDC",
                         side=proto.Side.S_ASK,
-                        type=[OrderType.OT_LIMIT],
                         amount=0.1,
                         price=150_000,
-                        project=proto.Project.P_OPENBOOK,
                         # optional, but much faster if known
                         open_orders_address=open_orders,
                         # optional, for identification
