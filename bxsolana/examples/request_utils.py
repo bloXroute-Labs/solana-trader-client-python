@@ -85,6 +85,38 @@ async def do_requests(
         ).to_json()
     )
 
+    print("fetching Raydium prices")
+
+    print(
+        (
+            await api.get_raydium_prices(
+                get_raydium_prices_request=proto.GetRaydiumPricesRequest(
+                    tokens=[
+                        "So11111111111111111111111111111111111111112",
+                        "SOL",
+                        "USDT",
+                    ]
+                )
+            )
+        ).to_json()
+    )
+
+    print("fetching Jupiter prices")
+
+    print(
+        (
+            await api.get_jupiter_prices(
+                get_jupiter_prices_request=proto.GetJupiterPricesRequest(
+                    tokens=[
+                        "So11111111111111111111111111111111111111112",
+                        "SOL",
+                        "USDT",
+                    ]
+                )
+            )
+        ).to_json()
+    )
+
     print("fetching pools")
     print(
         (
@@ -92,6 +124,15 @@ async def do_requests(
                 get_pools_request=proto.GetPoolsRequest(
                     projects=[proto.Project.P_RAYDIUM]
                 )
+            )
+        ).to_json()
+    )
+
+    print("fetching Raydium pools")
+    print(
+        (
+            await api.get_raydium_pools(
+                get_raydium_pools_request=proto.GetRaydiumPoolsRequest()
             )
         ).to_json()
     )
@@ -107,6 +148,36 @@ async def do_requests(
                     slippage=10,
                     limit=1,
                     projects=[proto.Project.P_RAYDIUM],
+                )
+            )
+        ).to_json()
+    )
+
+    print("fetching Raydium quotes")
+    print(
+        (
+            await api.get_raydium_quotes(
+                get_raydium_quotes_request=proto.GetRaydiumQuotesRequest(
+                    in_token="USDT",
+                    out_token="SOL",
+                    in_amount=0.01,
+                    slippage=10,
+                    limit=1,
+                )
+            )
+        ).to_json()
+    )
+
+    print("fetching Jupiter quotes")
+    print(
+        (
+            await api.get_jupiter_quotes(
+                get_jupiter_quotes_request=proto.GetJupiterQuotesRequest(
+                    in_token="USDT",
+                    out_token="SOL",
+                    in_amount=0.01,
+                    slippage=10,
+                    limit=1,
                 )
             )
         ).to_json()
@@ -283,6 +354,36 @@ async def do_requests(
         )
     )
 
+    print("generate raydium swap")
+    print(
+        (
+            await api.post_raydium_swap(
+                post_raydium_swap_request=proto.PostRaydiumSwapRequest(
+                    owner_address=public_key,
+                    in_token="SOL",
+                    in_amount=0.01,
+                    out_token="USDT",
+                    slippage=0.01,
+                )
+            )
+        )
+    )
+
+    print("generate jupiter swap")
+    print(
+        (
+            await api.post_jupiter_swap(
+                post_jupiter_swap_request=proto.PostJupiterSwapRequest(
+                    owner_address=public_key,
+                    in_token="SOL",
+                    in_amount=0.01,
+                    out_token="USDT",
+                    slippage=0.01,
+                )
+            )
+        )
+    )
+
     print("generate route swap")
     step = proto.RouteStep(
         in_token="USDT",
@@ -297,6 +398,26 @@ async def do_requests(
             await api.post_route_trade_swap(
                 route_trade_swap_request=proto.RouteTradeSwapRequest(
                     project=proto.Project.P_RAYDIUM,
+                    owner_address=public_key,
+                    slippage=0.1,
+                    steps=[step],
+                )
+            )
+        ).to_json()
+    )
+
+    print("generate raydium route swap")
+    step = proto.RaydiumRouteStep(
+        in_token="USDT",
+        in_amount=0.01,
+        out_token="SOL",
+        out_amount=0.01,
+        out_amount_min=0.01,
+    )
+    print(
+        (
+            await api.post_raydium_route_swap(
+                post_raydium_route_swap_request=proto.PostRaydiumRouteSwapRequest(
                     owner_address=public_key,
                     slippage=0.1,
                     steps=[step],

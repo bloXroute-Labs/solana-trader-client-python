@@ -61,7 +61,139 @@ class HttpProvider(Provider):
     async def close(self):
         await self._session.close()
 
-    # Beginning of V2
+    async def get_raydium_pools(
+        self,
+        get_raydium_pools_request: proto.GetRaydiumPoolsRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.GetRaydiumPoolsResponse:
+        async with self._session.get(
+            f"{self._endpoint_v2}/raydium/pools"
+            f"?pairOrAddress={get_raydium_pools_request.pair_or_address}"
+        ) as res:
+            return await map_response(res, proto.GetRaydiumPoolsResponse())
+
+    async def get_raydium_quotes(
+        self,
+        get_raydium_quotes_request: proto.GetRaydiumQuotesRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.GetRaydiumQuotesResponse:
+        async with self._session.get(
+            f"{self._endpoint_v2}/raydium/quotes?inToken={get_raydium_quotes_request.in_token}&"
+            f"outToken={get_raydium_quotes_request.out_token}&inAmount={get_raydium_quotes_request.in_amount}&"
+            f"slippage={get_raydium_quotes_request.slippage}&limit={get_raydium_quotes_request.limit}"
+        ) as res:
+            return await map_response(res, proto.GetRaydiumQuotesResponse())
+
+    async def get_jupiter_quotes(
+        self,
+        get_jupiter_quotes_request: proto.GetJupiterQuotesRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.GetJupiterQuotesResponse:
+        async with self._session.get(
+            f"{self._endpoint_v2}/jupiter/quotes?inToken={get_jupiter_quotes_request.in_token}&"
+            f"outToken={get_jupiter_quotes_request.out_token}&inAmount={get_jupiter_quotes_request.in_amount}&"
+            f"slippage={get_jupiter_quotes_request.slippage}&limit={get_jupiter_quotes_request.limit}"
+        ) as res:
+            return await map_response(res, proto.GetJupiterQuotesResponse())
+
+    async def get_raydium_prices(
+        self,
+        get_raydium_prices_request: proto.GetRaydiumPricesRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.GetRaydiumPricesResponse:
+        params = "?" + serialize_list(
+            "tokens", get_raydium_prices_request.tokens
+        )
+        async with self._session.get(
+            f"{self._endpoint_v2}/raydium/prices{params}"
+        ) as res:
+            return await map_response(res, proto.GetRaydiumPricesResponse())
+
+    async def get_jupiter_prices(
+        self,
+        get_jupiter_prices_request: proto.GetJupiterPricesRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.GetJupiterPricesResponse:
+        params = "?" + serialize_list(
+            "tokens", get_jupiter_prices_request.tokens
+        )
+        async with self._session.get(
+            f"{self._endpoint_v2}/jupiter/prices{params}"
+        ) as res:
+            return await map_response(res, proto.GetJupiterPricesResponse())
+
+    async def post_jupiter_swap(
+        self,
+        post_jupiter_swap_request: proto.PostJupiterSwapRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.PostJupiterSwapResponse:
+        async with self._session.post(
+            f"{self._endpoint_v2}/jupiter/swap",
+            json=post_jupiter_swap_request.to_dict(),
+        ) as res:
+            return await map_response(res, proto.PostJupiterSwapResponse())
+
+    async def post_raydium_swap(
+        self,
+        post_raydium_swap_request: proto.PostRaydiumSwapRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.PostRaydiumSwapResponse:
+        async with self._session.post(
+            f"{self._endpoint_v2}/raydium/swap",
+            json=post_raydium_swap_request.to_dict(),
+        ) as res:
+            return await map_response(res, proto.PostRaydiumSwapResponse())
+
+    async def post_jupiter_route_swap(
+        self,
+        post_jupiter_route_swap_request: proto.PostJupiterRouteSwapRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.PostJupiterRouteSwapResponse:
+        async with self._session.post(
+            f"{self._endpoint_v2}/jupiter/route-swap",
+            json=post_jupiter_route_swap_request.to_dict(),
+        ) as res:
+            return await map_response(res, proto.PostJupiterRouteSwapResponse())
+
+    async def post_raydium_route_swap(
+        self,
+        post_raydium_route_swap_request: proto.PostRaydiumRouteSwapRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.PostRaydiumRouteSwapResponse:
+        async with self._session.post(
+            f"{self._endpoint_v2}/raydium/route-swap",
+            json=post_raydium_route_swap_request.to_dict(),
+        ) as res:
+            return await map_response(res, proto.PostRaydiumRouteSwapResponse())
+
+    # Beginning of Drift V2
     async def post_close_drift_perp_positions(
         self,
         post_close_drift_perp_positions_request: proto.PostCloseDriftPerpPositionsRequest,
