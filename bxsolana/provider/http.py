@@ -583,7 +583,7 @@ class HttpProvider(Provider):
         if "orderId" in request_dict:
             request_dict["orderID"] = request_dict.pop("orderId")
         if "clientOrderId" in request_dict:
-                request_dict["clientOrderID"] = request_dict.pop("clientOrderId")
+            request_dict["clientOrderID"] = request_dict.pop("clientOrderId")
 
         async with self._session.post(
             f"{self._endpoint_v2}/openbook/replace",
