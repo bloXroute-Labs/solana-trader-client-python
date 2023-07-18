@@ -162,7 +162,6 @@ async def do_requests(
                     out_token="SOL",
                     in_amount=0.01,
                     slippage=10,
-                    limit=1,
                 )
             )
         ).to_json()
