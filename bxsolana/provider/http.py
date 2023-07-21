@@ -1031,6 +1031,23 @@ class HttpProvider(Provider):
         ) as res:
             return await map_response(res, proto.PostPerpOrderResponse())
 
+    async def post_drift_perp_order(
+        self,
+        post_drift_perp_order_request: proto.PostDriftPerpOrderRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.PostDriftPerpOrderResponse:
+        request_dict = post_drift_perp_order_request.to_dict()
+        if "clientOrderId" in request_dict:
+            request_dict["clientOrderID"] = request_dict.pop("clientOrderId")
+
+        async with self._session.post(
+            f"{self._endpoint_v2}/drift/perp/place", json=request_dict
+        ) as res:
+            return await map_response(res, proto.PostDriftPerpOrderResponse())
+
     async def get_open_perp_order(
         self,
         get_open_perp_order_request: proto.GetOpenPerpOrderRequest,

@@ -751,6 +751,24 @@ async def do_requests(
         ).to_json()
     )
 
+    print("post Drift perp order")
+    print(
+        (
+            await api.post_drift_perp_order(
+                post_drift_perp_order_request=proto.PostDriftPerpOrderRequest(
+                    owner_address=public_key,
+                    contract="SOL_PERP",
+                    position_side="LONG",
+                    slippage=0,
+                    type="LIMIT",
+                    amount=0,
+                    price=12000,
+                    client_order_id=12,
+                )
+            )
+        ).to_json()
+    )
+
     print("get perp contracts")
     print(
         (
