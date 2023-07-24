@@ -670,7 +670,7 @@ async def do_requests(
                     type="MARKET",  # or Limit
                     amount=10,
                     client_order_id=12,
-                    post_only=PostOnlyParams.PO_NONE,
+                    post_only="NONE",
                 )
             )
         ).to_json()
