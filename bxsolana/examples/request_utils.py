@@ -4,7 +4,6 @@ from bxsolana_trader_proto.common import PerpOrderType
 from bxsolana_trader_proto.common import PerpContract
 from bxsolana_trader_proto.common import PerpCollateralType
 from bxsolana_trader_proto.common import PerpCollateralToken
-from bxsolana_trader_proto.common import PostOnlyParams
 
 from .. import provider
 
