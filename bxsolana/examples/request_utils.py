@@ -4,7 +4,6 @@ from bxsolana_trader_proto.common import PerpOrderType
 from bxsolana_trader_proto.common import PerpContract
 from bxsolana_trader_proto.common import PerpCollateralType
 from bxsolana_trader_proto.common import PerpCollateralToken
-from bxsolana_trader_proto.common import PostOnlyParams
 
 from .. import provider
 
@@ -670,7 +669,7 @@ async def do_requests(
                     type="MARKET",  # or Limit
                     amount=10,
                     client_order_id=12,
-                    post_only=PostOnlyParams.PO_NONE,
+                    post_only="NONE",
                 )
             )
         ).to_json()
@@ -743,6 +742,24 @@ async def do_requests(
                     position_side=PerpPositionSide.PS_LONG,
                     slippage=0,
                     type=PerpOrderType.POT_LIMIT,
+                    amount=0,
+                    price=12000,
+                    client_order_id=12,
+                )
+            )
+        ).to_json()
+    )
+
+    print("post Drift perp order")
+    print(
+        (
+            await api.post_drift_perp_order(
+                post_drift_perp_order_request=proto.PostDriftPerpOrderRequest(
+                    owner_address=public_key,
+                    contract="SOL_PERP",
+                    position_side="LONG",
+                    slippage=0,
+                    type="LIMIT",
                     amount=0,
                     price=12000,
                     client_order_id=12,
