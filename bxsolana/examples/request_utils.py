@@ -5,6 +5,7 @@ from bxsolana_trader_proto.common import PerpContract
 from bxsolana_trader_proto.common import PerpCollateralType
 from bxsolana_trader_proto.common import PerpCollateralToken
 
+from .constants import SIDE_ASK
 from .. import provider
 
 
@@ -242,7 +243,7 @@ async def do_requests(
                     owner_address=public_key,
                     payer_address=public_key,
                     market="SOLUSDC",
-                    side=proto.Side.S_ASK,
+                    side=SIDE_ASK,
                     amount=0.1,
                     price=150_000,
                     # optional, but much faster if known
@@ -303,7 +304,7 @@ async def do_requests(
                     owner_address=public_key,
                     payer_address=public_key,
                     market="SOLUSDC",
-                    side=proto.Side.S_ASK,
+                    side=SIDE_ASK,
                     amount=0.1,
                     price=150_000,
                     # optional, but much faster if known
@@ -323,7 +324,7 @@ async def do_requests(
                         owner_address=public_key,
                         payer_address=public_key,
                         market="SOLUSDC",
-                        side=proto.Side.S_ASK,
+                        side=SIDE_ASK,
                         amount=0.1,
                         price=150_000,
                         # optional, but much faster if known
