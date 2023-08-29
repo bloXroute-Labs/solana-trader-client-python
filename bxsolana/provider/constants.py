@@ -17,6 +17,7 @@ def ws_endpoint(base: str, secure: bool) -> str:
         prefix = "wss"
     return f"{prefix}://{base}/ws"
 
+
 MAINNET_API_NY_HTTP = http_endpoint(_mainnet_ny, True)
 MAINNET_API_NY_WS = ws_endpoint(_mainnet_ny, True)
 MAINNET_API_NY_GRPC_HOST = _mainnet_ny
