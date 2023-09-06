@@ -9,12 +9,12 @@ from .. import provider
 
 
 async def do_requests(
-    api: provider.Provider,
-    public_key: str,
-    open_orders: str,
-    order_id: str,
-    usdc_wallet: str,
-    sol_usdc_market: str,
+        api: provider.Provider,
+        public_key: str,
+        open_orders: str,
+        order_id: str,
+        usdc_wallet: str,
+        sol_usdc_market: str,
 ):
     print("fetching market depth")
     print(
@@ -668,7 +668,7 @@ async def do_requests(
                     market="SOL",
                     position_side="BUY",
                     slippage=10,
-                    type="MARKET", # or Limit
+                    type="MARKET",  # or Limit
                     amount=10,
                     client_order_id=12,
                     post_only="NONE",

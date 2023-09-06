@@ -632,7 +632,7 @@ class HttpProvider(Provider):
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
-    ) -> proto.GetOpenOrdersResponse:
+    ) -> proto.GetOpenOrdersResponseV2:
         async with self._session.get(
             f"{self._endpoint_v2}/openbook/open-orders/{get_open_orders_request_v2.market}"
             f"?address={get_open_orders_request_v2.address}"
@@ -640,7 +640,7 @@ class HttpProvider(Provider):
             f"&orderID={get_open_orders_request_v2.order_id}"
             f"&clientOrderID={get_open_orders_request_v2.client_order_id}"
         ) as res:
-            return await map_response(res, proto.GetOpenOrdersResponse())
+            return await map_response(res, proto.GetOpenOrdersResponseV2())
 
     async def get_unsettled_v2(
         self,
