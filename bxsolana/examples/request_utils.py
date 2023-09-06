@@ -5,7 +5,6 @@ from bxsolana_trader_proto.common import PerpContract
 from bxsolana_trader_proto.common import PerpCollateralType
 from bxsolana_trader_proto.common import PerpCollateralToken
 
-from .constants import SIDE_ASK
 from .. import provider
 
 
@@ -243,9 +242,10 @@ async def do_requests(
                     owner_address=public_key,
                     payer_address=public_key,
                     market="SOLUSDC",
-                    side=SIDE_ASK,
+                    side="ASK",
                     amount=0.1,
                     price=150_000,
+                    type="limit",
                     # optional, but much faster if known
                     open_orders_address=open_orders,
                     # optional, for identification
@@ -261,7 +261,7 @@ async def do_requests(
                 await api.post_cancel_order_v2(
                     post_cancel_order_request_v2=proto.PostCancelOrderRequestV2(
                         order_id=order_id,
-                        side=proto.Side.S_ASK,
+                        side="ASK",
                         market_address="SOLUSDC",
                         owner_address=public_key,
                         open_orders_address=open_orders,
@@ -304,7 +304,8 @@ async def do_requests(
                     owner_address=public_key,
                     payer_address=public_key,
                     market="SOLUSDC",
-                    side=SIDE_ASK,
+                    side="ASK",
+                    type="limit",
                     amount=0.1,
                     price=150_000,
                     # optional, but much faster if known
@@ -324,7 +325,7 @@ async def do_requests(
                         owner_address=public_key,
                         payer_address=public_key,
                         market="SOLUSDC",
-                        side=SIDE_ASK,
+                        side="ASK",
                         amount=0.1,
                         price=150_000,
                         # optional, but much faster if known
@@ -665,7 +666,7 @@ async def do_requests(
                 post_drift_margin_order_request=proto.PostDriftMarginOrderRequest(
                     owner_address=public_key,
                     market="SOL",
-                    position_side="LONG",
+                    position_side="BUY",
                     slippage=10,
                     type="MARKET",  # or Limit
                     amount=10,
@@ -759,6 +760,7 @@ async def do_requests(
                     owner_address=public_key,
                     contract="SOL_PERP",
                     position_side="LONG",
+                    post_only="none",
                     slippage=0,
                     type="LIMIT",
                     amount=0,
@@ -970,7 +972,7 @@ async def do_requests(
                     token=PerpCollateralToken.PCTK_SOL,
                     type=PerpCollateralType.PCT_TRANSFER,
                     to_account_address=(
-                        "AbnwAQGrYnvktT4ihhX5np8RbgtfXJfPwpgMJnCFa4MT"
+                        "9UnwdvTf5EfGeLyLrF4GZDUs7LKRUeJQzW7qsDVGQ8sS"
                     ),
                 )
             )
