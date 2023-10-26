@@ -399,8 +399,8 @@ async def do_requests(
                 post_raydium_clmm_swap_request=proto.PostRaydiumClmmSwapRequest(
                     owner_address=public_key,
                     in_token="SOL",
-                    in_amount=0.01,
-                    out_token="USDT",
+                    in_amount=1,
+                    out_token="USDC",
                     slippage=0.01,
                 )
             )
