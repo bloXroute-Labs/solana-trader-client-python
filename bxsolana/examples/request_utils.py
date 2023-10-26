@@ -180,10 +180,10 @@ async def do_requests(
         (
             await api.get_raydium_clmm_quotes(
                 get_raydium_clmm_quotes_request=proto.GetRaydiumClmmQuotesRequest(
-                    in_token="USDT",
+                    in_token="USDC",
                     out_token="SOL",
-                    in_amount=0.01,
-                    slippage=10,
+                    in_amount=32,
+                    slippage=0.1,
                 )
             )
         ).to_json()
