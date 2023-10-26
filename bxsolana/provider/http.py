@@ -238,17 +238,17 @@ class HttpProvider(Provider):
 
     async def post_raydium_clmm_route_swap(
             self,
-            post_raydium_route_clmm_swap_request: proto.PostRaydiumClmmRouteSwapRequest,
+            post_raydium_clmm_route_swap_request: proto.PostRaydiumClmmRouteSwapRequest,
             *,
             timeout: Optional[float] = None,
             deadline: Optional["Deadline"] = None,
             metadata: Optional["MetadataLike"] = None,
-    ) -> proto.PostRaydiumClmmRouteSwapResponse:
+    ) -> proto.PostRaydiumRouteSwapResponse:
         async with self._session.post(
-                f"{self._endpoint_v2}/raydium/route-swap",
-                json=post_raydium_route_clmm_swap_request.to_dict(),
+                f"{self._endpoint_v2}/raydium/clmm-route-swap",
+                json=post_raydium_clmm_route_swap_request.to_dict(),
         ) as res:
-            return await map_response(res, proto.PostRaydiumClmmRouteSwapResponse())
+            return await map_response(res, proto.PostRaydiumRouteSwapResponse())
 
     # Beginning of Drift V2
     async def post_close_drift_perp_positions(
