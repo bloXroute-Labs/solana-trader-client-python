@@ -183,7 +183,7 @@ async def do_requests(
                     in_token="USDC",
                     out_token="SOL",
                     in_amount=32,
-                    slippage=0.1,
+                    slippage=10,
                 )
             )
         ).to_json()
@@ -401,7 +401,7 @@ async def do_requests(
                     in_token="SOL",
                     in_amount=1,
                     out_token="USDC",
-                    slippage=0.01,
+                    slippage=10,
                 )
             )
         )
@@ -470,7 +470,7 @@ async def do_requests(
             await api.post_raydium_clmm_route_swap(
                 post_raydium_clmm_route_swap_request=proto.PostRaydiumClmmRouteSwapRequest(
                     owner_address=public_key,
-                    slippage=0.1,
+                    slippage=10,
                     steps=[step],
                 )
             )
