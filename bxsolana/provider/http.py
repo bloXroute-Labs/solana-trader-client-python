@@ -1313,6 +1313,36 @@ class HttpProvider(Provider):
         ) as res:
             return await map_response(res, proto.PostSubmitBatchResponse())
 
+    async def post_submit_v2(
+        self,
+        post_submit_request: proto.PostSubmitRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.PostSubmitResponse:
+        if transaction is None:
+            raise ValueError("transaction cannot be omitted")
+
+        async with self._session.post(
+            f"{self._endpoint_v2}/submit", json=post_submit_request.to_dict()
+        ) as res:
+            return await map_response(res, proto.PostSubmitResponse())
+
+    async def post_submit_batch_v2(
+        self,
+        post_submit_batch_request: proto.PostSubmitBatchRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.PostSubmitBatchResponse:
+        async with self._session.post(
+            f"{self._endpoint_v2}/submit-batch",
+            json=post_submit_batch_request.to_dict(),
+        ) as res:
+            return await map_response(res, proto.PostSubmitBatchResponse())
+
     async def post_replace_by_client_order_id(
         self,
         post_order_request: proto.PostOrderRequest,
