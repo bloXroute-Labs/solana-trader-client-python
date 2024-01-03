@@ -149,3 +149,14 @@ async def do_stream(api: provider.Provider, run_slow: bool = False):
             if item_count == 2:
                 item_count = 0
                 break
+
+    if run_slow:
+        print("streaming raydium new pool updates...")
+        async for response in api.get_new_raydium_pools_stream(
+            get_new_raydium_pools_request=proto.GetNewRaydiumPoolsRequest()
+        ):
+            print(response.to_json())
+            item_count += 1
+            if item_count == 1:
+                item_count = 0
+                break
