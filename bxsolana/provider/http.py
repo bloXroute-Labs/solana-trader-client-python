@@ -12,6 +12,7 @@ from .. import transaction
 from . import constants
 from .base import Provider
 from .http_error import map_response
+from .package_info import NAME, VERSION
 
 if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences,PyProtectedMember
@@ -43,6 +44,8 @@ class HttpProvider(Provider):
 
         self._session = aiohttp.ClientSession()
         self._session.headers["authorization"] = auth_header
+        self._session.headers["X-SDK"] = NAME
+        self._session.headers["X-SDK-Version"] = VERSION
 
         if private_key is None:
             try:
