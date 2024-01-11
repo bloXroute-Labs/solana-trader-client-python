@@ -8,6 +8,7 @@ from solders import keypair as kp
 
 from . import Provider, constants
 from .. import transaction
+from .package_info import NAME, VERSION
 
 from grpclib.metadata import Deadline
 from grpclib.metadata import _MetadataLike as MetadataLike
@@ -41,7 +42,11 @@ class WsProvider(Provider):
             auth_header = os.environ["AUTH_HEADER"]
 
         opts = jsonrpc.WsRpcOpts(
-            headers={"authorization": auth_header},
+            headers={
+                "authorization": auth_header,
+                "X-SDK": NAME,
+                "X-SDK-Version": VERSION,
+            },
             request_timeout_s=request_timeout_s,
         )
         self._ws = jsonrpc.WsRpcConnection(endpoint, opts)
