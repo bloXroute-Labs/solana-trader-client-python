@@ -45,6 +45,8 @@ class Provider(api.ApiStub, ABC):
         price: float,
         open_orders_address: str = "",
         client_order_id: int = 0,
+        compute_limit: int = 0,
+        compute_price: int = 0,
         project: api.Project = api.Project.P_UNKNOWN,
         skip_pre_flight: bool = False,
     ) -> str:
@@ -60,6 +62,8 @@ class Provider(api.ApiStub, ABC):
                 price=price,
                 open_orders_address=open_orders_address,
                 client_order_id=client_order_id,
+                compute_limit=compute_limit,
+                compute_price=compute_price,
                 project=project,
             )
         )
@@ -80,6 +84,8 @@ class Provider(api.ApiStub, ABC):
         market_address: str = "",
         owner_address: str = "",
         open_orders_address: str = "",
+        compute_limit: int = 0,
+        compute_price: int = 0,
         project: api.Project = api.Project.P_UNKNOWN,
         skip_pre_flight: bool = True,
     ) -> str:
@@ -91,6 +97,8 @@ class Provider(api.ApiStub, ABC):
                 market_address=market_address,
                 owner_address=owner_address,
                 open_orders_address=open_orders_address,
+                compute_limit=compute_limit,
+                compute_price=compute_price,
                 project=project,
             )
         )
@@ -110,6 +118,8 @@ class Provider(api.ApiStub, ABC):
         market_address: str = "",
         owner_address: str = "",
         open_orders_address: str = "",
+        compute_limit: int = 0,
+        compute_price: int = 0,
         project: api.Project = api.Project.P_UNKNOWN,
         skip_pre_flight: bool = True,
     ) -> str:
@@ -120,6 +130,8 @@ class Provider(api.ApiStub, ABC):
                 market_address=market_address,
                 owner_address=owner_address,
                 open_orders_address=open_orders_address,
+                compute_limit=compute_limit,
+                compute_price=compute_price,
                 project=project,
             )
         )
@@ -138,6 +150,8 @@ class Provider(api.ApiStub, ABC):
         market: str = "",
         owner_address: str = "",
         open_orders_addresses: Optional[List[str]] = None,
+        compute_limit: int = 0,
+        compute_price: int = 0,
         project: api.Project = api.Project.P_UNKNOWN,
         skip_pre_flight: bool = True,
     ) -> List[str]:
@@ -150,6 +164,8 @@ class Provider(api.ApiStub, ABC):
                 market=market,
                 owner_address=owner_address,
                 open_orders_addresses=open_orders_addresses,
+                compute_limit=compute_limit,
+                compute_price=compute_price,
                 project=project,
             )
         )
@@ -173,6 +189,8 @@ class Provider(api.ApiStub, ABC):
         base_token_wallet: str = "",
         quote_token_wallet: str = "",
         open_orders_address: str = "",
+        compute_limit: int = 0,
+        compute_price: int = 0,
         project: api.Project = api.Project.P_UNKNOWN,
         skip_pre_flight: bool = False,
     ) -> str:
@@ -184,6 +202,8 @@ class Provider(api.ApiStub, ABC):
                 base_token_wallet=base_token_wallet,
                 quote_token_wallet=quote_token_wallet,
                 open_orders_address=open_orders_address,
+                compute_limit=compute_limit,
+                compute_price=compute_price,
                 project=project,
             )
         )
@@ -208,6 +228,8 @@ class Provider(api.ApiStub, ABC):
         price: float,
         open_orders_address: str = "",
         client_order_id: int = 0,
+        compute_limit: int = 0,
+        compute_price: int = 0,
         project: api.Project = api.Project.P_UNKNOWN,
         skip_pre_flight: bool = False,
     ) -> str:
@@ -223,6 +245,8 @@ class Provider(api.ApiStub, ABC):
                 price=price,
                 open_orders_address=open_orders_address,
                 client_order_id=client_order_id,
+                compute_limit=compute_limit,
+                compute_price=compute_price,
                 project=project,
             )
         )
@@ -248,6 +272,8 @@ class Provider(api.ApiStub, ABC):
         price: float,
         open_orders_address: str = "",
         client_order_id: int = 0,
+        compute_limit: int = 0,
+        compute_price: int = 0,
         project: api.Project = api.Project.P_UNKNOWN,
         skip_pre_flight: bool = False,
     ) -> str:
@@ -264,6 +290,8 @@ class Provider(api.ApiStub, ABC):
                 open_orders_address=open_orders_address,
                 client_order_id=client_order_id,
                 order_id=order_id,
+                compute_limit=compute_limit,
+                compute_price=compute_price,
                 project=project,
             )
         )
@@ -286,6 +314,8 @@ class Provider(api.ApiStub, ABC):
         out_token: str = "",
         in_amount: float = 0,
         slippage: float = 0,
+        compute_limit: int = 0,
+        compute_price: int = 0,
         skip_pre_flight: bool = False,
         submit_strategy: api.SubmitStrategy = api.SubmitStrategy.P_ABORT_ON_FIRST_ERROR,
     ) -> api.PostSubmitBatchResponse:
@@ -298,6 +328,8 @@ class Provider(api.ApiStub, ABC):
                 out_token=out_token,
                 in_amount=in_amount,
                 slippage=slippage,
+                compute_limit=compute_limit,
+                compute_price=compute_price,
             )
         )
 
@@ -322,13 +354,16 @@ class Provider(api.ApiStub, ABC):
         project: api.Project = api.Project.P_UNKNOWN,
         owner_address: str = "",
         steps: List["api.RouteStep"] = [],
+        slippage: float = 0,
+        compute_limit: int = 0,
+        compute_price: int = 0,
         skip_pre_flight: bool = False,
         submit_strategy: api.SubmitStrategy = api.SubmitStrategy.P_ABORT_ON_FIRST_ERROR,
     ) -> api.PostSubmitBatchResponse:
         pk = self.require_private_key()
         result = await self.post_route_trade_swap(
             route_trade_swap_request=api.RouteTradeSwapRequest(
-                project=project, owner_address=owner_address, steps=steps
+                project=project, owner_address=owner_address, steps=steps, slippage=slippage, compute_limit=compute_limit, compute_price=compute_price
             )
         )
 
