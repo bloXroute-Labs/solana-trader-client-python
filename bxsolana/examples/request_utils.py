@@ -16,6 +16,17 @@ async def do_requests(
     usdc_wallet: str,
     sol_usdc_market: str,
 ):
+    print("getting transaction")
+    print(
+        (
+            await api.get_transaction(
+                get_transaction_request=proto.GetTransactionRequest(
+                    signature="2s48MnhH54GfJbRwwiEK7iWKoEh3uNbS2zDEVBPNu7DaCjPXe3bfqo6RuCg9NgHRFDn3L28sMVfEh65xevf4o5W3"
+                )
+            )
+        ).to_json()
+    )
+
     print("fetching market depth")
     print(
         (

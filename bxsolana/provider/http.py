@@ -64,6 +64,19 @@ class HttpProvider(Provider):
     async def close(self):
         await self._session.close()
 
+    async def get_transaction(
+        self,
+        get_transaction_request: proto.GetTransactionRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.GetTransactionResponse:
+        async with self._session.get(
+            f"{self._endpoint_v2}/transaction?signature={get_transaction_request.signature}"
+        ) as res:
+            return await map_response(res, proto.GetTransactionResponse())
+
     async def get_raydium_pools(
         self,
         get_raydium_pools_request: proto.GetRaydiumPoolsRequest,
