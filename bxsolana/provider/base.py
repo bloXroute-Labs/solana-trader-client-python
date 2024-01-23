@@ -363,7 +363,12 @@ class Provider(api.ApiStub, ABC):
         pk = self.require_private_key()
         result = await self.post_route_trade_swap(
             route_trade_swap_request=api.RouteTradeSwapRequest(
-                project=project, owner_address=owner_address, steps=steps, slippage=slippage, compute_limit=compute_limit, compute_price=compute_price
+                project=project,
+                owner_address=owner_address,
+                steps=steps,
+                slippage=slippage,
+                compute_limit=compute_limit,
+                compute_price=compute_price,
             )
         )
 
