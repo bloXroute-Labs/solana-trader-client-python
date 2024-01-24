@@ -209,7 +209,6 @@ class HttpProvider(Provider):
         ) as res:
             return await map_response(res, proto.PostRaydiumRouteSwapResponse())
 
-
     # Openbook V2
 
     async def get_markets_v2(

@@ -350,50 +350,44 @@ async def do_requests(
         )
 
     print("generate trade swap")
-    print(
-        (
-            await api.post_trade_swap(
-                trade_swap_request=proto.TradeSwapRequest(
-                    project=proto.Project.P_RAYDIUM,
-                    owner_address=public_key,
-                    in_token="SOL",
-                    in_amount=0.01,
-                    out_token="USDT",
-                    slippage=0.01,
-                )
+    print((
+        await api.post_trade_swap(
+            trade_swap_request=proto.TradeSwapRequest(
+                project=proto.Project.P_RAYDIUM,
+                owner_address=public_key,
+                in_token="SOL",
+                in_amount=0.01,
+                out_token="USDT",
+                slippage=0.01,
             )
         )
-    )
+    ))
 
     print("generate raydium swap")
-    print(
-        (
-            await api.post_raydium_swap(
-                post_raydium_swap_request=proto.PostRaydiumSwapRequest(
-                    owner_address=public_key,
-                    in_token="SOL",
-                    in_amount=0.01,
-                    out_token="USDT",
-                    slippage=0.01,
-                )
+    print((
+        await api.post_raydium_swap(
+            post_raydium_swap_request=proto.PostRaydiumSwapRequest(
+                owner_address=public_key,
+                in_token="SOL",
+                in_amount=0.01,
+                out_token="USDT",
+                slippage=0.01,
             )
         )
-    )
+    ))
 
     print("generate jupiter swap")
-    print(
-        (
-            await api.post_jupiter_swap(
-                post_jupiter_swap_request=proto.PostJupiterSwapRequest(
-                    owner_address=public_key,
-                    in_token="SOL",
-                    in_amount=0.01,
-                    out_token="USDT",
-                    slippage=0.01,
-                )
+    print((
+        await api.post_jupiter_swap(
+            post_jupiter_swap_request=proto.PostJupiterSwapRequest(
+                owner_address=public_key,
+                in_token="SOL",
+                in_amount=0.01,
+                out_token="USDT",
+                slippage=0.01,
             )
         )
-    )
+    ))
 
     print("generate route swap")
     step = proto.RouteStep(
