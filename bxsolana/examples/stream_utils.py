@@ -99,58 +99,6 @@ async def do_stream(api: provider.Provider, run_slow: bool = False):
                 break
 
     if run_slow:
-        print("streaming Drift orderbook updates...")
-        async for response in api.get_perp_orderbooks_stream(
-            get_perp_orderbooks_request=proto.GetPerpOrderbooksRequest(
-                contracts=[PerpContract.ALL], project=proto.Project.P_DRIFT
-            )
-        ):
-            print(response.to_json())
-            item_count += 1
-            if item_count == 1:
-                item_count = 0
-                break
-
-    if run_slow:
-        print("streaming Drift trade updates...")
-        async for response in api.get_perp_trades_stream(
-            get_perp_trades_stream_request=proto.GetPerpTradesStreamRequest(
-                contracts=[PerpContract.ALL], project=proto.Project.P_DRIFT
-            )
-        ):
-            print(response.to_json())
-            item_count += 1
-            if item_count == 1:
-                item_count = 0
-                break
-
-    if run_slow:
-        print("streaming Drift margin orderbook updates...")
-        async for response in api.get_drift_margin_orderbooks_stream(
-            get_drift_margin_orderbooks_request=proto.GetDriftMarginOrderbooksRequest(
-                markets=["SOL"], metadata=True, limit=1
-            )
-        ):
-            print(response.to_json())
-            item_count += 1
-            if item_count == 1:
-                item_count = 0
-                break
-
-    if run_slow:
-        print("streaming Drift market depth updates...")
-        async for response in api.get_drift_market_depths_stream(
-            get_drift_market_depths_stream_request=proto.GetDriftMarketDepthsStreamRequest(
-                contracts=["SOL_PERP", "ETH_PERP"], limit=3
-            )
-        ):
-            print(response.to_json())
-            item_count += 1
-            if item_count == 2:
-                item_count = 0
-                break
-
-    if run_slow:
         print("streaming raydium new pool updates...")
         async for response in api.get_new_raydium_pools_stream(
             get_new_raydium_pools_request=proto.GetNewRaydiumPoolsRequest()
