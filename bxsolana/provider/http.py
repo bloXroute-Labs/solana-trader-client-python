@@ -377,64 +377,6 @@ class HttpProvider(Provider):
         async with self._session.get(f"{self._endpoint}/market/markets") as res:
             return await map_response(res, proto.GetMarketsResponse())
 
-    async def get_quotes(
-        self,
-        get_quotes_request: proto.GetQuotesRequest,
-        *,
-        timeout: Optional[float] = None,
-        deadline: Optional["Deadline"] = None,
-        metadata: Optional["MetadataLike"] = None,
-    ) -> proto.GetQuotesResponse:
-        projects_str = serialize_projects(get_quotes_request.projects)
-        async with self._session.get(
-            f"{self._endpoint}/market/quote?inToken={get_quotes_request.in_token}&"
-            f"outToken={get_quotes_request.out_token}&inAmount={get_quotes_request.in_amount}&"
-            f"slippage={get_quotes_request.slippage}&limit={get_quotes_request.limit}&{projects_str}"
-        ) as res:
-            return await map_response(res, proto.GetQuotesResponse())
-
-    async def post_route_trade_swap(
-        self,
-        route_trade_swap_request: proto.RouteTradeSwapRequest,
-        *,
-        timeout: Optional[float] = None,
-        deadline: Optional["Deadline"] = None,
-        metadata: Optional["MetadataLike"] = None,
-    ) -> proto.TradeSwapResponse:
-        async with self._session.post(
-            f"{self._endpoint}/trade/route-swap",
-            json=route_trade_swap_request.to_dict(),
-        ) as res:
-            return await map_response(res, proto.TradeSwapResponse())
-
-    async def get_orderbook(
-        self,
-        get_orderbook_request: proto.GetOrderbookRequest,
-        *,
-        timeout: Optional[float] = None,
-        deadline: Optional["Deadline"] = None,
-        metadata: Optional["MetadataLike"] = None,
-    ) -> proto.GetOrderbookResponse:
-        async with self._session.get(
-            f"{self._endpoint}/market/orderbooks/{get_orderbook_request.market}?"
-            f"limit={get_orderbook_request.limit}&project={get_orderbook_request.project.name}"
-        ) as res:
-            return await map_response(res, proto.GetOrderbookResponse())
-
-    async def get_market_depth(
-        self,
-        get_market_depth_request: proto.GetMarketDepthRequest,
-        *,
-        timeout: Optional[float] = None,
-        deadline: Optional["Deadline"] = None,
-        metadata: Optional["MetadataLike"] = None,
-    ) -> proto.GetMarketDepthResponse:
-        async with self._session.get(
-            f"{self._endpoint}/market/depth/{get_market_depth_request.market}?limit={get_market_depth_request.limit}"
-            f"&project={get_market_depth_request.project.name}"
-        ) as res:
-            return await map_response(res, proto.GetMarketDepthResponse())
-
     async def get_tickers(
         self,
         get_tickers_request: proto.GetTickersRequest,
@@ -458,23 +400,6 @@ class HttpProvider(Provider):
     ) -> proto.GetOrdersResponse:
         raise NotImplementedError()
 
-    async def get_open_orders(
-        self,
-        get_open_orders_request: proto.GetOpenOrdersRequest,
-        *,
-        timeout: Optional[float] = None,
-        deadline: Optional["Deadline"] = None,
-        metadata: Optional["MetadataLike"] = None,
-    ) -> proto.GetOpenOrdersResponse:
-        async with self._session.get(
-            f"{self._endpoint}/trade/orders/{get_open_orders_request.market}"
-            f"?address={get_open_orders_request.address}"
-            f"&openOrdersAddress={get_open_orders_request.open_orders_address}"
-            "&types=OT_LIMIT"
-            f"&project={get_open_orders_request.project.name}"
-        ) as res:
-            return await map_response(res, proto.GetOpenOrdersResponse())
-
     async def get_order_by_id(
         self,
         get_order_by_id_request: proto.GetOrderByIdRequest,
@@ -485,21 +410,6 @@ class HttpProvider(Provider):
     ) -> proto.GetOrderByIdResponse:
         # TODO
         raise NotImplementedError()
-
-    async def get_unsettled(
-        self,
-        get_unsettled_request: proto.GetUnsettledRequest,
-        *,
-        timeout: Optional[float] = None,
-        deadline: Optional["Deadline"] = None,
-        metadata: Optional["MetadataLike"] = None,
-    ) -> proto.GetUnsettledResponse:
-        async with self._session.get(
-            f"{self._endpoint}/trade/unsettled/{get_unsettled_request.market}?"
-            f"ownerAddress={get_unsettled_request.owner_address}&"
-            f"project={get_unsettled_request.project.name}"
-        ) as res:
-            return await map_response(res, proto.GetUnsettledResponse())
 
     async def get_account_balance(
         self,
@@ -542,20 +452,6 @@ class HttpProvider(Provider):
         ) as res:
             return await map_response(res, proto.GetPoolsResponse())
 
-    async def get_price(
-        self,
-        get_price_request: proto.GetPriceRequest,
-        *,
-        timeout: Optional[float] = None,
-        deadline: Optional["Deadline"] = None,
-        metadata: Optional["MetadataLike"] = None,
-    ) -> proto.GetPriceResponse:
-        params = "?" + serialize_list("tokens", get_price_request.tokens)
-        async with self._session.get(
-            f"{self._endpoint}/market/price{params}"
-        ) as res:
-            return await map_response(res, proto.GetPriceResponse())
-
     async def get_recent_block_hash(
         self,
         get_recent_block_hash_request: proto.GetRecentBlockHashRequest,
@@ -568,92 +464,6 @@ class HttpProvider(Provider):
             f"{self._endpoint}/system/blockhash"
         ) as res:
             return await map_response(res, proto.GetRecentBlockHashResponse())
-
-    async def post_trade_swap(
-        self,
-        trade_swap_request: proto.TradeSwapRequest,
-        *,
-        timeout: Optional[float] = None,
-        deadline: Optional["Deadline"] = None,
-        metadata: Optional["MetadataLike"] = None,
-    ) -> proto.TradeSwapResponse:
-        async with self._session.post(
-            f"{self._endpoint}/trade/swap", json=trade_swap_request.to_dict()
-        ) as res:
-            return await map_response(res, proto.TradeSwapResponse())
-
-    async def post_order(
-        self,
-        post_order_request: proto.PostOrderRequest,
-        *,
-        timeout: Optional[float] = None,
-        deadline: Optional["Deadline"] = None,
-        metadata: Optional["MetadataLike"] = None,
-    ) -> proto.PostOrderResponse:
-        async with self._session.post(
-            f"{self._endpoint}/trade/place", json=post_order_request.to_dict()
-        ) as res:
-            return await map_response(res, proto.PostOrderResponse())
-
-    async def post_cancel_order(
-        self,
-        post_cancel_order_request: proto.PostCancelOrderRequest,
-        *,
-        timeout: Optional[float] = None,
-        deadline: Optional["Deadline"] = None,
-        metadata: Optional["MetadataLike"] = None,
-    ) -> proto.PostCancelOrderResponse:
-        request_dict = post_cancel_order_request.to_dict()
-        if "orderId" in request_dict:
-            request_dict["orderID"] = request_dict.pop("orderId")
-        async with self._session.post(
-            f"{self._endpoint}/trade/cancel",
-            json=request_dict,
-        ) as res:
-            return await map_response(res, proto.PostCancelOrderResponse())
-
-    async def post_cancel_by_client_order_id(
-        self,
-        post_cancel_by_client_order_id_request: proto.PostCancelByClientOrderIdRequest,
-        *,
-        timeout: Optional[float] = None,
-        deadline: Optional["Deadline"] = None,
-        metadata: Optional["MetadataLike"] = None,
-    ) -> proto.PostCancelOrderResponse:
-        request_dict = post_cancel_by_client_order_id_request.to_dict()
-        if "clientOrderId" in request_dict:
-            request_dict["clientOrderID"] = request_dict.pop("clientOrderId")
-        async with self._session.post(
-            f"{self._endpoint}/trade/cancelbyid", json=request_dict
-        ) as res:
-            return await map_response(res, proto.PostCancelOrderResponse())
-
-    async def post_cancel_all(
-        self,
-        post_cancel_all_request: proto.PostCancelAllRequest,
-        *,
-        timeout: Optional[float] = None,
-        deadline: Optional["Deadline"] = None,
-        metadata: Optional["MetadataLike"] = None,
-    ) -> proto.PostCancelAllResponse:
-        async with self._session.post(
-            f"{self._endpoint}/trade/cancelall",
-            json=post_cancel_all_request.to_dict(),
-        ) as res:
-            return await map_response(res, proto.PostCancelAllResponse())
-
-    async def post_settle(
-        self,
-        post_settle_request: proto.PostSettleRequest,
-        *,
-        timeout: Optional[float] = None,
-        deadline: Optional["Deadline"] = None,
-        metadata: Optional["MetadataLike"] = None,
-    ) -> proto.PostSettleResponse:
-        async with self._session.post(
-            f"{self._endpoint}/trade/settle", json=post_settle_request.to_dict()
-        ) as res:
-            return await map_response(res, proto.PostSettleResponse())
 
     async def post_submit(
         self,
@@ -714,40 +524,6 @@ class HttpProvider(Provider):
             json=post_submit_batch_request.to_dict(),
         ) as res:
             return await map_response(res, proto.PostSubmitBatchResponse())
-
-    async def post_replace_by_client_order_id(
-        self,
-        post_order_request: proto.PostOrderRequest,
-        *,
-        timeout: Optional[float] = None,
-        deadline: Optional["Deadline"] = None,
-        metadata: Optional["MetadataLike"] = None,
-    ) -> proto.PostOrderResponse:
-        request_dict = post_order_request.to_dict()
-        if "clientOrderId" in request_dict:
-            request_dict["clientOrderID"] = request_dict.pop("clientOrderId")
-        async with self._session.post(
-            f"{self._endpoint}/trade/replacebyclientid", json=request_dict
-        ) as res:
-            return await map_response(res, proto.PostOrderResponse())
-
-    async def post_replace_order(
-        self,
-        post_replace_order_request: proto.PostReplaceOrderRequest,
-        *,
-        timeout: Optional[float] = None,
-        deadline: Optional["Deadline"] = None,
-        metadata: Optional["MetadataLike"] = None,
-    ) -> proto.PostOrderResponse:
-        request_dict = post_replace_order_request.to_dict()
-        if "orderId" in request_dict:
-            request_dict["orderID"] = request_dict.pop("orderId")
-
-        async with self._session.post(
-            f"{self._endpoint}/trade/replace",
-            json=request_dict,
-        ) as res:
-            return await map_response(res, proto.PostOrderResponse())
 
     async def _unary_stream(
         self,

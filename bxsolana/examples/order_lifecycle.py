@@ -3,7 +3,6 @@ import async_timeout
 
 from bxsolana import provider
 from bxsolana_trader_proto import api as proto
-from .order_utils import cancel_order, place_order, settle_funds
 
 crank_timeout = 60
 
