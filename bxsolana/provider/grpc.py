@@ -58,11 +58,11 @@ class GrpcProvider(Provider):
             self.channel = client.Channel(
                 self._host, self._port, ssl=self._use_ssl
             )
-            self.metadata = {
-                "authorization": self._auth_header,
-                "X-SDK": NAME,
-                "X-SDK-Version": VERSION,
-            }
+            # self.metadata = {
+            #     "authorization": self._auth_header,
+            #     "X-SDK": NAME,
+            #     "X-SDK-Version": VERSION,
+            # }
 
     def private_key(self) -> Optional[kp.Keypair]:
         return self._private_key
