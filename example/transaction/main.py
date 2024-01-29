@@ -21,9 +21,9 @@ order_amount = 0.1
 
 
 async def main():
-    # await ws()
+    await ws()
     await grpc()
-    # await http()
+    await http()
 
 
 async def ws():
