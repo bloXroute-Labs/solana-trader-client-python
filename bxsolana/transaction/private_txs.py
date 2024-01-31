@@ -13,8 +13,6 @@ from solders.pubkey import Pubkey
 from solders.system_program import transfer, TransferParams
 from solders.transaction import Transaction
 
-from example.bundles.main import public_key
-
 BloxrouteTipWallet = pk.Pubkey.from_string(
     "AFT8VayE7qr8MoQsW3wHsDS83HhEvhGWdbNSHRKeUDfQ"
 )
@@ -31,7 +29,7 @@ def create_trader_api_tip_instruction(
         TransferParams(
             from_pubkey=sender_address,
             to_pubkey=BloxrouteTipWallet,
-            lamports=tip_amount,
+            lamports=int(tip_amount),
         )
     )
 
