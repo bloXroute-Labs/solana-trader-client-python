@@ -7,7 +7,6 @@ from solders import keypair as kp
 from .. import transaction
 from . import constants
 from .base import Provider
-from .package_info import NAME, VERSION
 
 
 class GrpcProvider(Provider):

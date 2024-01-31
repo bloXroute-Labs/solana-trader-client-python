@@ -1,9 +1,4 @@
 from bxsolana_trader_proto import api as proto
-from bxsolana_trader_proto.common import PerpPositionSide
-from bxsolana_trader_proto.common import PerpOrderType
-from bxsolana_trader_proto.common import PerpContract
-from bxsolana_trader_proto.common import PerpCollateralType
-from bxsolana_trader_proto.common import PerpCollateralToken
 
 from .. import provider
 
