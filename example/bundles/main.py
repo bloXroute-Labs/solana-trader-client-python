@@ -31,18 +31,23 @@ async def main():
 async def ws():
     print("\n*** WS Example using Openbook bundles ***\n")
     async with provider.ws_testnet() as api:
-        openbook_bundle_tx = await api.post_order_v2(post_order_request_v2=proto.PostOrderRequestV2(
-            owner_address=public_key,
-            payer_address=public_key,
-            market="SOLUSDC",
-            side="ASK",
-            amount=0.01,
-            price=150_000,
-            type="limit",
-            tip=1030
-            ))
+        openbook_bundle_tx = await api.post_order_v2(
+            post_order_request_v2=proto.PostOrderRequestV2(
+                owner_address=public_key,
+                payer_address=public_key,
+                market="SOLUSDC",
+                side="ASK",
+                amount=0.01,
+                price=150_000,
+                type="limit",
+                tip=1030,
+            )
+        )
 
-        print(f'created OPENBOOK tx with bundle tip of 1030: {openbook_bundle_tx.transaction.content}')
+        print(
+            "created OPENBOOK tx with bundle tip of 1030:"
+            f" {openbook_bundle_tx.transaction.content}"
+        )
 
         signed_tx = signing.sign_tx(openbook_bundle_tx.transaction.content)
 
@@ -50,23 +55,34 @@ async def ws():
             post_submit_request=proto.PostSubmitRequest(
                 transaction=proto.TransactionMessage(content=signed_tx),
                 skip_pre_flight=True,
-                front_running_protection=True
+                front_running_protection=True,
             )
         )
 
-        print(f'submitted OPENBOOK tx with front running protection: {openbook_bundle_tx.transaction.content}')
+        print(
+            "submitted OPENBOOK tx with front running protection:"
+            f" {openbook_bundle_tx.transaction.content}"
+        )
+
 
 async def grpc():
     print("\n*** GRPC Test ***\n")
     async with provider.grpc_testnet() as api:
-        raydium_bundle_tx = await api.post_raydium_swap(proto.PostRaydiumSwapRequest(owner_address=public_key,
-                                                                                  in_token="SOL",
-                                                                                  out_token="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-                                                                                  slippage=0.2,
-                                                                                  in_amount=0.01,
-                                                                                  tip=1030))
+        raydium_bundle_tx = await api.post_raydium_swap(
+            proto.PostRaydiumSwapRequest(
+                owner_address=public_key,
+                in_token="SOL",
+                out_token="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                slippage=0.2,
+                in_amount=0.01,
+                tip=1030,
+            )
+        )
 
-        print(f'created RAYDIUM swap tx with bundle tip of 1030: {raydium_bundle_tx.transaction.content}')
+        print(
+            "created RAYDIUM swap tx with bundle tip of 1030:"
+            f" {raydium_bundle_tx.transaction.content}"
+        )
 
         signed_tx = signing.sign_tx(raydium_bundle_tx.transaction.content)
 
@@ -74,23 +90,34 @@ async def grpc():
             post_submit_request=proto.PostSubmitRequest(
                 transaction=proto.TransactionMessage(content=signed_tx),
                 skip_pre_flight=True,
-                front_running_protection=True
+                front_running_protection=True,
             )
         )
 
-        print(f'submitted RAYDIUM tx with front running protection: {post_submit_response.transaction.content}')
+        print(
+            "submitted RAYDIUM tx with front running protection:"
+            f" {post_submit_response.transaction.content}"
+        )
+
 
 async def http():
     print("\n*** HTTP Test ***\n")
     async with provider.http_testnet() as api:
-        raydium_bundle_tx = await api.post_raydium_swap(proto.PostRaydiumSwapRequest(owner_address=public_key,
-                                                                                     in_token="SOL",
-                                                                                     out_token="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-                                                                                     slippage=0.2,
-                                                                                     in_amount=0.01,
-                                                                                     tip=1030))
+        raydium_bundle_tx = await api.post_raydium_swap(
+            proto.PostRaydiumSwapRequest(
+                owner_address=public_key,
+                in_token="SOL",
+                out_token="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                slippage=0.2,
+                in_amount=0.01,
+                tip=1030,
+            )
+        )
 
-        print(f'created RAYDIUM swap tx with bundle tip of 1030: {raydium_bundle_tx.transactions[0].content}')
+        print(
+            "created RAYDIUM swap tx with bundle tip of 1030:"
+            f" {raydium_bundle_tx.transactions[0].content}"
+        )
 
         signed_tx = signing.sign_tx(raydium_bundle_tx.transactions[0].content)
 
@@ -98,11 +125,15 @@ async def http():
             post_submit_request=proto.PostSubmitRequest(
                 transaction=proto.TransactionMessage(content=signed_tx),
                 skip_pre_flight=True,
-                front_running_protection=True
+                front_running_protection=True,
             )
         )
 
-        print(f'submitted RAYDIUM tx with front running protection: {post_submit_response.signature}')
+        print(
+            "submitted RAYDIUM tx with front running protection:"
+            f" {post_submit_response.signature}"
+        )
+
 
 if __name__ == "__main__":
     asyncio.run(main())

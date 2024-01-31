@@ -24,14 +24,14 @@ BloxrouteTipWallet = pk.Pubkey.from_string(
 # bundles or wants front running protection. If using bloXroute API, this instruction must be included in the last
 # transaction sent to the API
 def create_trader_api_tip_instruction(
-        tip_amount: uint64,
-        sender_address: Pubkey,
+    tip_amount: uint64,
+    sender_address: Pubkey,
 ) -> inst.Instruction:
     instruction = transfer(
         TransferParams(
             from_pubkey=sender_address,
             to_pubkey=BloxrouteTipWallet,
-            lamports=tip_amount
+            lamports=tip_amount,
         )
     )
 
@@ -42,12 +42,11 @@ def create_trader_api_tip_instruction(
 # bundles or wants front running protection. If using bloXroute API, this transaction must be the last transaction sent
 # to the api
 def create_trader_api_tip_tx_signed(
-        tip_amount: uint64,
-        sender_address: Keypair,
-        blockhash: Hash
+    tip_amount: uint64, sender_address: Keypair, blockhash: Hash
 ) -> solders_tx.Transaction:
-
-    transfer_ix = create_trader_api_tip_instruction(tip_amount, sender_address.pubkey())
+    transfer_ix = create_trader_api_tip_instruction(
+        tip_amount, sender_address.pubkey()
+    )
 
     message = Message([transfer_ix], sender_address.pubkey())
     tx = Transaction([sender_address], message, blockhash)
