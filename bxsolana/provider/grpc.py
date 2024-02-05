@@ -60,8 +60,8 @@ class GrpcProvider(Provider):
             )
             self.metadata = {
                 "authorization": self._auth_header,
-                "X-SDK": NAME,
-                "X-SDK-Version": VERSION,
+                "x-sdk": NAME,
+                "s-sdk-version": VERSION,
             }
 
     def private_key(self) -> Optional[kp.Keypair]:
