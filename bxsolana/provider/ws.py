@@ -44,8 +44,8 @@ class WsProvider(Provider):
         opts = jsonrpc.WsRpcOpts(
             headers={
                 "authorization": auth_header,
-                "X-SDK": NAME,
-                "X-SDK-Version": VERSION,
+                "x-sdk": NAME,
+                "x-sdk-version": VERSION,
             },
             request_timeout_s=request_timeout_s,
         )
