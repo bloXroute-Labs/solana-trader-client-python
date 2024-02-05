@@ -48,7 +48,7 @@ class Provider(api.ApiStub, ABC):
         compute_limit: int = 0,
         compute_price: int = 0,
         project: api.Project = api.Project.P_UNKNOWN,
-        skip_pre_flight: bool = False,
+        skip_pre_flight: bool = True,
     ) -> str:
         pk = self.require_private_key()
         order = await self.post_order(
@@ -192,7 +192,7 @@ class Provider(api.ApiStub, ABC):
         compute_limit: int = 0,
         compute_price: int = 0,
         project: api.Project = api.Project.P_UNKNOWN,
-        skip_pre_flight: bool = False,
+        skip_pre_flight: bool = True,
     ) -> str:
         pk = self.require_private_key()
         response = await self.post_settle(
@@ -231,7 +231,7 @@ class Provider(api.ApiStub, ABC):
         compute_limit: int = 0,
         compute_price: int = 0,
         project: api.Project = api.Project.P_UNKNOWN,
-        skip_pre_flight: bool = False,
+        skip_pre_flight: bool = True,
     ) -> str:
         pk = self.require_private_key()
         order = await self.post_replace_by_client_order_id(
@@ -275,7 +275,7 @@ class Provider(api.ApiStub, ABC):
         compute_limit: int = 0,
         compute_price: int = 0,
         project: api.Project = api.Project.P_UNKNOWN,
-        skip_pre_flight: bool = False,
+        skip_pre_flight: bool = True,
     ) -> str:
         pk = self.require_private_key()
         order = await self.post_replace_order(
@@ -316,7 +316,7 @@ class Provider(api.ApiStub, ABC):
         slippage: float = 0,
         compute_limit: int = 0,
         compute_price: int = 0,
-        skip_pre_flight: bool = False,
+        skip_pre_flight: bool = True,
         submit_strategy: api.SubmitStrategy = api.SubmitStrategy.P_ABORT_ON_FIRST_ERROR,
     ) -> api.PostSubmitBatchResponse:
         pk = self.require_private_key()
@@ -357,7 +357,7 @@ class Provider(api.ApiStub, ABC):
         slippage: float = 0,
         compute_limit: int = 0,
         compute_price: int = 0,
-        skip_pre_flight: bool = False,
+        skip_pre_flight: bool = True,
         submit_strategy: api.SubmitStrategy = api.SubmitStrategy.P_ABORT_ON_FIRST_ERROR,
     ) -> api.PostSubmitBatchResponse:
         pk = self.require_private_key()
