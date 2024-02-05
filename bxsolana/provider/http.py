@@ -46,7 +46,7 @@ class HttpProvider(Provider):
         self._session.headers["authorization"] = auth_header
         self._session.headers["x-sdk"] = NAME
         self._session.headers["x-sdk-version"] = VERSION
-        
+
         if private_key is None:
             try:
                 self._private_key = transaction.load_private_key_from_env()
