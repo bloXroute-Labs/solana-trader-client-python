@@ -7,6 +7,7 @@ from solders import keypair as kp
 from .. import transaction
 from . import constants
 from .base import Provider
+from .package_info import NAME, VERSION
 
 
 class GrpcProvider(Provider):
@@ -57,11 +58,11 @@ class GrpcProvider(Provider):
             self.channel = client.Channel(
                 self._host, self._port, ssl=self._use_ssl
             )
-            # self.metadata = {
-            #     "authorization": self._auth_header,
-            #     "X-SDK": NAME,
-            #     "X-SDK-Version": VERSION,
-            # }
+            self.metadata = {
+                "authorization": self._auth_header,
+                "x-sdk": NAME,
+                "s-sdk-version": VERSION,
+            }
 
     def private_key(self) -> Optional[kp.Keypair]:
         return self._private_key

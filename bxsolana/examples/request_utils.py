@@ -82,8 +82,7 @@ async def do_requests(
                 get_price_request=proto.GetPriceRequest(
                     tokens=[
                         "So11111111111111111111111111111111111111112",
-                        "SOL",
-                        "USDT",
+                        "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
                     ]
                 )
             )
@@ -98,8 +97,7 @@ async def do_requests(
                 get_raydium_prices_request=proto.GetRaydiumPricesRequest(
                     tokens=[
                         "So11111111111111111111111111111111111111112",
-                        "SOL",
-                        "USDT",
+                        "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
                     ]
                 )
             )
@@ -114,8 +112,7 @@ async def do_requests(
                 get_jupiter_prices_request=proto.GetJupiterPricesRequest(
                     tokens=[
                         "So11111111111111111111111111111111111111112",
-                        "SOL",
-                        "USDT",
+                        "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
                     ]
                 )
             )
@@ -147,8 +144,8 @@ async def do_requests(
         (
             await api.get_quotes(
                 get_quotes_request=proto.GetQuotesRequest(
-                    in_token="USDT",
-                    out_token="SOL",
+                    in_token="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                    out_token="So11111111111111111111111111111111111111112",
                     in_amount=0.01,
                     slippage=10,
                     limit=1,
@@ -163,8 +160,8 @@ async def do_requests(
         (
             await api.get_raydium_quotes(
                 get_raydium_quotes_request=proto.GetRaydiumQuotesRequest(
-                    in_token="USDT",
-                    out_token="SOL",
+                    in_token="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                    out_token="So11111111111111111111111111111111111111112",
                     in_amount=0.01,
                     slippage=10,
                 )
@@ -177,8 +174,8 @@ async def do_requests(
         (
             await api.get_jupiter_quotes(
                 get_jupiter_quotes_request=proto.GetJupiterQuotesRequest(
-                    in_token="USDT",
-                    out_token="SOL",
+                    in_token="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                    out_token="So11111111111111111111111111111111111111112",
                     in_amount=0.01,
                     slippage=10,
                     limit=1,
@@ -351,9 +348,9 @@ async def do_requests(
                 trade_swap_request=proto.TradeSwapRequest(
                     project=proto.Project.P_RAYDIUM,
                     owner_address=public_key,
-                    in_token="SOL",
+                    in_token="So11111111111111111111111111111111111111112",
                     in_amount=0.01,
-                    out_token="USDT",
+                    out_token="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
                     slippage=0.01,
                 )
             )
@@ -366,9 +363,9 @@ async def do_requests(
             await api.post_raydium_swap(
                 post_raydium_swap_request=proto.PostRaydiumSwapRequest(
                     owner_address=public_key,
-                    in_token="SOL",
+                    in_token="So11111111111111111111111111111111111111112",
                     in_amount=0.01,
-                    out_token="USDT",
+                    out_token="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
                     slippage=0.01,
                 )
             )
@@ -381,9 +378,9 @@ async def do_requests(
             await api.post_jupiter_swap(
                 post_jupiter_swap_request=proto.PostJupiterSwapRequest(
                     owner_address=public_key,
-                    in_token="SOL",
+                    in_token="So11111111111111111111111111111111111111112",
                     in_amount=0.01,
-                    out_token="USDT",
+                    out_token="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
                     slippage=0.01,
                 )
             )
@@ -392,9 +389,9 @@ async def do_requests(
 
     print("generate route swap")
     step = proto.RouteStep(
-        in_token="USDT",
+        in_token="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
         in_amount=0.01,
-        out_token="SOL",
+        out_token="So11111111111111111111111111111111111111112",
         out_amount=0.01,
         out_amount_min=0.01,
         project=proto.StepProject(label="Raydium"),
@@ -414,9 +411,9 @@ async def do_requests(
 
     print("generate raydium route swap")
     step = proto.RaydiumRouteStep(
-        in_token="USDT",
+        in_token="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
         in_amount=0.01,
-        out_token="SOL",
+        out_token="So11111111111111111111111111111111111111112",
         out_amount=0.01,
         out_amount_min=0.01,
     )
