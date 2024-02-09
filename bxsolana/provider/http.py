@@ -64,6 +64,19 @@ class HttpProvider(Provider):
     async def close(self):
         await self._session.close()
 
+    async def get_rate_limit(
+        self,
+        get_rate_limit_request: proto.GetRateLimitRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.GetRateLimitResponse:
+        async with self._session.get(
+            f"{self._endpoint_v2}/account/rate-limit"
+        ) as res:
+            return await map_response(res, proto.GetRateLimitResponse())
+
     async def get_transaction(
         self,
         get_transaction_request: proto.GetTransactionRequest,

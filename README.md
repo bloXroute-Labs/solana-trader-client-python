@@ -82,6 +82,7 @@ you can build the solana-trader-proto/python directory using these commands
     $ python3 -m build
     $ python3 -m twine upload --repository pypi dist/*
     
+    
     and install the package locally now
     $ pip install dist/bxsolana-trader-proto-0.0.42.tar.gz
     
