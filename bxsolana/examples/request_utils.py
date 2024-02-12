@@ -22,6 +22,15 @@ async def do_requests(
         ).to_json()
     )
 
+    print("getting ratelimit")
+    print(
+        (
+            await api.get_rate_limit(
+                get_rate_limit_request=proto.GetRateLimitRequest()
+            )
+        ).to_json()
+    )
+
     print("fetching market depth")
     print(
         (
