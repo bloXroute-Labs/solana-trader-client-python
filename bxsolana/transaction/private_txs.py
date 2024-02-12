@@ -9,8 +9,10 @@ from solders.pubkey import Pubkey
 from solders.system_program import transfer, TransferParams
 from solders.transaction import Transaction
 
+# as of 2/12/2024, this is the bloxRoute tip wallet... check docs to see latest up to date tip wallet:
+# https://docs.bloxroute.com/solana/trader-api-v2/front-running-protection-and-transaction-bundle
 BloxrouteTipWallet = pk.Pubkey.from_string(
-    "AFT8VayE7qr8MoQsW3wHsDS83HhEvhGWdbNSHRKeUDfQ"
+    "HWEoBxYs7ssKuudEjzjmpfJVX7Dvi7wescFsVx2L5yoY"
 )
 
 
