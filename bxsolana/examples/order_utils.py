@@ -55,6 +55,54 @@ async def place_order(
     return client_order_id
 
 
+async def place_order_with_tip(
+    p: provider.Provider,
+    owner_addr,
+    payer_addr,
+    market_addr,
+    order_side,
+    order_type,
+    order_amount,
+    order_price,
+    open_orders_addr,
+) -> int:
+    print("starting place order")
+
+    client_order_id = random.randint(0, 1000000)
+    post_order_response = await p.post_order(
+        post_order_request=proto.PostOrderRequest(
+            owner_address=owner_addr,
+            payer_address=payer_addr,
+            market=market_addr,
+            side=order_side,
+            type=[order_type],
+            amount=order_amount,
+            price=order_price,
+            open_orders_address=open_orders_addr,
+            client_order_id=client_order_id,
+            tip=1030,
+        )
+    )
+    print("place order transaction created successfully")
+
+    signed_tx = signing.sign_tx(post_order_response.transaction.content)
+
+    post_submit_response = await p.post_submit(
+        post_submit_request=proto.PostSubmitRequest(
+            transaction=proto.TransactionMessage(content=signed_tx),
+            skip_pre_flight=True,
+            front_running_protection=True,
+        )
+    )
+
+    print(
+        f"placing order with clientOrderID {client_order_id.__str__()},"
+        f" response signature: {post_submit_response.signature}"
+    )
+
+    return client_order_id
+
+
 async def cancel_order(
     p: provider.Provider,
     client_order_id: int,
