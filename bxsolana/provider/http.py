@@ -591,7 +591,7 @@ class HttpProvider(Provider):
         metadata: Optional["MetadataLike"] = None,
     ) -> proto.GetPriorityFeeResponse:
         percentile = getattr(get_priority_fee_request, "percentile", None)
-        url = f"{self._endpoint}/system/priority-fee"
+        url = f"{self._endpoint_v2}/system/priority-fee"
         if percentile is not None:
             url += f"?percentile={percentile}"
 
