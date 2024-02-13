@@ -110,7 +110,7 @@ async def do_stream(api: provider.Provider, run_slow: bool = False):
     if run_slow:
         print("streaming priority fee updates...")
         async for response in api.get_priority_fee_stream(
-            get_priority_fees_request=proto.GetPriorityFeeRequest()
+            get_priority_fee_request=proto.GetPriorityFeeRequest()
         ):
             print(response.to_json())
             item_count += 1
