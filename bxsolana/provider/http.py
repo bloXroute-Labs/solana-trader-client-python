@@ -582,6 +582,22 @@ class HttpProvider(Provider):
         ) as res:
             return await map_response(res, proto.GetRecentBlockHashResponse())
 
+    async def get_priority_fee(
+        self,
+        get_priority_fee_request: proto.GetPriorityFeeRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.GetPriorityFeeResponse:
+        percentile = getattr(get_priority_fee_request, "percentile", None)
+        url = f"{self._endpoint}/system/priority-fee"
+        if percentile is not None:
+            url += f"?percentile={percentile}"
+
+        async with self._session.get(url) as res:
+            return await map_response(res, proto.GetPriorityFeeResponse())
+
     async def post_trade_swap(
         self,
         trade_swap_request: proto.TradeSwapRequest,
