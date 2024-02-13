@@ -112,7 +112,6 @@ async def cancel_order(
 ):
     print("starting cancel order")
 
-    # pyre-ignore[28] - there is no real type error
     cancel_order_response = await p.post_cancel_by_client_order_id(
         post_cancel_by_client_order_id_request=proto.PostCancelByClientOrderIdRequest(
             client_order_id=client_order_id,

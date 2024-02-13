@@ -124,7 +124,7 @@ class Provider(api.ApiStub, ABC):
         skip_pre_flight: bool = True,
     ) -> str:
         pk = self.require_private_key()
-        # pyre-ignore[28]
+
         order = await self.post_cancel_by_client_order_id(
             post_cancel_by_client_order_id_request=api.PostCancelByClientOrderIdRequest(
                 client_order_id=client_order_id,
