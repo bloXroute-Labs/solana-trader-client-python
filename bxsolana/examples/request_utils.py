@@ -42,6 +42,15 @@ async def do_requests(
         ).to_json()
     )
 
+    print("fetching priority fee")
+    print(
+        (
+            await api.get_priority_fee(
+                get_priority_fee_request=proto.GetPriorityFeeRequest()
+            )
+        ).to_json()
+    )
+
     # markets API
     print("fetching all markets")
     print(

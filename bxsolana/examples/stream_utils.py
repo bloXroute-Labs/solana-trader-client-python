@@ -107,9 +107,21 @@ async def do_stream(api: provider.Provider, run_slow: bool = False):
                 item_count = 0
                 break
 
+    if run_slow:
         print("streaming bundle requests stream updates...")
         async for response in api.get_bundle_results_stream(
             get_bundle_results_stream_request=proto.GetBundleResultsStreamRequest()
+        ):
+            print(response.to_json())
+            item_count += 1
+            if item_count == 1:
+                item_count = 0
+                break
+
+    if run_slow:
+        print("streaming priority fee updates...")
+        async for response in api.get_priority_fee_stream(
+            get_priority_fee_request=proto.GetPriorityFeeRequest()
         ):
             print(response.to_json())
             item_count += 1
