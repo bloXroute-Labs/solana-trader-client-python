@@ -89,6 +89,7 @@ class HttpProvider(Provider):
                 f"{self._endpoint_v2}/transaction?signature={get_transaction_request.signature}"
         ) as res:
             return await map_response(res, proto.GetTransactionResponse())
+
     async def get_bundle_result_v2(
             self,
             get_bundle_result_request: proto.GetBundleResultRequest,
