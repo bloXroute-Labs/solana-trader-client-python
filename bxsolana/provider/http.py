@@ -98,7 +98,7 @@ class HttpProvider(Provider):
             metadata: Optional["MetadataLike"] = None,
     ) -> proto.GetBundleResultResponse:
         async with self._session.get(
-                f"{self._endpoint_v2}/trade/bundle-result/{get_bundle_result_request.uuid}"
+                f"{self._endpoint_v2}/bundle-result/{get_bundle_result_request.uuid}"
         ) as res:
             return await map_response(res, proto.GetBundleResultResponse())
 
