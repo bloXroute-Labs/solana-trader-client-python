@@ -196,7 +196,6 @@ async def do_requests(
                     out_token="So11111111111111111111111111111111111111112",
                     in_amount=0.01,
                     slippage=10,
-                    limit=1,
                 )
             )
         ).to_json()

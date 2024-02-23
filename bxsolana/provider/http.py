@@ -142,7 +142,7 @@ class HttpProvider(Provider):
         async with self._session.get(
                 f"{self._endpoint_v2}/jupiter/quotes?inToken={get_jupiter_quotes_request.in_token}&"
                 f"outToken={get_jupiter_quotes_request.out_token}&inAmount={get_jupiter_quotes_request.in_amount}&"
-                f"slippage={get_jupiter_quotes_request.slippage}&limit={get_jupiter_quotes_request.limit}"
+                f"slippage={get_jupiter_quotes_request.slippage}"
         ) as res:
             return await map_response(res, proto.GetJupiterQuotesResponse())
 
