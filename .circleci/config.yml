@@ -107,15 +107,6 @@ workflows:
       - unit:
           requires:
             - init
-      - testnet_examples:
-          context: trader-api-sdk
-          requires:
-            - init
-      - mainnet_examples:
-          context:
-            - trader-api-sdk
-          requires:
-            - init
   nightly:
     when:
       equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
@@ -126,15 +117,3 @@ workflows:
       - unit:
           requires:
             - init
-      - testnet_examples:
-          context:
-            - trader-api-sdk
-          requires:
-            - init
-            - unit
-      - mainnet_examples:
-          context:
-            - trader-api-sdk
-          requires:
-            - init
-            - unit
