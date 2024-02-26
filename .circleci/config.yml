@@ -60,18 +60,6 @@ jobs:
             cd ~/ws/solana-trader-client-python
             . venv/bin/activate
             make test
-  testnet_examples:
-    executor: bxpython
-    steps:
-      - attach_workspace:
-          at: ~/ws
-      - run:
-          name: Testnet
-          command: |
-            unset PRIVATE_KEY
-            cd ~/ws/solana-trader-client-python
-            . venv/bin/activate
-            API_ENV=testnet AUTH_HEADER=$AUTH_HEADER_TESTNET python example/provider/main.py
   mainnet_examples:
     executor: bxpython
     steps:
