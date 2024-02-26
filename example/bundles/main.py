@@ -21,10 +21,12 @@ order_type = OrderType.OT_LIMIT
 order_price = 170200
 order_amount = 0.1
 
+
 async def main():
     await ws()
     await grpc()
     await http()
+
 
 async def ws():
     print("\n*** WS Example using Openbook bundles ***\n")
@@ -62,7 +64,10 @@ async def ws():
             f" {openbook_bundle_tx.transaction.content}"
         )
         # get feedback about your bundle
-        print(f'current bundle status: {api.get_bundle_result_v2(post_submit_response.uuid)}')
+        print(
+            "current bundle status:"
+            f" {api.get_bundle_result_v2(post_submit_response.uuid)}"
+        )
 
 
 async def grpc():
@@ -94,15 +99,17 @@ async def grpc():
             )
         )
 
-
-
         print(
             "submitted RAYDIUM tx with front running protection:"
             f" {post_submit_response.transaction.content}"
         )
 
         # get feedback about your bundle
-        print(f'current bundle status: {api.get_bundle_result_v2(post_submit_response.uuid)}')
+        print(
+            "current bundle status:"
+            f" {api.get_bundle_result_v2(post_submit_response.uuid)}"
+        )
+
 
 async def http():
     print("\n*** HTTP Test ***\n")
@@ -139,7 +146,10 @@ async def http():
         )
 
         # get feedback about your bundle
-        print(f'current bundle status: {api.get_bundle_result_v2(post_submit_response.uuid)}')
+        print(
+            "current bundle status:"
+            f" {api.get_bundle_result_v2(post_submit_response.uuid)}"
+        )
 
 
 if __name__ == "__main__":
