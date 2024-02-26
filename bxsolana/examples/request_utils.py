@@ -433,6 +433,9 @@ async def do_requests(
         out_token="So11111111111111111111111111111111111111112",
         out_amount=0.01,
         out_amount_min=0.01,
+        project=proto.StepProject(
+            label="Raydium", id="58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2"
+        ),
     )
     print(
         (
