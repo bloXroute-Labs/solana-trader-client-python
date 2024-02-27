@@ -602,9 +602,9 @@ class HttpProvider(Provider):
         metadata: Optional["MetadataLike"] = None,
     ) -> proto.GetPriorityFeeResponse:
         percentile = getattr(get_priority_fee_request, "percentile", None)
-        url = f"{self._endpoint_v2}/system/priority-fee"
+        url = f"{self._endpoint_v2}/system/priority-fee?project={get_priority_fee_request.project.name}"
         if percentile is not None:
-            url += f"?percentile={percentile}"
+            url += f"&percentile={percentile}"
 
         async with self._session.get(url) as res:
             return await map_response(res, proto.GetPriorityFeeResponse())
