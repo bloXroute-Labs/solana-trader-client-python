@@ -153,7 +153,9 @@ async def do_requests(
         (
             await api.get_raydium_pools(
                 get_raydium_pools_request=proto.GetRaydiumPoolsRequest(
-                    pair_or_address="GHGxSHVHsUNcGuf94rqFDsnhzGg3qbN1dD1z6DHZDfeQ"
+                    pair_or_address=(
+                        "GHGxSHVHsUNcGuf94rqFDsnhzGg3qbN1dD1z6DHZDfeQ"
+                    )
                 )
             )
         ).to_json()
