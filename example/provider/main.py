@@ -27,8 +27,8 @@ else:
 
 
 async def main():
-    await http()
-    await ws()
+    # await http()
+    # await ws()
     await grpc()
 
 
@@ -112,6 +112,7 @@ async def grpc():
     api = await bxsolana.trader_api(p)
 
     try:
+        await examples.do_stream(api, RUN_SLOW_STREAMS)
         await examples.do_requests(
             api,
             examples.PUBLIC_KEY,
