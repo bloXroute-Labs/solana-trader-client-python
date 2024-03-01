@@ -22,7 +22,17 @@ async def do_stream(api: provider.Provider, run_slow: bool = False):
         print("streaming ticker updates...")
         async for response in api.get_tickers_stream(
             get_tickers_stream_request=proto.GetTickersStreamRequest(
-                markets=["SOLUSDC"], project=proto.Project.P_OPENBOOK
+                markets=[
+                    "BONK/SOL",
+                    "wSOL/RAY",
+                    "BONK/RAY",
+                    "RAY/USDC",
+                    "SOL/USDC",
+                    "SOL/USDC",
+                    "RAY/USDC",
+                    "USDT/USDC",
+                ],
+                project=proto.Project.P_OPENBOOK,
             )
         ):
             print(response.to_json())
