@@ -31,6 +31,9 @@ class HttpError(Exception):
 async def map_response(
     response: aiohttp.ClientResponse, destination: betterproto.Message
 ):
+    if response.status != 200:
+        response_text = await response.text()
+        raise HttpError(code=response.status, message=response_text, details=[])
     response_json = await response.json()
     try:
         http_error = HttpError.from_json(response_json)
