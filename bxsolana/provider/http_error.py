@@ -32,11 +32,8 @@ async def map_response(
     response: aiohttp.ClientResponse, destination: betterproto.Message
 ):
     if response.status != 200:
-        try:
-            response_text = await response.text()
-            raise HttpError(code=response.status, message=response_text, details=[])
-        except Exception as e:
-            raise HttpError(code=response.status, message="Failed to process error response", details=[str(e)])
+        response_text = await response.text()
+        raise HttpError(code=response.status, message=response_text, details=[])
     response_json = await response.json()
     try:
         http_error = HttpError.from_json(response_json)
