@@ -4,6 +4,7 @@ import re
 from typing import AsyncGenerator, Dict, Optional, TYPE_CHECKING, Type
 
 import jsonrpc
+from . import jsonrpc_patch
 from solders import keypair as kp
 
 from . import Provider, constants
