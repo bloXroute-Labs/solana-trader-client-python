@@ -21,8 +21,8 @@ async def do_stream(api: provider.Provider, run_slow: bool = False):
     if run_slow:
         print("streaming ticker updates...")
         async for response in api.get_tickers_stream(
-            get_tickers_request=proto.GetTickersRequest(
-                market="SOLUSDC", project=proto.Project.P_OPENBOOK
+            get_tickers_stream_request=proto.GetTickersStreamRequest(
+                markets=["SOLUSDC"], project=proto.Project.P_OPENBOOK
             )
         ):
             print(response.to_json())
@@ -69,7 +69,8 @@ async def do_stream(api: provider.Provider, run_slow: bool = False):
         print("streaming pool reserves...")
         async for response in api.get_pool_reserves_stream(
             get_pool_reserves_stream_request=proto.GetPoolReservesStreamRequest(
-                projects=[proto.Project.P_RAYDIUM]
+                projects=[proto.Project.P_RAYDIUM],
+                pools=["GHGxSHVHsUNcGuf94rqFDsnhzGg3qbN1dD1z6DHZDfeQ"],
             )
         ):
             print(response.to_json())
