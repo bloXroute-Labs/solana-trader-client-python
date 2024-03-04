@@ -111,7 +111,6 @@ class HttpProvider(Provider):
     ) -> proto.GetRaydiumPoolsResponse:
         async with self._session.get(
             f"{self._endpoint_v2}/raydium/pools"
-            f"?pairOrAddress={get_raydium_pools_request.pair_or_address}"
         ) as res:
             return await map_response(res, proto.GetRaydiumPoolsResponse())
 
