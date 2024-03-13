@@ -123,12 +123,15 @@ class HttpProvider(Provider):
         metadata: Optional["MetadataLike"] = None,
     ) -> proto.GetRaydiumPoolReserveResponse:
         params = "?" + serialize_list(
-            "pairsOrAddresses", get_raydium_pool_reserve_request.pairs_or_addresses
+            "pairsOrAddresses",
+            get_raydium_pool_reserve_request.pairs_or_addresses,
         )
         async with self._session.get(
             f"{self._endpoint_v2}/raydium/pool-reserves{params}"
         ) as res:
-            return await map_response(res, proto.GetRaydiumPoolReserveResponse())
+            return await map_response(
+                res, proto.GetRaydiumPoolReserveResponse()
+            )
 
     async def get_raydium_quotes(
         self,

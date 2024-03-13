@@ -144,7 +144,8 @@ def _validated_response(response: Dict, response_type: Type["T"]) -> "T":
     for field in field_names:
         if camelcase(field) not in response:
             raise Exception(
-                f"didn't find field {camelcase(field)}, {field}, response {response} was not of type {response_type}"
+                f"didn't find field {camelcase(field)}, {field}, response"
+                f" {response} was not of type {response_type}"
             )
 
     return message
@@ -169,4 +170,4 @@ def camelcase(string):
         lambda matched: str(matched.group(1)).upper(),
         string[1:],
     )
-    return re.sub(r'account[iI][dD]', 'accountID', val, flags=re.IGNORECASE)
+    return re.sub(r"account[iI][dD]", "accountID", val, flags=re.IGNORECASE)

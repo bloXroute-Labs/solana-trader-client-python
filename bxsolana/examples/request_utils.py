@@ -4,12 +4,12 @@ from .. import provider
 
 
 async def do_requests(
-        api: provider.Provider,
-        public_key: str,
-        open_orders: str,
-        order_id: str,
-        usdc_wallet: str,
-        sol_usdc_market: str,
+    api: provider.Provider,
+    public_key: str,
+    open_orders: str,
+    order_id: str,
+    usdc_wallet: str,
+    sol_usdc_market: str,
 ):
     print("fetching Raydium pool reserve")
     print(
@@ -430,8 +430,8 @@ async def do_requests(
         out_amount=0.007505,
         out_amount_min=0.0074,
         project=proto.StepProject(
-            label="Raydium",
-            id="58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2")
+            label="Raydium", id="58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2"
+        ),
     )
 
     print(
