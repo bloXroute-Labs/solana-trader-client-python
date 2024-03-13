@@ -80,7 +80,11 @@ async def do_stream(api: provider.Provider, run_slow: bool = False):
         async for response in api.get_pool_reserves_stream(
             get_pool_reserves_stream_request=proto.GetPoolReservesStreamRequest(
                 projects=[proto.Project.P_RAYDIUM],
-                pools=["GHGxSHVHsUNcGuf94rqFDsnhzGg3qbN1dD1z6DHZDfeQ"],
+                pools=["GHGxSHVHsUNcGuf94rqFDsnhzGg3qbN1dD1z6DHZDfeQ",
+                       "HZ1znC9XBasm9AMDhGocd9EHSyH8Pyj1EUdiPb4WnZjo",
+                       "D8wAxwpH2aKaEGBKfeGdnQbCc2s54NrRvTDXCK98VAeT",
+                       "DdpuaJgjB2RptGMnfnCZVmC4vkKsMV6ytRa2gggQtCWt",
+                       ],
             )
         ):
             print(response.to_json())
@@ -96,8 +100,7 @@ async def do_stream(api: provider.Provider, run_slow: bool = False):
                 projects=[proto.Project.P_RAYDIUM],
                 tokens=[
                     "So11111111111111111111111111111111111111112",
-                    "SOL",
-                    "USDT",
+                    "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
                 ],
             )
         ):
