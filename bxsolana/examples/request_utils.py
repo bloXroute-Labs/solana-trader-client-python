@@ -11,6 +11,31 @@ async def do_requests(
     usdc_wallet: str,
     sol_usdc_market: str,
 ):
+    print("fetching Raydium pool reserve")
+    print(
+        (
+            await api.get_raydium_pool_reserve(
+                get_raydium_pool_reserve_request=proto.GetRaydiumPoolReserveRequest(
+                    pairs_or_addresses=[
+                        "HZ1znC9XBasm9AMDhGocd9EHSyH8Pyj1EUdiPb4WnZjo",
+                        "D8wAxwpH2aKaEGBKfeGdnQbCc2s54NrRvTDXCK98VAeT",
+                        "DdpuaJgjB2RptGMnfnCZVmC4vkKsMV6ytRa2gggQtCWt",
+                    ]
+                )
+            )
+        ).to_json()
+    )
+
+    # prints too much info, that's why it's commented
+    # print("fetching Raydium pools")
+    # print(
+    #     (
+    #         await api.get_raydium_pools(
+    #             get_raydium_pools_request=proto.GetRaydiumPoolsRequest()
+    #         )
+    #     ).to_json()
+    # )
+
     print("getting transaction")
     print(
         (
@@ -46,7 +71,9 @@ async def do_requests(
     print(
         (
             await api.get_priority_fee(
-                get_priority_fee_request=proto.GetPriorityFeeRequest()
+                get_priority_fee_request=proto.GetPriorityFeeRequest(
+                    project=proto.Project.P_RAYDIUM
+                )
             )
         ).to_json()
     )
@@ -406,13 +433,16 @@ async def do_requests(
 
     print("generate route swap")
     step = proto.RouteStep(
-        in_token="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+        in_token="So11111111111111111111111111111111111111112",
         in_amount=0.01,
-        out_token="So11111111111111111111111111111111111111112",
-        out_amount=0.01,
-        out_amount_min=0.01,
-        project=proto.StepProject(label="Raydium"),
+        out_token="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+        out_amount=0.007505,
+        out_amount_min=0.0074,
+        project=proto.StepProject(
+            label="Raydium", id="58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2"
+        ),
     )
+
     print(
         (
             await api.post_route_trade_swap(
