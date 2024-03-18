@@ -163,17 +163,26 @@ async def do_requests(
             )
         ).to_json()
     )
-    # prints too much info, that's why it's commented
-    # print("fetching pools")
-    # print(
-    #     (
-    #         await api.get_pools(
-    #             get_pools_request=proto.GetPoolsRequest(
-    #                 projects=[proto.Project.P_RAYDIUM]
-    #             )
-    #         )
-    #     ).to_json()
-    # )
+
+    print("fetching pools")
+    print(
+        (
+            await api.get_pools(
+                get_pools_request=proto.GetPoolsRequest(
+                    projects=[proto.Project.P_RAYDIUM]
+                )
+            )
+        ).to_json()
+    )
+
+    print("fetching Raydium pools")
+    print(
+        (
+            await api.get_raydium_pools(
+                get_raydium_pools_request=proto.GetRaydiumPoolsRequest()
+            )
+        ).to_json()
+    )
 
     print("fetching quotes")
     print(
