@@ -4,19 +4,29 @@ from .. import provider
 
 async def do_stream(api: provider.Provider, run_slow: bool = False):
     item_count = 0
+    print("streaming market depth updates...")
+    async for response in api.get_market_depths_stream(
+        get_market_depths_request=proto.GetMarketDepthsRequest(
+            markets=["SOLUSDC"], limit=10, project=proto.Project.P_OPENBOOK
+        )
+    ):
+        print(response.to_json())
+        item_count += 1
+        if item_count == 1:
+            item_count = 0
+            break
 
-    if run_slow:
-        print("streaming orderbook updates...")
-        async for response in api.get_orderbooks_stream(
-            get_orderbooks_request=proto.GetOrderbooksRequest(
-                markets=["SOLUSDC"], project=proto.Project.P_OPENBOOK
-            )
-        ):
-            print(response.to_json())
-            item_count += 1
-            if item_count == 1:
-                item_count = 0
-                break
+    print("streaming orderbook updates...")
+    async for response in api.get_orderbooks_stream(
+        get_orderbooks_request=proto.GetOrderbooksRequest(
+            markets=["SOLUSDC"], project=proto.Project.P_OPENBOOK
+        )
+    ):
+        print(response.to_json())
+        item_count += 1
+        if item_count == 1:
+            item_count = 0
+            break
 
     if run_slow:
         print("streaming ticker updates...")
