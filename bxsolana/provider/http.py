@@ -552,7 +552,7 @@ class HttpProvider(Provider):
         metadata: Optional["MetadataLike"] = None,
     ) -> proto.GetAccountBalanceResponse:
         async with self._session.get(
-            f"{self._endpoint}/account/balance?ownerAddress={get_account_balance_request.owner_address}"
+            f"{self._endpoint_v2}/balance?ownerAddress={get_account_balance_request.owner_address}"
         ) as res:
             return await map_response(res, proto.GetAccountBalanceResponse())
 
