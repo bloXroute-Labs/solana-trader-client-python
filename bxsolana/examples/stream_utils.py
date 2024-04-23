@@ -142,3 +142,15 @@ async def do_stream(api: provider.Provider, run_slow: bool = False):
             if item_count == 1:
                 item_count = 0
                 break
+
+    if run_slow:
+        print("streaming bundle tip updates...")
+        async for response in api.get_bundle_tip_stream(
+            get_bundle_tip_request=proto.GetBundleResultRequest()
+        ):
+            print(response.to_json())
+            item_count += 1
+            if item_count == 1:
+                item_count = 0
+                break
+
