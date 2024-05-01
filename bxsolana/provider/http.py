@@ -156,11 +156,14 @@ class HttpProvider(Provider):
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
     ) -> proto.GetJupiterQuotesResponse:
-        async with self._session.get(
+        url = (
             f"{self._endpoint_v2}/jupiter/quotes?inToken={get_jupiter_quotes_request.in_token}&"
             f"outToken={get_jupiter_quotes_request.out_token}&inAmount={get_jupiter_quotes_request.in_amount}&"
             f"slippage={get_jupiter_quotes_request.slippage}"
-        ) as res:
+        )
+        if get_jupiter_quotes_request.fast_mode is not None:
+            url += f"&fastMode={get_jupiter_quotes_request.fast_mode}"
+        async with self._session.get(url) as res:
             return await map_response(res, proto.GetJupiterQuotesResponse())
 
     async def get_raydium_prices(
