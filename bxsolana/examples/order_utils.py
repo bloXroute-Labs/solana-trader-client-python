@@ -92,6 +92,7 @@ async def place_order_with_tip(
             transaction=proto.TransactionMessage(content=signed_tx),
             skip_pre_flight=True,
             front_running_protection=True,
+            use_staked_rp_cs=True,
         )
     )
 
