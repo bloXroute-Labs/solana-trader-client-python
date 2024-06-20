@@ -651,8 +651,13 @@ class HttpProvider(Provider):
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
     ) -> proto.PostOrderResponse:
+        # the to_dict() call below will give use a field name of clientOrderId,
+        # however we need clientOrderID (id is capitalized, not camelCase). This
+        # code snippet will adjust the dictionary for us.
+        json = post_order_request.to_dict()
+        jsonFixed = {"clientOrderID" if k == "clientOrderId" else k:v for k,v in json.items()}
         async with self._session.post(
-            f"{self._endpoint}/trade/place", json=post_order_request.to_dict()
+            f"{self._endpoint}/trade/place", json=jsonFixed
         ) as res:
             return await map_response(res, proto.PostOrderResponse())
 
