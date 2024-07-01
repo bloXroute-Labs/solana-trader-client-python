@@ -63,11 +63,6 @@ async def ws():
             "submitted OPENBOOK tx with front running protection:"
             f" {openbook_bundle_tx.transaction.content}"
         )
-        # get feedback about your bundle
-        print(
-            "current bundle status:"
-            f" {api.get_bundle_result_v2(post_submit_response.uuid)}"
-        )
 
 
 async def grpc():
@@ -86,10 +81,10 @@ async def grpc():
 
         print(
             "created RAYDIUM swap tx with bundle tip of 1030:"
-            f" {raydium_bundle_tx.transaction.content}"
+            f" {raydium_bundle_tx.transactions[0].content}"
         )
 
-        signed_tx = signing.sign_tx(raydium_bundle_tx.transaction.content)
+        signed_tx = signing.sign_tx(raydium_bundle_tx.transactions[0].content)
 
         post_submit_response = await api.post_submit(
             post_submit_request=proto.PostSubmitRequest(
@@ -101,13 +96,7 @@ async def grpc():
 
         print(
             "submitted RAYDIUM tx with front running protection:"
-            f" {post_submit_response.transaction.content}"
-        )
-
-        # get feedback about your bundle
-        print(
-            "current bundle status:"
-            f" {api.get_bundle_result_v2(post_submit_response.uuid)}"
+            f" {post_submit_response.signature}"
         )
 
 
@@ -143,12 +132,6 @@ async def http():
         print(
             "submitted RAYDIUM tx with front running protection:"
             f" {post_submit_response.signature}"
-        )
-
-        # get feedback about your bundle
-        print(
-            "current bundle status:"
-            f" {api.get_bundle_result_v2(post_submit_response.uuid)}"
         )
 
 

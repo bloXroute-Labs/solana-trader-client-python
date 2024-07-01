@@ -33,7 +33,7 @@ async def do_transaction_requests(
             types=[OrderType.OT_LIMIT],
             amount=0.1,
             price=150_000,
-            project=proto.Project.P_SERUM,
+            project=proto.Project.P_OPENBOOK,
             # optional, but much faster if known
             open_orders_address=open_orders_addr,
             # optional, for identification
@@ -66,7 +66,7 @@ async def do_transaction_requests(
             types=[OrderType.OT_LIMIT],
             amount=0.1,
             price=150_000,
-            project=proto.Project.P_SERUM,
+            project=proto.Project.P_OPENBOOK,
             # optional, but much faster if known
             open_orders_address=open_orders_addr,
             # optional, for identification
@@ -88,7 +88,7 @@ async def do_transaction_requests(
             types=[OrderType.OT_LIMIT],
             amount=0.1,
             price=150_000,
-            project=proto.Project.P_SERUM,
+            project=proto.Project.P_OPENBOOK,
             # optional, but much faster if known
             open_orders_address=open_orders_addr,
             # optional, for identification

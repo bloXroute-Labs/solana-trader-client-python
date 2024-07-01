@@ -122,9 +122,23 @@ async def do_stream(api: provider.Provider, run_slow: bool = False):
                 break
 
     if run_slow:
-        print("streaming raydium new pool updates...")
+        if run_slow:
+            print("streaming raydium new pool updates without cpmm pools...")
+            async for response in api.get_new_raydium_pools_stream(
+                get_new_raydium_pools_request=proto.GetNewRaydiumPoolsRequest()
+            ):
+                print(response.to_json())
+                item_count += 1
+                if item_count == 1:
+                    item_count = 0
+                    break
+
+    if run_slow:
+        print("streaming raydium new pool updates with cpmm pools...")
         async for response in api.get_new_raydium_pools_stream(
-            get_new_raydium_pools_request=proto.GetNewRaydiumPoolsRequest()
+            get_new_raydium_pools_request=proto.GetNewRaydiumPoolsRequest(
+                include_cpmm=True
+            )
         ):
             print(response.to_json())
             item_count += 1
