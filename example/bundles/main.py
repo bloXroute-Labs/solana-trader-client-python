@@ -63,12 +63,6 @@ async def ws():
             "submitted OPENBOOK tx with front running protection:"
             f" {openbook_bundle_tx.transaction.content}"
         )
-        # get feedback about your bundle
-        print(
-            "current bundle status:"
-            f" {api.get_bundle_result_v2(post_submit_response.uuid)}"
-        )
-
 
 async def grpc():
     print("\n*** GRPC Test ***\n")
@@ -104,12 +98,6 @@ async def grpc():
             f" {post_submit_response.signature}"
         )
 
-        # get feedback about your bundle
-        print(
-            "current bundle status:"
-            f" {api.get_bundle_result_v2(post_submit_response.uuid)}"
-        )
-
 
 async def http():
     print("\n*** HTTP Test ***\n")
@@ -143,12 +131,6 @@ async def http():
         print(
             "submitted RAYDIUM tx with front running protection:"
             f" {post_submit_response.signature}"
-        )
-
-        # get feedback about your bundle
-        print(
-            "current bundle status:"
-            f" {api.get_bundle_result_v2(post_submit_response.uuid)}"
         )
 
 

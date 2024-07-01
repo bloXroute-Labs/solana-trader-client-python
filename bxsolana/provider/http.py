@@ -88,19 +88,6 @@ class HttpProvider(Provider):
         ) as res:
             return await map_response(res, proto.GetTransactionResponse())
 
-    async def get_bundle_result_v2(
-        self,
-        get_bundle_result_request: proto.GetBundleResultRequest,
-        *,
-        timeout: Optional[float] = None,
-        deadline: Optional["Deadline"] = None,
-        metadata: Optional["MetadataLike"] = None,
-    ) -> proto.GetBundleResultResponse:
-        async with self._session.get(
-            f"{self._endpoint_v2}/bundle-result/{get_bundle_result_request.uuid}"
-        ) as res:
-            return await map_response(res, proto.GetBundleResultResponse())
-
     async def get_raydium_pools(
         self,
         get_raydium_pools_request: proto.GetRaydiumPoolsRequest,
@@ -655,7 +642,7 @@ class HttpProvider(Provider):
         # however we need clientOrderID (id is capitalized, not camelCase). This
         # code snippet will adjust the dictionary for us.
         json = post_order_request.to_dict()
-        jsonFixed = {"clientOrderID" if k == "clientOrderId" else k:v for k,v in json.items()}
+        jsonFixed = {"clientOrderID" if k == "clientOrderId" else k: v for k, v in json.items()}
         async with self._session.post(
             f"{self._endpoint}/trade/place", json=jsonFixed
         ) as res:
