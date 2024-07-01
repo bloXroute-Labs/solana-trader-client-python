@@ -64,6 +64,7 @@ async def ws():
             f" {openbook_bundle_tx.transaction.content}"
         )
 
+
 async def grpc():
     print("\n*** GRPC Test ***\n")
     async with provider.grpc_testnet() as api:
