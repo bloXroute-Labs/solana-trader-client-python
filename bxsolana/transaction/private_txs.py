@@ -15,7 +15,6 @@ BloxrouteTipWallet = pk.Pubkey.from_string(
     "HWEoBxYs7ssKuudEjzjmpfJVX7Dvi7wescFsVx2L5yoY"
 )
 
-
 # create_trader_api_tip_instruction creates a tip instruction to send to bloxRoute. This is used if a user wants to send
 # bundles or wants front running protection. If using bloXroute API, this instruction must be included in the last
 # transaction sent to the API

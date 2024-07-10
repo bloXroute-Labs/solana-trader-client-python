@@ -167,3 +167,15 @@ async def do_stream(api: provider.Provider, run_slow: bool = False):
             if item_count == 1:
                 item_count = 0
                 break
+
+    if run_slow:
+        print("streaming zeta tx stream updates...")
+        async for response in api.get_zeta_transaction_stream(
+            get_zeta_transaction_stream_request=proto.GetZetaTransactionStreamRequest(instructions=["PlacePerpOrderV4"])
+        ):
+            print(response.to_json())
+            item_count += 1
+            if item_count == 1:
+                item_count = 0
+                break
+
