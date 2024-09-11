@@ -99,7 +99,7 @@ async def ws():
             examples.USDC_WALLET,
             examples.MARKET,
         )
-        await examples.do_stream(api, RUN_SLOW_STREAMS)
+        await examples.do_stream(api, provider.ws_pump_ny(), RUN_SLOW_STREAMS)
 
 
 async def grpc():
@@ -130,7 +130,7 @@ async def grpc():
             examples.USDC_WALLET,
             examples.MARKET,
         )
-        await examples.do_stream(api, RUN_SLOW_STREAMS)
+        await examples.do_stream(api, provider.grpc_pump_ny(), RUN_SLOW_STREAMS)
     finally:
         await p.close()
 

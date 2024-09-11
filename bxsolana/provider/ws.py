@@ -117,6 +117,10 @@ def ws() -> Provider:
     return WsProvider()
 
 
+def ws_pump_ny() -> Provider:
+    return WsProvider(endpoint=constants.MAINNET_API_PUMP_NY_WS)
+
+
 def ws_testnet() -> Provider:
     return WsProvider(endpoint=constants.TESTNET_API_WS)
 
