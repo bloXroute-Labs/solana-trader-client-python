@@ -80,26 +80,30 @@ async def ws():
     else:
         p = provider.ws_testnet()
 
-    async with p as api:
-        await examples.do_requests(
-            api,
-            examples.PUBLIC_KEY,
-            examples.OPEN_ORDERS,
-            examples.ORDER_ID,
-            examples.USDC_WALLET,
-            examples.MARKET,
-        )
-        await examples.do_transaction_requests(
-            api,
-            RUN_TRADES,
-            examples.PUBLIC_KEY,
-            examples.PUBLIC_KEY,
-            examples.OPEN_ORDERS,
-            examples.ORDER_ID,
-            examples.USDC_WALLET,
-            examples.MARKET,
-        )
-        await examples.do_stream(api, provider.ws_pump_ny(), RUN_SLOW_STREAMS)
+    pny = provider.ws_pump_ny()
+
+    async with pny as pnyy:
+        async with p as api:
+            await examples.do_requests(
+                api,
+                examples.PUBLIC_KEY,
+                examples.OPEN_ORDERS,
+                examples.ORDER_ID,
+                examples.USDC_WALLET,
+                examples.MARKET,
+            )
+            await examples.do_transaction_requests(
+                api,
+                RUN_TRADES,
+                examples.PUBLIC_KEY,
+                examples.PUBLIC_KEY,
+                examples.OPEN_ORDERS,
+                examples.ORDER_ID,
+                examples.USDC_WALLET,
+                examples.MARKET,
+            )
+
+            await examples.do_stream(api, pnyy, RUN_SLOW_STREAMS)
 
 
 async def grpc():
@@ -111,6 +115,8 @@ async def grpc():
         p = provider.grpc_testnet()
     api = await bxsolana.trader_api(p)
 
+    pumpny = provider.grpc_pump_ny()
+    pumpny_api = await bxsolana.trader_api(pumpny)
     try:
         await examples.do_requests(
             api,
@@ -130,7 +136,7 @@ async def grpc():
             examples.USDC_WALLET,
             examples.MARKET,
         )
-        await examples.do_stream(api, provider.grpc_pump_ny(), RUN_SLOW_STREAMS)
+        await examples.do_stream(api, pumpny_api, RUN_SLOW_STREAMS)
     finally:
         await p.close()
 
