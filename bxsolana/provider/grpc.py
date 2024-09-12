@@ -77,6 +77,14 @@ def grpc(auth_header: Optional[str] = None) -> Provider:
     return GrpcProvider(auth_header=auth_header, use_ssl=True)
 
 
+def grpc_pump_ny(auth_header: Optional[str] = None) -> Provider:
+    return GrpcProvider(
+        host=constants.MAINNET_API_PUMP_NY_GRPC_HOST,
+        auth_header=auth_header,
+        use_ssl=True,
+    )
+
+
 def grpc_testnet(auth_header: Optional[str] = None) -> Provider:
     return GrpcProvider(
         host=constants.TESTNET_API_GRPC_HOST,

@@ -1,4 +1,5 @@
 _mainnet_ny = "ny.solana.dex.blxrbdn.com"
+_mainnet_pump_ny = "pump-ny.solana.dex.blxrbdn.com"
 _mainnet_uk = "uk.solana.dex.blxrbdn.com"
 _testnet = "solana.dex.bxrtest.com"
 _devnet = "solana-trader-api-nlb-6b0f765f2fc759e1.elb.us-east-1.amazonaws.com"
@@ -20,7 +21,9 @@ def ws_endpoint(base: str, secure: bool) -> str:
 
 MAINNET_API_NY_HTTP = http_endpoint(_mainnet_ny, True)
 MAINNET_API_NY_WS = ws_endpoint(_mainnet_ny, True)
+MAINNET_API_PUMP_NY_WS = ws_endpoint(_mainnet_pump_ny, True)
 MAINNET_API_NY_GRPC_HOST = _mainnet_ny
+MAINNET_API_PUMP_NY_GRPC_HOST = _mainnet_pump_ny
 
 MAINNET_API_UK_HTTP = http_endpoint(_mainnet_uk, True)
 MAINNET_API_UK_WS = ws_endpoint(_mainnet_uk, True)
