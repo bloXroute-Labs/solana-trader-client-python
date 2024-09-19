@@ -84,7 +84,7 @@ you can build the solana-trader-proto/python directory using these commands
     
     
     and install the package locally now
-    $ pip install dist/bxsolana-trader-proto-0.0.42.tar.gz
+    $ pip install dist/bxsolana_trader_proto-<your version>.tar.gz
     
     now you can update the depdendency in solana-trader-client-python
     update the version of bxsolana-trader-proto in setup.cfg
