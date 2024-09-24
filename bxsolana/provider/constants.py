@@ -20,6 +20,7 @@ def ws_endpoint(base: str, secure: bool) -> str:
 
 
 MAINNET_API_NY_HTTP = http_endpoint(_mainnet_ny, True)
+MAINNET_API_PUMP_NY_HTTP = http_endpoint(_mainnet_pump_ny, True)
 MAINNET_API_NY_WS = ws_endpoint(_mainnet_ny, True)
 MAINNET_API_PUMP_NY_WS = ws_endpoint(_mainnet_pump_ny, True)
 MAINNET_API_NY_GRPC_HOST = _mainnet_ny

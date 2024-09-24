@@ -5,6 +5,7 @@ from .. import provider
 
 async def do_requests(
     api: provider.Provider,
+    pumpny_api: provider.Provider,
     public_key: str,
     open_orders: str,
     order_id: str,
@@ -435,7 +436,7 @@ async def do_requests(
     print("generate pump_fun swap")
     print(
         (
-            await api.post_pump_fun_swap(
+            await pumpny_api.post_pump_fun_swap(
                 post_pump_fun_swap_request=proto.PostPumpFunSwapRequest(
                     user_address=public_key,
                     bonding_curve_address=(

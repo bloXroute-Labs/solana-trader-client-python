@@ -863,5 +863,8 @@ def http_devnet() -> Provider:
     return HttpProvider(endpoint=constants.DEVNET_API_HTTP)
 
 
+def http_pump_ny() -> Provider:
+    return HttpProvider(endpoint=constants.MAINNET_API_PUMP_NY_HTTP)
+
 def http_local() -> Provider:
     return HttpProvider(endpoint=constants.LOCAL_API_HTTP)
