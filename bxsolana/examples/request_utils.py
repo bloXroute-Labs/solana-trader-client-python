@@ -5,6 +5,7 @@ from .. import provider
 
 async def do_requests(
     api: provider.Provider,
+    pumpny_api: provider.Provider,
     public_key: str,
     open_orders: str,
     order_id: str,
@@ -412,6 +413,41 @@ async def do_requests(
                     in_amount=0.01,
                     out_token="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
                     slippage=0.01,
+                )
+            )
+        )
+    )
+
+    print("generate raydium swap")
+    print(
+        (
+            await api.post_raydium_swap(
+                post_raydium_swap_request=proto.PostRaydiumSwapRequest(
+                    owner_address=public_key,
+                    in_token="So11111111111111111111111111111111111111112",
+                    in_amount=0.01,
+                    out_token="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                    slippage=0.01,
+                )
+            )
+        )
+    )
+
+    print("generate pump_fun swap")
+    print(
+        (
+            await pumpny_api.post_pump_fun_swap(
+                post_pump_fun_swap_request=proto.PostPumpFunSwapRequest(
+                    user_address=public_key,
+                    bonding_curve_address=(
+                        "7BcRpqUC7AF5Xsc3QEpCb8xmoi2X1LpwjUBNThbjWvyo"
+                    ),
+                    token_address=(
+                        "BAHY8ocERNc5j6LqkYav1Prr8GBGsHvBV5X3dWPhsgXw"
+                    ),
+                    token_amount=10,
+                    sol_threshold=0.0001,
+                    is_buy=True,
                 )
             )
         )

@@ -44,11 +44,13 @@ async def http():
     else:
         p = provider.http_testnet()
     api = await bxsolana.trader_api(p)
-
+    pny = provider.http_pump_ny()
+    pny_api = await bxsolana.trader_api(pny)
     # either `try`/`finally` or `async with` work with each type of provider
     try:
         await examples.do_requests(
             api,
+            pny_api,
             examples.PUBLIC_KEY,
             examples.OPEN_ORDERS,
             examples.ORDER_ID,
@@ -86,6 +88,7 @@ async def ws():
         async with p as api:
             await examples.do_requests(
                 api,
+                pnyy,
                 examples.PUBLIC_KEY,
                 examples.OPEN_ORDERS,
                 examples.ORDER_ID,
@@ -120,6 +123,7 @@ async def grpc():
     try:
         await examples.do_requests(
             api,
+            pumpny_api,
             examples.PUBLIC_KEY,
             examples.OPEN_ORDERS,
             examples.ORDER_ID,
