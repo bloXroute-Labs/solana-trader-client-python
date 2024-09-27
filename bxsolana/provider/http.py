@@ -135,6 +135,23 @@ class HttpProvider(Provider):
         ) as res:
             return await map_response(res, proto.GetRaydiumQuotesResponse())
 
+    async def get_pump_fun_quotes(
+        self,
+        get_pump_fun_quotes_request: proto.GetPumpFunQuotesRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.GetPumpFunQuotesResponse:
+        async with self._session.get(
+            f"{self._endpoint_v2}/pumpfun/quotes?quoteType={get_pump_fun_quotes_request.quote_type}&"
+            f"amount={get_pump_fun_quotes_request.amount}&"
+            f"bondingCurveAddress={get_pump_fun_quotes_request.bonding_curve_address}&"
+            f"mintAddress={get_pump_fun_quotes_request.mint_address}&"
+            f"slippage={get_pump_fun_quotes_request.slippage}"
+        ) as res:
+            return await map_response(res, proto.GetPumpFunQuotesResponse())
+
     async def get_jupiter_quotes(
         self,
         get_jupiter_quotes_request: proto.GetJupiterQuotesRequest,
