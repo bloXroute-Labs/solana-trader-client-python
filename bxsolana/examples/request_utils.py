@@ -37,6 +37,15 @@ async def do_requests(
     #     ).to_json()
     # )
 
+    print("fetching Raydium CLMM pools")
+    print(
+        (
+            await api.get_raydium_clmm_pools(
+                get_raydium_clmm_pools_request=proto.GetRaydiumClmmPoolsRequest()
+            )
+        ).to_json()
+    )
+
     print("getting transaction")
     print(
         (
@@ -209,6 +218,20 @@ async def do_requests(
                     in_token="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
                     out_token="So11111111111111111111111111111111111111112",
                     in_amount=0.01,
+                    slippage=10,
+                )
+            )
+        ).to_json()
+    )
+
+    print("fetching Raydium CLMM quotes")
+    print(
+        (
+            await api.get_raydium_clmm_quotes(
+                get_raydium_clmm_quotes_request=proto.GetRaydiumClmmQuotesRequest(
+                    in_token="USDC",
+                    out_token="SOL",
+                    in_amount=32,
                     slippage=10,
                 )
             )
@@ -418,6 +441,21 @@ async def do_requests(
         )
     )
 
+    print("generate raydium CLMM swap")
+    print(
+        (
+            await api.post_raydium_clmm_swap(
+                post_raydium_clmm_swap_request=proto.PostRaydiumClmmSwapRequest(
+                    owner_address=public_key,
+                    in_token="SOL",
+                    in_amount=1,
+                    out_token="USDC",
+                    slippage=10,
+                )
+            )
+        )
+    )
+
     print("generate raydium swap")
     print(
         (
@@ -479,6 +517,19 @@ async def do_requests(
         project=proto.StepProject(
             label="Raydium", id="58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2"
         ),
+    )
+
+    print("generate raydium CLMM route swap")
+    print(
+        (
+            await api.post_raydium_clmm_route_swap(
+                post_raydium_clmm_route_swap_request=proto.PostRaydiumClmmRouteSwapRequest(
+                    owner_address=public_key,
+                    slippage=10,
+                    steps=[step],
+                )
+            )
+        ).to_json()
     )
 
     print(
