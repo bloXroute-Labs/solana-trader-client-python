@@ -215,6 +215,23 @@ async def do_requests(
         ).to_json()
     )
 
+    print("fetching PumpFun quotes")
+    print(
+        (
+            await pumpny_api.get_pump_fun_quotes(
+                get_pump_fun_quotes_request=proto.GetPumpFunQuotesRequest(
+                    bonding_curve_address=(
+                        "Dga6eouREJ4kLHMqWWtccGGPsGebexuBYrcepBVd494q"
+                    ),
+                    mint_address="9QG5NHnfqQCyZ9SKhz7BzfjPseTFWaApmAtBTziXLanY",
+                    amount=0.01,
+                    slippage=1,
+                    quote_type="buy",
+                )
+            )
+        ).to_json()
+    )
+
     print("fetching Jupiter quotes")
     print(
         (
