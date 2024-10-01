@@ -46,6 +46,8 @@ async def do_requests(
         ).to_json()
     )
 
+
+
     print("getting transaction")
     print(
         (
@@ -246,6 +248,20 @@ async def do_requests(
         (
             await api.get_raydium_clmm_quotes(
                 get_raydium_clmm_quotes_request=proto.GetRaydiumClmmQuotesRequest(
+                    in_token="USDC",
+                    out_token="SOL",
+                    in_amount=32,
+                    slippage=10,
+                )
+            )
+        ).to_json()
+    )
+
+    print("fetching Raydium CPMM quotes")
+    print(
+        (
+            await api.get_raydium_cpmm_quotes(
+                get_raydium_cpmm_quotes_request=proto.GetRaydiumCpmmQuotesRequest(
                     in_token="USDC",
                     out_token="SOL",
                     in_amount=32,
@@ -463,6 +479,21 @@ async def do_requests(
         (
             await api.post_raydium_clmm_swap(
                 post_raydium_swap_request=proto.PostRaydiumSwapRequest(
+                    owner_address=public_key,
+                    in_token="SOL",
+                    in_amount=1,
+                    out_token="USDC",
+                    slippage=10,
+                )
+            )
+        )
+    )
+
+    print("generate raydium CPMM swap")
+    print(
+        (
+            await api.post_raydium_cpmm_swap(
+                post_raydium_cpmm_swap_request=proto.PostRaydiumCpmmSwapRequest(
                     owner_address=public_key,
                     in_token="SOL",
                     in_amount=1,
