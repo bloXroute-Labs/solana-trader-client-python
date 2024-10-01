@@ -102,16 +102,16 @@ class HttpProvider(Provider):
             return await map_response(res, proto.GetRaydiumPoolsResponse())
 
     async def get_raydium_clmm_pools(
-            self,
-            get_raydium_clmm_pools_request: proto.GetRaydiumClmmPoolsRequest,
-            *,
-            timeout: Optional[float] = None,
-            deadline: Optional["Deadline"] = None,
-            metadata: Optional["MetadataLike"] = None,
+        self,
+        get_raydium_clmm_pools_request: proto.GetRaydiumClmmPoolsRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
     ) -> proto.GetRaydiumClmmPoolsResponse:
         async with self._session.get(
-                f"{self._endpoint_v2}/raydium/clmm-pools"
-                f"?pairOrAddress={get_raydium_clmm_pools_request.pair_or_address}"
+            f"{self._endpoint_v2}/raydium/clmm-pools"
+            f"?pairOrAddress={get_raydium_clmm_pools_request.pair_or_address}"
         ) as res:
             return await map_response(res, proto.GetRaydiumClmmPoolsResponse())
 
@@ -167,17 +167,17 @@ class HttpProvider(Provider):
             return await map_response(res, proto.GetPumpFunQuotesResponse())
 
     async def get_raydium_clmm_quotes(
-            self,
-            get_raydium_clmm_quotes_request: proto.GetRaydiumQuotesRequest,
-            *,
-            timeout: Optional[float] = None,
-            deadline: Optional["Deadline"] = None,
-            metadata: Optional["MetadataLike"] = None,
-    ) -> proto.GetRaydiumQuotesResponse:
+        self,
+        get_raydium_clmm_quotes_request: proto.GetRaydiumClmmQuotesRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.GetRaydiumClmmQuotesResponse:
         async with self._session.get(
-                f"{self._endpoint_v2}/raydium/clmm-quotes?inToken={get_raydium_clmm_quotes_request.in_token}&"
-                f"outToken={get_raydium_clmm_quotes_request.out_token}&inAmount={get_raydium_clmm_quotes_request.in_amount}&"
-                f"slippage={get_raydium_clmm_quotes_request.slippage}"
+            f"{self._endpoint_v2}/raydium/clmm-quotes?inToken={get_raydium_clmm_quotes_request.in_token}&"
+            f"outToken={get_raydium_clmm_quotes_request.out_token}&inAmount={get_raydium_clmm_quotes_request.in_amount}&"
+            f"slippage={get_raydium_clmm_quotes_request.slippage}"
         ) as res:
             return await map_response(res, proto.GetRaydiumQuotesResponse())
 
@@ -260,18 +260,18 @@ class HttpProvider(Provider):
             return await map_response(res, proto.PostRaydiumSwapResponse())
 
     async def post_raydium_clmm_swap(
-            self,
-            post_raydium_clmm_swap_request: proto.PostRaydiumClmmSwapRequest,
-            *,
-            timeout: Optional[float] = None,
-            deadline: Optional["Deadline"] = None,
-            metadata: Optional["MetadataLike"] = None,
-    ) -> proto.PostRaydiumClmmSwapResponse:
+        self,
+        post_raydium_swap_request: proto.PostRaydiumSwapRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.PostRaydiumSwapResponse:
         async with self._session.post(
-                f"{self._endpoint_v2}/raydium/clmm-swap",
-                json=post_raydium_clmm_swap_request.to_dict(),
+            f"{self._endpoint_v2}/raydium/clmm-swap",
+            json=post_raydium_swap_request.to_dict(),
         ) as res:
-            return await map_response(res, proto.PostRaydiumClmmSwapResponse())
+            return await map_response(res, proto.PostRaydiumSwapResponse())
 
     async def post_pump_fun_swap(
         self,
@@ -316,16 +316,16 @@ class HttpProvider(Provider):
             return await map_response(res, proto.PostRaydiumRouteSwapResponse())
 
     async def post_raydium_clmm_route_swap(
-            self,
-            post_raydium_clmm_route_swap_request: proto.PostRaydiumClmmRouteSwapRequest,
-            *,
-            timeout: Optional[float] = None,
-            deadline: Optional["Deadline"] = None,
-            metadata: Optional["MetadataLike"] = None,
+        self,
+        post_raydium_route_swap_request: proto.PostRaydiumRouteSwapRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
     ) -> proto.PostRaydiumRouteSwapResponse:
         async with self._session.post(
-                f"{self._endpoint_v2}/raydium/clmm-route-swap",
-                json=post_raydium_clmm_route_swap_request.to_dict(),
+            f"{self._endpoint_v2}/raydium/clmm-route-swap",
+            json=post_raydium_route_swap_request.to_dict(),
         ) as res:
             return await map_response(res, proto.PostRaydiumRouteSwapResponse())
 

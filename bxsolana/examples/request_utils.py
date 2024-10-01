@@ -462,7 +462,7 @@ async def do_requests(
     print(
         (
             await api.post_raydium_clmm_swap(
-                post_raydium_clmm_swap_request=proto.PostRaydiumClmmSwapRequest(
+                post_raydium_swap_request=proto.PostRaydiumSwapRequest(
                     owner_address=public_key,
                     in_token="SOL",
                     in_amount=1,
@@ -525,7 +525,7 @@ async def do_requests(
     )
 
     print("generate route swap")
-    step = proto.RouteStep(
+    step = proto.RaydiumRouteStep(
         in_token="So11111111111111111111111111111111111111112",
         in_amount=0.01,
         out_token="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
@@ -540,13 +540,24 @@ async def do_requests(
     print(
         (
             await api.post_raydium_clmm_route_swap(
-                post_raydium_clmm_route_swap_request=proto.PostRaydiumClmmRouteSwapRequest(
+                post_raydium_route_swap_request=proto.PostRaydiumRouteSwapRequest(
                     owner_address=public_key,
                     slippage=10,
                     steps=[step],
                 )
             )
         ).to_json()
+    )
+
+    step = proto.RouteStep(
+        in_token="So11111111111111111111111111111111111111112",
+        in_amount=0.01,
+        out_token="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+        out_amount=0.007505,
+        out_amount_min=0.0074,
+        project=proto.StepProject(
+            label="Raydium", id="58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2"
+        ),
     )
 
     print(
