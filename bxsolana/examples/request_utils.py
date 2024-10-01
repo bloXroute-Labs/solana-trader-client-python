@@ -46,8 +46,6 @@ async def do_requests(
         ).to_json()
     )
 
-
-
     print("getting transaction")
     print(
         (
