@@ -101,7 +101,7 @@ class HttpProvider(Provider):
         ) as res:
             return await map_response(res, proto.GetRaydiumPoolsResponse())
 
-        async def get_raydium_clmm_pools(
+    async def get_raydium_clmm_pools(
             self,
             get_raydium_clmm_pools_request: proto.GetRaydiumClmmPoolsRequest,
             *,
