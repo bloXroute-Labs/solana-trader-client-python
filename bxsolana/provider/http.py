@@ -632,6 +632,19 @@ class HttpProvider(Provider):
         ) as res:
             return await map_response(res, proto.GetRecentBlockHashResponse())
 
+    async def get_recent_block_hash_v2(
+        self,
+        get_recent_block_hash_request_v2: proto.GetRecentBlockHashRequestV2,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.GetRecentBlockHashResponseV2:
+        async with self._session.get(
+            f"{self._endpoint_v2}/system/blockhash?offset={get_recent_block_hash_request_v2.offset}"
+        ) as res:
+            return await map_response(res, proto.GetRecentBlockHashResponseV2())
+
     async def get_priority_fee(
         self,
         get_priority_fee_request: proto.GetPriorityFeeRequest,
