@@ -63,51 +63,27 @@ Refer to the `examples/` for more info.
 bloXroute Solana Trader API's interfaces are primarily powered by protobuf, so you will 
 need to install it for your system: https://grpc.io/docs/protoc-installation/
 
-In order to install local version of bxsolana_trader_proto dependency
-
-you can build the solana-trader-proto/python directory using these commands
-
-
-```
-    $ cd ~/solana-trader-proto/
-    
-    upgrade the version in pyproject.toml
-    
-   
-    $ make proto-build-api-python
-    $ cd python
-    
-    you can also push the package to pypi 
-    $ rm -rf python/dist/
-    $ python3 -m build
-    $ python3 -m twine upload --repository pypi dist/*
-    
-    
-    and install the package locally now
-    $ pip install dist/bxsolana_trader_proto-<your version>.tar.gz
-    
-    now you can update the depdendency in solana-trader-client-python
-    update the version of bxsolana-trader-proto in setup.cfg
-    and run 
-    $ pip install -r requirements.txt
-    
-
-```
-
 Clone project and install dependencies:
 
 ```
-$ git clone https://github.com/bloXroute-Labs/solana-trader-client-python.git
-$ cd solana-trader-client-python
-$ pip install -r requirements.txt
+    $ git clone https://github.com/bloXroute-Labs/solana-trader-client-python.git
+```
+You can build the **solana-trader-proto-python** directory using these steps:
+
+ - update **setup.cfg**, set the new version of bxsolana-trader-proto, e.g.
+```
+    bxsolana-trader-proto==0.0.86
+```
+- run:
+```
+    $ pip install -r requirements.txt
 ```
 
 Run tests:
-
 ```
-$ make test
-
+    $ make test
+```
 Linting:
 ```
-$ make lint
+    $ make lint
 ```

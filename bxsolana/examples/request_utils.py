@@ -624,3 +624,32 @@ async def do_requests(
             )
         ).to_json()
     )
+
+    print("fetching Recent Block Hash")
+    print(
+        (
+            await api.get_recent_block_hash(
+                get_recent_block_hash_request=proto.GetRecentBlockHashRequest()
+            )
+        ).to_json()
+    )
+
+    print("fetching Recent Block Hash V2 without offset")
+    print(
+        (
+            await api.get_recent_block_hash_v2(
+                get_recent_block_hash_request_v2=proto.GetRecentBlockHashRequestV2()
+            )
+        ).to_json()
+    )
+
+    print("fetching Recent Block Hash V2 with offset")
+    print(
+        (
+            await api.get_recent_block_hash_v2(
+                get_recent_block_hash_request_v2=proto.GetRecentBlockHashRequestV2(
+                    offset=1
+                )
+            )
+        ).to_json()
+    )
