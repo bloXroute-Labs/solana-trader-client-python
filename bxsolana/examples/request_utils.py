@@ -37,6 +37,15 @@ async def do_requests(
     #     ).to_json()
     # )
 
+    print("fetching Raydium CLMM pools")
+    print(
+        (
+            await api.get_raydium_clmm_pools(
+                get_raydium_clmm_pools_request=proto.GetRaydiumClmmPoolsRequest()
+            )
+        ).to_json()
+    )
+
     print("getting transaction")
     print(
         (
@@ -227,6 +236,34 @@ async def do_requests(
                     amount=0.01,
                     slippage=1,
                     quote_type="buy",
+                )
+            )
+        ).to_json()
+    )
+
+    print("fetching Raydium CLMM quotes")
+    print(
+        (
+            await api.get_raydium_clmm_quotes(
+                get_raydium_clmm_quotes_request=proto.GetRaydiumClmmQuotesRequest(
+                    in_token="USDC",
+                    out_token="SOL",
+                    in_amount=32,
+                    slippage=10,
+                )
+            )
+        ).to_json()
+    )
+
+    print("fetching Raydium CPMM quotes")
+    print(
+        (
+            await api.get_raydium_cpmm_quotes(
+                get_raydium_cpmm_quotes_request=proto.GetRaydiumCpmmQuotesRequest(
+                    in_token="USDC",
+                    out_token="SOL",
+                    in_amount=32,
+                    slippage=10,
                 )
             )
         ).to_json()
@@ -435,6 +472,36 @@ async def do_requests(
         )
     )
 
+    print("generate raydium CLMM swap")
+    print(
+        (
+            await api.post_raydium_clmm_swap(
+                post_raydium_swap_request=proto.PostRaydiumSwapRequest(
+                    owner_address=public_key,
+                    in_token="SOL",
+                    in_amount=1,
+                    out_token="USDC",
+                    slippage=10,
+                )
+            )
+        )
+    )
+
+    print("generate raydium CPMM swap")
+    print(
+        (
+            await api.post_raydium_cpmm_swap(
+                post_raydium_cpmm_swap_request=proto.PostRaydiumCpmmSwapRequest(
+                    owner_address=public_key,
+                    in_token="SOL",
+                    in_amount=1,
+                    out_token="USDC",
+                    slippage=10,
+                )
+            )
+        )
+    )
+
     print("generate raydium swap")
     print(
         (
@@ -487,6 +554,30 @@ async def do_requests(
     )
 
     print("generate route swap")
+    step = proto.RaydiumRouteStep(
+        in_token="So11111111111111111111111111111111111111112",
+        in_amount=0.01,
+        out_token="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+        out_amount=0.007505,
+        out_amount_min=0.0074,
+        project=proto.StepProject(
+            label="Raydium", id="58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2"
+        ),
+    )
+
+    print("generate raydium CLMM route swap")
+    print(
+        (
+            await api.post_raydium_clmm_route_swap(
+                post_raydium_route_swap_request=proto.PostRaydiumRouteSwapRequest(
+                    owner_address=public_key,
+                    slippage=10,
+                    steps=[step],
+                )
+            )
+        ).to_json()
+    )
+
     step = proto.RouteStep(
         in_token="So11111111111111111111111111111111111111112",
         in_amount=0.01,

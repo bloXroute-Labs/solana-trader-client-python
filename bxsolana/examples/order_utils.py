@@ -48,7 +48,7 @@ async def place_order(
     )
 
     print(
-        f"placing order with clientOrderID {client_order_id.__str__()},"
+        f"placing order with clientOrderID {client_order_id.__str__()}, "
         f" response signature: {post_submit_response.signature}"
     )
 
@@ -97,7 +97,7 @@ async def place_order_with_tip(
     )
 
     print(
-        f"placing order with clientOrderID {client_order_id.__str__()},"
+        f"placing order with clientOrderID {client_order_id.__str__()}, "
         f" response signature: {post_submit_response.signature}"
     )
 
@@ -132,7 +132,7 @@ async def cancel_order(
         )
     )
     print(
-        f"cancelling order with clientOrderID {client_order_id.__str__()},"
+        f"cancelling order with clientOrderID {client_order_id.__str__()}, "
         f" response signature: {post_submit_response.signature}"
     )
 
@@ -322,7 +322,7 @@ async def replace_order_by_client_order_id(
         )
     )
     print(
-        f"replacing order with clientOrderID {client_order_id.__str__()},"
+        f"replacing order with clientOrderID {client_order_id.__str__()}, "
         f" response signature: {post_submit_response.signature}"
     )
 
