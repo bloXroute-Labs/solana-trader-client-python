@@ -1,5 +1,5 @@
 import asyncio
-import async_timeout
+import async_timeout  # type: ignore
 
 from bxsolana import provider
 from bxsolana_trader_proto import api as proto
