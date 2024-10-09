@@ -77,3 +77,10 @@ def sign_tx_message_with_private_key(
         sign_tx_with_private_key(tx_message.content, keypair),
         tx_message.is_cleanup,
     )
+
+def sign_tx_message_with_private_key(
+    tx_message: proto.TransactionMessageV2, keypair: kp.Keypair
+) -> proto.TransactionMessage:
+    return proto.TransactionMessage(
+        sign_tx_with_private_key(tx_message.content, keypair),
+    )

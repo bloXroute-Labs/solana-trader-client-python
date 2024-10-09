@@ -32,7 +32,7 @@ class WsProvider(Provider):
     # noinspection PyMissingConstructor
     def __init__(
         self,
-        endpoint: str = constants.MAINNET_API_NY_WS,
+        endpoint: str = constants.MAINNET_API_UK_WS,
         auth_header: Optional[str] = None,
         private_key: Optional[str] = None,
         request_timeout_s: Optional[int] = None,
