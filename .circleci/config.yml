@@ -2,7 +2,7 @@ version: 2.1
 executors:
   bxpython:
     docker:
-      - image: cimg/python:3.10.7
+      - image: cimg/python:3.12.0
     environment:
       RUN_TRADES: false
       RUN_SLOW_STREAMS: false
@@ -26,7 +26,7 @@ jobs:
           name: Install dependencies
           command: |
             cd ~/ws/solana-trader-client-python
-            python -m virtualenv venv
+            python -m virtualenv --clear venv
             . venv/bin/activate
             pip install -r requirements.txt
             make environment-integration
@@ -48,6 +48,12 @@ jobs:
           command: |
             cd ~/ws/solana-trader-client-python
             . venv/bin/activate
+            pip install pyre-check black flake8  # adjust based on your needs
+            echo "Current directory contents:"
+            python --version
+            ls -la
+            echo "Pyre configuration contents:"
+            cat .pyre_configuration
             make lint
   unit:
     executor: bxpython

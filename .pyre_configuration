@@ -6,5 +6,6 @@
   ],
   "ignore_all_errors": [
     "bxsolana/proto/"
-  ]
+  ],
+  "python_version": "3.11"
 }

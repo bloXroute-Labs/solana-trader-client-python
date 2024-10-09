@@ -3,7 +3,7 @@ from typing import Type, AsyncGenerator, Optional, TYPE_CHECKING, List, Any
 
 import aiohttp
 
-from solders import keypair as kp
+from solders import keypair as kp  # pyre-ignore[21]: module is too hard to find
 
 from bxsolana_trader_proto import api as proto
 from grpclib.metadata import Deadline
@@ -24,21 +24,20 @@ if TYPE_CHECKING:
 
 
 class HttpProvider(Provider):
-    _endpoint: str
-    _endpoint_v2: str
-    _session: aiohttp.ClientSession
-    _private_key: Optional[kp.Keypair]
+    _endpoint: str # pyre-ignore[11]: annotation
+    _endpoint_v2: str # pyre-ignore[11]: annotation
+    _session: aiohttp.ClientSession # pyre-ignore[11]: annotation
+    _private_key: Optional[kp.Keypair] # pyre-ignore[11]: annotation
 
     # noinspection PyMissingConstructor
     def __init__(
         self,
-        endpoint: str = constants.MAINNET_API_NY_HTTP,
+        endpoint: str = constants.MAINNET_API_UK_HTTP,
         auth_header: Optional[str] = None,
         private_key: Optional[str] = None,
     ):
-        self._endpoint = f"{endpoint}/api/v1"
-        self._endpoint_v2 = f"{endpoint}/api/v2"
-
+        self._endpoint = f'{endpoint}/api/v1'
+        self._endpoint_v2 = f'{endpoint}/api/v2'
         if auth_header is None:
             auth_header = os.environ["AUTH_HEADER"]
 
@@ -72,6 +71,9 @@ class HttpProvider(Provider):
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
     ) -> proto.GetRateLimitResponse:
+
+        print(f"{self._endpoint_v2}/rate-limit")
+
         async with self._session.get(f"{self._endpoint_v2}/rate-limit") as res:
             return await map_response(res, proto.GetRateLimitResponse())
 
@@ -408,6 +410,8 @@ class HttpProvider(Provider):
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
     ) -> proto.GetTickersResponseV2:
+
+        print(f"{self._endpoint_v2}/openbook/tickers/{get_tickers_request_v2.market}")
         async with self._session.get(
             f"{self._endpoint_v2}/openbook/tickers/{get_tickers_request_v2.market}"
         ) as res:

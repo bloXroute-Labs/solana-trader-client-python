@@ -1,3 +1,10 @@
+# flake8: noqa
+
+from .private_txs import (
+    create_trader_api_tip_instruction,  # noqa: F401
+    create_trader_api_tip_tx_signed  # noqa: F401
+)
+
 from .memo import (
     create_trader_api_memo_instruction,
     add_memo_to_serialized_txn,
@@ -9,7 +16,7 @@ from .signing import (
     sign_tx,
     sign_tx_with_private_key,
     sign_tx_message_with_private_key,
-    load_open_orders,
+    load_open_orders, sign_tx_message_with_private_key_v2,
 )
 
 __all__ = [
@@ -18,7 +25,9 @@ __all__ = [
     "sign_tx",
     "sign_tx_with_private_key",
     "sign_tx_message_with_private_key",
+    "sign_tx_message_with_private_key_v2",
     "load_open_orders",
     "create_trader_api_memo_instruction",
     "add_memo_to_serialized_txn",
+
 ]

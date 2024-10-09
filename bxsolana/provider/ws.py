@@ -5,7 +5,7 @@ from typing import AsyncGenerator, Dict, Optional, TYPE_CHECKING, Type
 
 import jsonrpc
 from . import jsonrpc_patch  # noqa: F401, Used for side-effect patching
-from solders import keypair as kp
+from solders import keypair as kp # pyre-ignore[21]: module is too hard to find
 
 from . import Provider, constants
 from .. import transaction
@@ -24,15 +24,15 @@ if TYPE_CHECKING:
 
 
 class WsProvider(Provider):
-    _ws: jsonrpc.WsRpcConnection
+    _ws: jsonrpc.WsRpcConnection  # pyre-ignore[11]: annotation
 
-    _endpoint: str
-    _private_key: Optional[kp.Keypair]
+    _endpoint: str  # pyre-ignore[11]: annotation
+    _private_key: Optional[kp.Keypair]  # pyre-ignore[11]: annotation
 
-    # noinspection PyMissingConstructor
+
     def __init__(
         self,
-        endpoint: str = constants.MAINNET_API_NY_WS,
+        endpoint: str = constants.MAINNET_API_UK_WS,
         auth_header: Optional[str] = None,
         private_key: Optional[str] = None,
         request_timeout_s: Optional[int] = None,
