@@ -9,14 +9,14 @@ def http_endpoint(base: str, secure: bool) -> str:
     prefix = "http"
     if secure:
         prefix = "https"
-    return f"{prefix}: //{base}"
+    return f"{prefix}://{base}"
 
 
 def ws_endpoint(base: str, secure: bool) -> str:
     prefix = "ws"
     if secure:
         prefix = "wss"
-    return f"{prefix}: //{base}/ws"
+    return f"{prefix}://{base}/ws"
 
 
 MAINNET_API_NY_HTTP = http_endpoint(_mainnet_ny, True)

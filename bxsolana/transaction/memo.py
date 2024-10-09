@@ -1,9 +1,9 @@
 import base64
 
-from solders import pubkey as pk
-from solders import instruction as inst
-from solders import transaction as solders_tx
-from solders import message as solders_msg
+from solders import pubkey as pk # pyre-ignore[21]: module is too hard to find
+from solders import instruction as inst # pyre-ignore[21]: module is too hard to find
+from solders import transaction as solders_tx # pyre-ignore[21]: module is too hard to find
+from solders import message as solders_msg  # pyre-ignore[21]: module is too hard to find
 
 BxMemoMarkerMsg = "Powered by bloXroute Trader Api"
 TraderAPIMemoProgram = pk.Pubkey.from_string(
@@ -15,7 +15,7 @@ TraderAPIMemoProgram = pk.Pubkey.from_string(
 # Having a memo instruction with signals Trader-API usage is required
 def create_trader_api_memo_instruction(
     msg: str,
-) -> inst.Instruction:
+) -> inst.Instruction:  # pyre-ignore[11]: annotation
     if msg == "":
         msg = BxMemoMarkerMsg
 
@@ -27,7 +27,7 @@ def create_trader_api_memo_instruction(
 
 def create_compiled_memo_instruction(
     program_id_index: int,
-) -> inst.CompiledInstruction:
+) -> inst.CompiledInstruction:  # pyre-ignore[11]: annotation
     data = bytes(BxMemoMarkerMsg, "utf-8")
     instruction = inst.CompiledInstruction(program_id_index, data, bytes([]))
 
@@ -35,7 +35,7 @@ def create_compiled_memo_instruction(
 
 
 def add_memo(
-    tx: solders_tx.VersionedTransaction,
+    tx: solders_tx.VersionedTransaction,  # pyre-ignore[11]: annotation
 ) -> solders_tx.VersionedTransaction:
     instructions = tx.message.instructions
     accounts = tx.message.account_keys
