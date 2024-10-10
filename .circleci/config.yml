@@ -2,7 +2,7 @@ version: 2.1
 executors:
   bxpython:
     docker:
-      - image: cimg/python:3.10.7
+      - image: cimg/python:3.12.0
     environment:
       RUN_TRADES: false
       RUN_SLOW_STREAMS: false
