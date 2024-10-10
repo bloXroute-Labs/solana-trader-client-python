@@ -78,7 +78,7 @@ def sign_tx_message_with_private_key(
         tx_message.is_cleanup,
     )
 
-def sign_tx_message_with_private_key(
+def sign_tx_message_with_private_key_v2(
     tx_message: proto.TransactionMessageV2, keypair: kp.Keypair
 ) -> proto.TransactionMessage:
     return proto.TransactionMessage(

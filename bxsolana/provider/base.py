@@ -317,7 +317,7 @@ class Provider(api.ApiStub, ABC):
         slippage: float = 0,
         compute_limit: int = 0,
         compute_price: int = 0,
-            tip: int = 0,
+        tip: int = 0,
         skip_pre_flight: bool = True,
         submit_strategy: api.SubmitStrategy = api.SubmitStrategy.P_ABORT_ON_FIRST_ERROR,
     ) -> api.PostSubmitBatchResponse:
@@ -360,7 +360,7 @@ class Provider(api.ApiStub, ABC):
         slippage: float = 0,
         compute_limit: int = 0,
         compute_price: int = 0,
-            tip: int = 0,
+        tip: int = 0,
         skip_pre_flight: bool = True,
         submit_strategy: api.SubmitStrategy = api.SubmitStrategy.P_ABORT_ON_FIRST_ERROR,
     ) -> api.PostSubmitBatchResponse:
@@ -562,7 +562,7 @@ class Provider(api.ApiStub, ABC):
             tip=tip
         ))
 
-        signed_tx = transaction.sign_tx_message_with_private_key(
+        signed_tx = transaction.sign_tx_message_with_private_key_v2(
             swap.transaction, pk
         )
 

@@ -1,15 +1,17 @@
-import os
 from asyncio.log import logger
 from collections.abc import Callable, Awaitable
 from pprint import pprint
 
-from bxsolana import provider, transaction
+from bxsolana import provider
 from bxsolana_trader_proto import api as proto
+
+import os
+
 
 
 class Endpoint:
     func: Callable[[provider.Provider], Awaitable[bool]]
-    requires_auth: bool
+    requires_additional_env_vars: bool
 
     def __init__(self, func: Callable[[provider.Provider], Awaitable[bool]], requires_additional_env_vars: bool):
         self.func = func
@@ -192,7 +194,7 @@ async def get_unsettled(p: provider.Provider) -> bool:
         proto.GetUnsettledRequestV2(market="SOLUSDC", owner_address="HxFLKUAmAMLz1jtT3hbvCMELwH5H9tpM2QugP8sKyfhc"))
     pprint(resp)
 
-    return True if resp.token_prices is not None else False
+    return True if resp.market is not None else False
 
 
 async def get_account_balance(p: provider.Provider) -> bool:
@@ -230,7 +232,7 @@ async def get_raydium_quotes(p: provider.Provider) -> bool:
 
     pprint(resp)
 
-    return True if resp.quotes is not None else False
+    return True if resp.routes is not None else False
 
 
 async def get_raydium_cpmm_quotes(p: provider.Provider) -> bool:
@@ -324,7 +326,7 @@ async def market_depth_stream(p: provider.Provider) -> bool:
         pprint(resp)
         await p.close()
 
-        return True if resp.orderbook is not None else False
+        return True if resp.data is not None else False
     return False
 
 
@@ -403,7 +405,7 @@ async def get_trades_stream(p: provider.Provider) -> bool:
         pprint(resp)
 
         await p.close()
-        return True if resp.swap is not None else False
+        return True if resp.trades is not None else False
     return False
 
 
