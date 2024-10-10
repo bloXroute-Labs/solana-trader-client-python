@@ -28,7 +28,6 @@ cryptography~=43.0.1
 more-itertools~=10.5.0
 Pygments~=2.18.0
 betterproto~=2.0.0b6
-zlib~=1.2.13
 openssl~=3.0.15
 jaraco-classes~=3.4.0
 nest-asyncio~=1.6.0
