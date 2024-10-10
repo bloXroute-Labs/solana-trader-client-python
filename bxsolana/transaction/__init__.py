@@ -1,3 +1,8 @@
+from .private_txs import (
+    create_trader_api_tip_instruction,
+    create_trader_api_tip_tx_signed
+)
+
 from .memo import (
     create_trader_api_memo_instruction,
     add_memo_to_serialized_txn,
@@ -22,4 +27,5 @@ __all__ = [
     "load_open_orders",
     "create_trader_api_memo_instruction",
     "add_memo_to_serialized_txn",
+
 ]
