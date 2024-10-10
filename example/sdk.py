@@ -7,9 +7,10 @@ import nest_asyncio
 import os
 import pyfiglet
 
-from example.menu.menu import MenuSelection
+from .menu.menu import MenuSelection
 
-from example.samples.helpers import Endpoint, get_markets, get_pools, get_tickers, get_raydium_clmm_pools, \
+
+from .samples.helpers import Endpoint, get_markets, get_pools, get_tickers, get_raydium_clmm_pools, \
     get_orderbook, get_raydium_pool_reserves, get_market_depth, get_open_orders, get_transaction, get_recent_blockhash, \
     get_recent_blockhash_offset, get_rate_limit, get_price, get_raydium_pools, get_raydium_prices, get_jupiter_prices, \
     get_unsettled, get_account_balance, get_quotes, get_raydium_quotes, get_raydium_cpmm_quotes, \
