@@ -1,6 +1,10 @@
-from bxsolana import provider
+# from bxsolana import provider
 from colorama import init
 from termcolor import colored
+
+
+
+import bxsolana.provider as provider
 
 import asyncio
 import nest_asyncio
