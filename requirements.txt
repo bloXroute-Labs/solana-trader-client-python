@@ -32,6 +32,4 @@ jaraco-classes~=3.4.0
 nest-asyncio~=1.6.0
 termcolor~=2.1.0
 async-timeout~=4.0.3
-zlib~=1.2.13
-openssl~=3.0.15
 prompt-toolkit~=3.0.48
