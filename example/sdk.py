@@ -18,7 +18,7 @@ from example.samples.helpers import Endpoint, get_markets, get_pools, get_ticker
     get_new_raydium_pools_stream_cpmm, get_recent_blockhash_stream, get_pool_reserve_stream, \
     get_block_stream, get_priority_fee, get_priority_fee_stream, get_bundle_tip_stream, get_token_accounts, \
     call_trade_swap, call_route_trade_swap, call_raydium_trade_swap, call_raydium_cpmm_trade_swap, \
-    call_raydium_clmm_trade_swap, call_jupiter_trade_swap, call_pump_fun_trade_swap
+    call_raydium_clmm_trade_swap, call_jupiter_trade_swap, call_pump_fun_trade_swap, create_personal_tx_and_submit
 
 nest_asyncio.apply()
 init(autoreset=True)
@@ -92,6 +92,7 @@ ExampleEndpoints = {
     "raydium_clmm_swap": Endpoint(func=call_raydium_clmm_trade_swap, requires_additional_env_vars=True),
     "jupiter_swap": Endpoint(func=call_jupiter_trade_swap, requires_additional_env_vars=True),
     "pump_fun_swap": Endpoint(func=call_pump_fun_trade_swap, requires_additional_env_vars=True),
+    "create_custom_bloxroute_transfer": Endpoint(func=create_personal_tx_and_submit, requires_additional_env_vars=True),
 }
 
 
@@ -168,6 +169,10 @@ async def sdk_loop():
                 menu_text.clear()
 
                 await p.close()
+
+                print(f'Press any key to continue...')
+                input()
+
 
 
 async def main():

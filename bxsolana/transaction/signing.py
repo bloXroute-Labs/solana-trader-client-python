@@ -57,6 +57,7 @@ def sign_tx_with_private_key(
     b = base64.b64decode(unsigned_tx_base64)
 
     raw_tx = solders_tx.VersionedTransaction.from_bytes(b)
+
     signature = keypair.sign_message(msg.to_bytes_versioned(raw_tx.message))
     signatures = [signature]
 

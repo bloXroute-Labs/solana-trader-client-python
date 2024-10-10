@@ -2,11 +2,14 @@ from asyncio.log import logger
 from collections.abc import Callable, Awaitable
 from pprint import pprint
 
+from solders.hash import Hash
+
 from bxsolana import provider
 from bxsolana_trader_proto import api as proto
 
 import os
 
+from bxsolana.transaction import create_trader_api_tip_tx_signed, load_private_key_from_env
 
 
 class Endpoint:
@@ -643,5 +646,27 @@ async def call_pump_fun_trade_swap(p: provider.Provider) -> bool:
     print("signature for pump fun swap tx", response)
 
     return True if response != "" else False
+
+async def create_personal_tx_and_submit(p: provider.Provider) -> bool:
+    print("creating own transaction and submitting to trader api... ")
+
+    resp = await p.get_recent_block_hash_v2(proto.GetRecentBlockHashRequestV2())
+
+    tx = create_trader_api_tip_tx_signed(
+        tip_amount=1100000,
+        sender_address=load_private_key_from_env(),
+        blockhash=Hash.from_string(resp.block_hash)
+    )
+
+    response = await p.post_submit(proto.PostSubmitRequest(
+        transaction=tx,
+        skip_pre_flight=True)
+    )
+
+
+    print("signature for custom user tx", response)
+
+    return True if response != "" else False
+
 
 
