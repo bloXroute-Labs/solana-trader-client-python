@@ -411,7 +411,6 @@ class HttpProvider(Provider):
         metadata: Optional["MetadataLike"] = None,
     ) -> proto.GetTickersResponseV2:
 
-
         print(f"{self._endpoint_v2}/openbook/tickers/{get_tickers_request_v2.market}")
         async with self._session.get(
             f"{self._endpoint_v2}/openbook/tickers/{get_tickers_request_v2.market}"
