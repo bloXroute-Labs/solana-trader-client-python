@@ -2,7 +2,8 @@
   "site_package_search_strategy": "all",
   "source_directories": [
     "bxsolana",
-    "example"
+    "example",
+    ".venv"
   ],
   "ignore_all_errors": [
     "bxsolana/proto/"
