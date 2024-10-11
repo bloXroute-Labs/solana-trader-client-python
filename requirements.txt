@@ -34,3 +34,4 @@ bx-jsonrpc-py~=0.2.0
 bxsolana-trader-proto~=0.0.86
 async-timeout~=4.0.3
 prompt-toolkit~=3.0.48
+bxsolana-trader~=2.1.7
