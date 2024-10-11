@@ -34,3 +34,5 @@ bx-jsonrpc-py~=0.2.0
 bxsolana-trader-proto~=0.0.86
 async-timeout~=4.0.3
 prompt-toolkit~=3.0.48
+/Users/billmcroberts/dev/solana-trader-client-python/dist/bxsolana_trader-2.1.5.tar.gz
+/Users/billmcroberts/dev/solana-trader-client-python/dist/bxsolana_trader_proto-0.0.87.tar.gz
