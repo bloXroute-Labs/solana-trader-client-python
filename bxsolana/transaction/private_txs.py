@@ -2,15 +2,15 @@ import base64
 from bxsolana_trader_proto import api as proto
 
 from numpy import uint64
-from solders import pubkey as pk, keypair
+from solders import pubkey as pk
 from solders import instruction as inst
 from solders import transaction as solders_tx
 from solders.hash import Hash
 from solders.keypair import Keypair
-from solders.message import Message, MessageV0
+from solders.message import MessageV0
 from solders.pubkey import Pubkey
 from solders.system_program import transfer, TransferParams
-from solders.transaction import Transaction, VersionedTransaction
+from solders.transaction import VersionedTransaction
 from solders import message as msg
 
 
@@ -70,5 +70,3 @@ def create_trader_api_tip_tx_signed(
     signed_tx_bytes_base64 = base64.b64encode(bytes(tx))
 
     return proto.TransactionMessage(content=signed_tx_bytes_base64.decode('utf-8'), is_cleanup=False)
-
-
