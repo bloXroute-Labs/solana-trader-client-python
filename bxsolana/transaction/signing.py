@@ -2,14 +2,14 @@ import os
 import base58
 import base64
 
-from solders import keypair as kp
-from solders import transaction as solders_tx
-from solders import message as msg
+from solders import keypair as kp  # noinspection python2.7 error only
+from solders import transaction as solders_tx  # noinspection python2.7 error only
+from solders import message as msg  # noinspection python2.7 error only
 
 from bxsolana_trader_proto import api as proto
 
 
-def load_private_key(pkey_str: str) -> kp.Keypair:
+def load_private_key(pkey_str: str) -> kp.Keypair:  # noinspection python2.7 error only
     # convert base58 private key string to a keypair
     pkey_bytes = bytes(pkey_str, encoding="utf-8")
     pkey_bytes_base58 = base58.b58decode(pkey_bytes)

@@ -24,9 +24,9 @@ if TYPE_CHECKING:
 
 
 class WsProvider(Provider):
-    _ws: jsonrpc.WsRpcConnection
+    _ws: jsonrpc.WsRpcConnection  # noinspection python2.7 error only
 
-    _endpoint: str
+    _endpoint: str  # noinspection python2.7 error only
     _private_key: Optional[kp.Keypair]  # noinspection
 
     # noinspection PyMissingConstructor
