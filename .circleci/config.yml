@@ -52,7 +52,7 @@ jobs:
           name: lint
           command: |
             cd ~/ws/solana-trader-client-python
-            . venv/bin/activate
+#            . venv/bin/activate
             make lint
   unit:
     executor: bxpython
