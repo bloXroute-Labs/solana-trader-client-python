@@ -1,6 +1,8 @@
+# flake8: noqa
+
 from .private_txs import (
-    create_trader_api_tip_instruction,
-    create_trader_api_tip_tx_signed
+    create_trader_api_tip_instruction,  # noqa: F401
+    create_trader_api_tip_tx_signed  # noqa: F401
 )
 
 from .memo import (
