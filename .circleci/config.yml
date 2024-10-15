@@ -34,6 +34,7 @@ jobs:
             . venv/bin/activate
             pip install --upgrade pip 
             pip install -r requirements.txt
+            pip install pyre-check
             make environment-integration
       - save_cache:
           key: deps-{{ checksum "~/ws/solana-trader-client-python/requirements.txt" }}
@@ -52,7 +53,7 @@ jobs:
           name: lint
           command: |
             cd ~/ws/solana-trader-client-python
-#            . venv/bin/activate
+            . venv/bin/activate
             make lint
   unit:
     executor: bxpython
