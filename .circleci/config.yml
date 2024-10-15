@@ -54,8 +54,7 @@ jobs:
           command: |
             cd ~/ws/solana-trader-client-python
             . venv/bin/activate
-            
-            pyre --verbose check
+            pyre check
             make lint
   unit:
     executor: bxpython
