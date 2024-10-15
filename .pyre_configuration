@@ -4,6 +4,7 @@
     "bxsolana",
     "example"
   ],
+  "version": "3.6",
   "ignore_all_errors": [
     "bxsolana/proto/"
   ]
