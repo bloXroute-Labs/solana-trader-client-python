@@ -26,7 +26,7 @@ jobs:
           name: Install dependencies
           command: |
             cd ~/ws/solana-trader-client-python
-            python -m virtualenv venv
+            python -m virtualenv venv --copies
             . venv/bin/activate
             pip install --upgrade pip 
             pip install -r requirements.txt
