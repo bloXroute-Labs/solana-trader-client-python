@@ -27,7 +27,7 @@ class WsProvider(Provider):
     _ws: jsonrpc.WsRpcConnection
 
     _endpoint: str
-    _private_key: Optional[kp.Keypair]
+    _private_key: Optional[kp.Keypair] #pyre-fixme # pyre import issue with from import
 
     # noinspection PyMissingConstructor
     def __init__(
