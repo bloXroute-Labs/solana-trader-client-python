@@ -34,7 +34,7 @@ jobs:
             . venv/bin/activate
             pip install --upgrade pip 
             pip install -r requirements.txt
-            pip install pyre-check
+            pip install pyre-check==0.9.18
             make environment-integration
       - save_cache:
           key: deps-{{ checksum "~/ws/solana-trader-client-python/requirements.txt" }}
@@ -54,6 +54,8 @@ jobs:
           command: |
             cd ~/ws/solana-trader-client-python
             . venv/bin/activate
+            
+            pyre --verbose check
             make lint
   unit:
     executor: bxpython
