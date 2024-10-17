@@ -24,15 +24,15 @@ if TYPE_CHECKING:
 
 
 class WsProvider(Provider):
-    _ws: jsonrpc.WsRpcConnection
+    _ws: jsonrpc.WsRpcConnection  # noinspection python2.7 error only
 
-    _endpoint: str
-    _private_key: Optional[kp.Keypair]
+    _endpoint: str  # noinspection python2.7 error only
+    _private_key: Optional[kp.Keypair]  # noinspection
 
     # noinspection PyMissingConstructor
     def __init__(
         self,
-        endpoint: str = constants.MAINNET_API_NY_WS,
+        endpoint: str = constants.MAINNET_API_UK_WS,
         auth_header: Optional[str] = None,
         private_key: Optional[str] = None,
         request_timeout_s: Optional[int] = None,

@@ -2,7 +2,7 @@ version: 2.1
 executors:
   bxpython:
     docker:
-      - image: cimg/python:3.10.7
+      - image: cimg/python:3.12-browsers
     environment:
       RUN_TRADES: false
       RUN_SLOW_STREAMS: false
@@ -26,9 +26,15 @@ jobs:
           name: Install dependencies
           command: |
             cd ~/ws/solana-trader-client-python
-            python -m virtualenv venv
+            
+            if [ -d "venv" ]; then
+              rm -rf venv
+            fi
+            python -m virtualenv venv --copies
             . venv/bin/activate
+            pip install --upgrade pip 
             pip install -r requirements.txt
+            pip install pyre-check==0.9.18
             make environment-integration
       - save_cache:
           key: deps-{{ checksum "~/ws/solana-trader-client-python/requirements.txt" }}
@@ -48,6 +54,7 @@ jobs:
           command: |
             cd ~/ws/solana-trader-client-python
             . venv/bin/activate
+            pyre check
             make lint
   unit:
     executor: bxpython
