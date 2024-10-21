@@ -153,8 +153,8 @@ async def mark_transaction_with_memo(api: provider.Provider):
         )
     )
 
+    # the memo is added by trader api when we submit the tx
     tx = response.transactions[0].content
-    tx = transaction.add_memo_to_serialized_txn(tx)
 
     signed_tx = transaction.sign_tx_with_private_key(tx, private_key)
 
