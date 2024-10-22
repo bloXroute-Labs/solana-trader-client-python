@@ -2,7 +2,7 @@ import os
 from typing import Optional
 
 from grpclib import client
-from solders import keypair as kp
+from solders import keypair as kp # pyre-ignore[21]: module is too hard to find
 
 from .. import transaction
 from . import constants
@@ -12,17 +12,17 @@ from .package_info import NAME, VERSION
 
 class GrpcProvider(Provider):
     # pyre-ignore[15]: overriding to force context manager hooks
-    channel: Optional[client.Channel] = None
+    channel: Optional[client.Channel] = None # pyre-ignore[11]: annotation
 
-    _host: str
-    _port: int
-    _auth_header: str
-    _use_ssl: bool
-    _private_key: Optional[kp.Keypair]
+    _host: str # pyre-ignore[11]: annotation
+    _port: int # pyre-ignore[11]: annotation
+    _auth_header: str # pyre-ignore[11]: annotation
+    _use_ssl: bool # pyre-ignore[11]: annotation
+    _private_key: Optional[kp.Keypair] # pyre-ignore[11]: annotation
 
     def __init__(
         self,
-        host: str = constants.MAINNET_API_NY_GRPC_HOST,
+        host: str = constants.MAINNET_API_UK_GRPC_HOST,
         port: int = constants.MAINNET_API_GRPC_PORT,
         private_key: Optional[str] = None,
         auth_header: Optional[str] = None,
