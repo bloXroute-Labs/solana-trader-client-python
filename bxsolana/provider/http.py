@@ -854,7 +854,7 @@ class HttpProvider(Provider):
 
         req_dict = post_submit_request.to_dict()
         if 'useStakedRpCs' in req_dict:
-            req_dict['useStakedRpcs'] = req_dict.pop('useStakedRpCs')
+            req_dict['useStakedRPCs'] = req_dict.pop('useStakedRpCs')
         async with self._session.post(
             f"{self._endpoint}/trade/submit", json=req_dict
         ) as res:
