@@ -42,10 +42,11 @@ class HttpProvider(Provider):
         if auth_header is None:
             auth_header = os.environ["AUTH_HEADER"]
 
-        self._session = aiohttp.ClientSession()
+        self._session = aiohttp.ClientSession(connector=aiohttp.TCPConnector(force_close=True))
         self._session.headers["authorization"] = auth_header
         self._session.headers["x-sdk"] = NAME
         self._session.headers["x-sdk-version"] = VERSION
+        # self._session.headers["Connection"] = "keep-alive"
 
         if private_key is None:
             try:
