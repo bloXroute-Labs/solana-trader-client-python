@@ -852,8 +852,11 @@ class HttpProvider(Provider):
         if transaction is None:
             raise ValueError("transaction cannot be omitted")
 
+        req_dict = post_submit_request.to_dict()
+        if 'useStakedRpCs' in req_dict:
+            req_dict['useStakedRpcs'] = req_dict.pop('useStakedRpCs')
         async with self._session.post(
-            f"{self._endpoint}/trade/submit", json=post_submit_request.to_dict()
+            f"{self._endpoint}/trade/submit", json=req_dict
         ) as res:
             return await map_response(res, proto.PostSubmitResponse())
 
