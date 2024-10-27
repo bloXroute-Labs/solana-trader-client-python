@@ -41,8 +41,8 @@ class HttpProvider(Provider):
 
         if auth_header is None:
             auth_header = os.environ["AUTH_HEADER"]
-
-        self._session = aiohttp.ClientSession(connector=aiohttp.TCPConnector(force_close=True))
+        timeout = aiohttp.ClientTimeout(total=5)
+        self._session = aiohttp.ClientSession(connector=aiohttp.TCPConnector(force_close=True), timeout=timeout)
         self._session.headers["authorization"] = auth_header
         self._session.headers["x-sdk"] = NAME
         self._session.headers["x-sdk-version"] = VERSION
