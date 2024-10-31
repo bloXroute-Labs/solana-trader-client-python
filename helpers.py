@@ -589,7 +589,7 @@ async def call_raydium_cpmm_trade_swap(p: provider.Provider) -> bool:
 async def call_raydium_clmm_trade_swap(p: provider.Provider) -> bool:
     print("calling post submit raydium clmm trade swap...")
 
-    response = await p.submit_raydium_swap_cpmm(
+    response = await p.submit_raydium_swap_clmm(
         owner_address=UserEnvironment.public_key,
         in_token="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
         out_token="So11111111111111111111111111111111111111112",
@@ -633,11 +633,11 @@ async def call_pump_fun_trade_swap(p: provider.Provider) -> bool:
 
     response = await p.submit_pump_fun_swap(
         owner_address=UserEnvironment.public_key,
-        bonding_curve_address="7BcRpqUC7AF5Xsc3QEpCb8xmoi2X1LpwjUBNThbjWvyo",
-        token_address="BAHY8ocERNc5j6LqkYav1Prr8GBGsHvBV5X3dWPhsgXw",
+        bonding_curve_address="3q1sBYJLF1bKSghg94MWsWb75NXwm2tJymT2f7VXJkju",
+        token_address="5vzEtnMtjYWcKTuhXyoA8tn572SnAsZHH6mJ9rtApump",
         token_amount=10,
         sol_threshold=0.0001,
-        is_buy=False,
+        is_buy=True,
         compute_price=160000,
         compute_limit=200000,
         tip=1100000,
