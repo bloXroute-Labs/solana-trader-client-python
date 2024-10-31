@@ -3,7 +3,7 @@ from typing import List, Optional
 
 from bxsolana_trader_proto import api
 from bxsolana_trader_proto.common import OrderType
-from solders import keypair as kp
+from solders import keypair as kp     # pyre-ignore[21]: module is too hard to find
 
 from .. import transaction
 
@@ -21,7 +21,7 @@ class Provider(api.ApiStub, ABC):
         pass
 
     @abstractmethod
-    def private_key(self) -> Optional[kp.Keypair]:
+    def private_key(self) -> Optional[kp.Keypair]: # pyre-ignore[11]: annotation
         pass
 
     @abstractmethod
@@ -317,6 +317,7 @@ class Provider(api.ApiStub, ABC):
         slippage: float = 0,
         compute_limit: int = 0,
         compute_price: int = 0,
+        tip: int = 0,
         skip_pre_flight: bool = True,
         submit_strategy: api.SubmitStrategy = api.SubmitStrategy.P_ABORT_ON_FIRST_ERROR,
     ) -> api.PostSubmitBatchResponse:
@@ -331,6 +332,7 @@ class Provider(api.ApiStub, ABC):
                 slippage=slippage,
                 compute_limit=compute_limit,
                 compute_price=compute_price,
+                tip=tip
             )
         )
 
@@ -358,6 +360,7 @@ class Provider(api.ApiStub, ABC):
         slippage: float = 0,
         compute_limit: int = 0,
         compute_price: int = 0,
+        tip: int = 0,
         skip_pre_flight: bool = True,
         submit_strategy: api.SubmitStrategy = api.SubmitStrategy.P_ABORT_ON_FIRST_ERROR,
     ) -> api.PostSubmitBatchResponse:
@@ -370,6 +373,7 @@ class Provider(api.ApiStub, ABC):
                 slippage=slippage,
                 compute_limit=compute_limit,
                 compute_price=compute_price,
+                tip=tip,
             )
         )
 
@@ -387,6 +391,188 @@ class Provider(api.ApiStub, ABC):
                 entries=signed_txs, submit_strategy=submit_strategy
             )
         )
+
+    async def submit_raydium_swap(
+        self,
+        owner_address: str,
+        in_token: str,
+        out_token: str,
+        in_amount: float,
+        slippage: float = 0,
+        compute_limit: int = 0,
+        compute_price: int = 0,
+        tip: int = 0,
+        skip_pre_flight: bool = True,
+    ) -> str:
+        pk = self.require_private_key()
+        swap = await self.post_raydium_swap(post_raydium_swap_request=api.PostRaydiumSwapRequest(
+            owner_address=owner_address,
+            in_token=in_token,
+            out_token=out_token,
+            in_amount=in_amount,
+            slippage=slippage,
+            compute_limit=compute_limit,
+            compute_price=compute_price,
+            tip=tip
+        ))
+
+        signed_tx = transaction.sign_tx_message_with_private_key(
+            swap.transactions[0], pk
+        )
+
+        result = await self.post_submit(
+            post_submit_request=api.PostSubmitRequest(
+                transaction=signed_tx, skip_pre_flight=skip_pre_flight
+            )
+        )
+
+        return result.signature
+
+    async def submit_raydium_swap_cpmm(
+        self,
+        owner_address: str,
+        in_token: str,
+        out_token: str,
+        in_amount: float,
+        slippage: float = 0,
+        compute_limit: int = 0,
+        compute_price: int = 0,
+        tip: int = 0,
+        skip_pre_flight: bool = True,
+    ) -> str:
+        pk = self.require_private_key()
+        swap = await self.post_raydium_cpmm_swap(post_raydium_cpmm_swap_request=api.PostRaydiumCpmmSwapRequest(
+            owner_address=owner_address,
+            in_token=in_token,
+            out_token=out_token,
+            in_amount=in_amount,
+            slippage=slippage,
+            compute_limit=compute_limit,
+            compute_price=compute_price,
+            tip=tip
+        ))
+
+        signed_tx = transaction.sign_tx_message_with_private_key(
+            swap.transaction, pk
+        )
+
+        result = await self.post_submit(
+            post_submit_request=api.PostSubmitRequest(
+                transaction=signed_tx, skip_pre_flight=skip_pre_flight
+            )
+        )
+
+        return result.signature
+
+    async def submit_raydium_swap_clmm(
+        self,
+        owner_address: str,
+        in_token: str,
+        out_token: str,
+        in_amount: float,
+        slippage: float = 0,
+        compute_limit: int = 0,
+        compute_price: int = 0,
+        tip: int = 0,
+        skip_pre_flight: bool = True,
+    ) -> str:
+        pk = self.require_private_key()
+        swap = await self.post_raydium_clmm_swap(post_raydium_swap_request=api.PostRaydiumSwapRequest(
+            owner_address=owner_address,
+            in_token=in_token,
+            out_token=out_token,
+            in_amount=in_amount,
+            slippage=slippage,
+            compute_limit=compute_limit,
+            compute_price=compute_price,
+            tip=tip
+        ))
+
+        signed_tx = transaction.sign_tx_message_with_private_key(
+            swap.transactions[0], pk
+        )
+
+        result = await self.post_submit(
+            post_submit_request=api.PostSubmitRequest(
+                transaction=signed_tx, skip_pre_flight=skip_pre_flight
+            )
+        )
+
+        return result.signature
+
+    async def submit_jupiter_swap(
+        self,
+        owner_address: str,
+        in_token: str,
+        out_token: str,
+        in_amount: float,
+        slippage: float = 0,
+        compute_limit: int = 0,
+        compute_price: int = 0,
+        tip: int = 0,
+        skip_pre_flight: bool = True,
+    ) -> str:
+        pk = self.require_private_key()
+        swap = await self.post_jupiter_swap(post_jupiter_swap_request=api.PostJupiterSwapRequest(
+            owner_address=owner_address,
+            in_token=in_token,
+            out_token=out_token,
+            in_amount=in_amount,
+            slippage=slippage,
+            compute_limit=compute_limit,
+            compute_price=compute_price,
+            tip=tip
+        ))
+
+        signed_tx = transaction.sign_tx_message_with_private_key(
+            swap.transactions[0], pk
+        )
+
+        result = await self.post_submit(
+            post_submit_request=api.PostSubmitRequest(
+                transaction=signed_tx, skip_pre_flight=skip_pre_flight
+            )
+        )
+
+        return result.signature
+
+    async def submit_pump_fun_swap(
+        self,
+        owner_address: str,
+        bonding_curve_address: str,
+        token_address: str,
+        token_amount: float,
+        sol_threshold: float,
+        is_buy: bool,
+        compute_limit: int = 0,
+        compute_price: int = 0,
+        tip: int = 0,
+        skip_pre_flight: bool = True,
+    ) -> str:
+        pk = self.require_private_key()
+        swap = await self.post_pump_fun_swap(post_pump_fun_swap_request=api.PostPumpFunSwapRequest(
+            user_address=owner_address,
+            bonding_curve_address=bonding_curve_address,
+            token_address=token_address,
+            token_amount=token_amount,
+            sol_threshold=sol_threshold,
+            is_buy=is_buy,
+            compute_limit=compute_limit,
+            compute_price=compute_price,
+            tip=tip
+        ))
+
+        signed_tx = transaction.sign_tx_message_with_private_key_v2(
+            swap.transaction, pk
+        )
+
+        result = await self.post_submit(
+            post_submit_request=api.PostSubmitRequest(
+                transaction=signed_tx, skip_pre_flight=skip_pre_flight
+            )
+        )
+
+        return result.signature
 
 
 class NotConnectedException(Exception):

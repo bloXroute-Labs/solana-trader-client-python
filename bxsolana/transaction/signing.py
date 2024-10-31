@@ -2,14 +2,14 @@ import os
 import base58
 import base64
 
-from solders import keypair as kp
-from solders import transaction as solders_tx
-from solders import message as msg
+from solders import keypair as kp  # pyre-ignore[21]: module is too hard to find
+from solders import transaction as solders_tx  # pyre-ignore[21]: module is too hard to find
+from solders import message as msg  # pyre-ignore[21]: module is too hard to find
 
 from bxsolana_trader_proto import api as proto
 
 
-def load_private_key(pkey_str: str) -> kp.Keypair:
+def load_private_key(pkey_str: str) -> kp.Keypair:  # pyre-ignore[11]: annotation
     # convert base58 private key string to a keypair
     pkey_bytes = bytes(pkey_str, encoding="utf-8")
     pkey_bytes_base58 = base58.b58decode(pkey_bytes)
@@ -57,6 +57,7 @@ def sign_tx_with_private_key(
     b = base64.b64decode(unsigned_tx_base64)
 
     raw_tx = solders_tx.VersionedTransaction.from_bytes(b)
+
     signature = keypair.sign_message(msg.to_bytes_versioned(raw_tx.message))
     signatures = [signature]
 
@@ -76,4 +77,12 @@ def sign_tx_message_with_private_key(
     return proto.TransactionMessage(
         sign_tx_with_private_key(tx_message.content, keypair),
         tx_message.is_cleanup,
+    )
+
+
+def sign_tx_message_with_private_key_v2(
+    tx_message: proto.TransactionMessageV2, keypair: kp.Keypair
+) -> proto.TransactionMessage:
+    return proto.TransactionMessage(
+        sign_tx_with_private_key(tx_message.content, keypair),
     )
