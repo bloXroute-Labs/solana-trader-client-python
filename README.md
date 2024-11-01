@@ -8,6 +8,7 @@ Provides a Python SDK for bloXroute's Solana Trader API.
 $ pip install bxsolana-trader
 ```
 
+
 ## Usage
 
 This library supports HTTP, websockets, and GRPC interfaces. You can use it with
