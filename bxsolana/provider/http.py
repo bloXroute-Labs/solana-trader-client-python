@@ -751,6 +751,20 @@ class HttpProvider(Provider):
         async with self._session.get(url) as res:
             return await map_response(res, proto.GetPriorityFeeResponse())
 
+    async def get_priority_fee_by_program(
+        self,
+        get_priority_fee_by_program_request: proto.GetPriorityFeeByProgramRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.GetPriorityFeeResponse:
+        url_params = "&programs=".join(get_priority_fee_by_program_request.programs)
+        url = f"{self._endpoint_v2}/system/priority-fee-by-program?programs={url_params}"
+
+        async with self._session.get(url) as res:
+            return await map_response(res, proto.GetPriorityFeeByProgramResponse())
+
     async def post_trade_swap(
         self,
         trade_swap_request: proto.TradeSwapRequest,

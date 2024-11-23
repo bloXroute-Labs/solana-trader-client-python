@@ -1,3 +1,4 @@
+.
 build==0.8.0
 base58~=2.1.1
 solders~=0.19.0
@@ -34,4 +35,3 @@ bx-jsonrpc-py~=0.2.0
 bxsolana-trader-proto~=0.0.89
 async-timeout~=4.0.3
 prompt-toolkit~=3.0.48
-bxsolana-trader~=2.1.8
