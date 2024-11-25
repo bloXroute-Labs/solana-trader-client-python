@@ -88,6 +88,20 @@ async def do_requests(
         ).to_json()
     )
 
+    print("fetching priority fee by program")
+    print(
+        (
+            await api.get_priority_fee_by_program(
+                get_priority_fee_by_program_request=proto.GetPriorityFeeByProgramRequest(
+                    programs=[
+                        "CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK",
+	                    "CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C",
+                    ]
+                )
+            )
+        ).to_json()
+    )
+
     # markets API
     print("fetching all markets")
     print(
@@ -234,7 +248,6 @@ async def do_requests(
                     ),
                     mint_address="9QG5NHnfqQCyZ9SKhz7BzfjPseTFWaApmAtBTziXLanY",
                     amount=0.01,
-                    slippage=1,
                     quote_type="buy",
                 )
             )
