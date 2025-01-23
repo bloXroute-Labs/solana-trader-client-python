@@ -599,7 +599,6 @@ class Provider(api.ApiStub, ABC):
                 )
             )
             
-            # Filter and collect successful transaction signatures
             return [
                 entry.signature 
                 for entry in result.transactions 

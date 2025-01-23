@@ -707,11 +707,9 @@ async def create_personal_tx_and_submit(p: provider.Provider) -> bool:
 
 
 async def call_submit_snipe(p: provider.Provider) -> bool:
-    # Get recent blockhash
     resp = await p.get_recent_block_hash_v2(proto.GetRecentBlockHashRequestV2())
     blockhash = Hash.from_string(resp.block_hash)
     
-    # Set up test data
     fee_payer = Keypair()
     small_tip = 100_000
     staked_tip_threshold = 1_000_000
@@ -772,7 +770,6 @@ async def call_submit_snipe(p: provider.Provider) -> bool:
         )
     ]
 
-    # Submit snipe transactions
     result = await p.submit_snipe(transactions, use_staked_rpcs=True)
     print("Snipe Signatures:", result)
     return len(result) > 0
