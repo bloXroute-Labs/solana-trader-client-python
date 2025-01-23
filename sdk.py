@@ -16,7 +16,7 @@ from helpers import Endpoint, get_markets, get_pools, get_tickers, get_raydium_c
     get_raydium_clmm_quotes, get_jupiter_quotes, get_pump_fun_quotes, get_leader_schedule, orderbook_stream, market_depth_stream, \
     get_tickers_stream, get_prices_stream, get_swaps_stream, get_trades_stream, get_new_raydium_pools_stream, \
     get_new_raydium_pools_stream_cpmm, get_recent_blockhash_stream, get_pool_reserve_stream, \
-    get_block_stream, get_priority_fee, get_priority_fee_stream, get_bundle_tip_stream, get_token_accounts, \
+    get_block_stream, get_priority_fee, get_priority_fee_stream, get_bundle_tip_stream, get_priority_fee_by_program_stream, get_token_accounts, \
     call_trade_swap, call_route_trade_swap, call_raydium_trade_swap, call_raydium_cpmm_trade_swap, \
     call_raydium_clmm_trade_swap, call_jupiter_trade_swap, call_pump_fun_trade_swap, create_personal_tx_and_submit
 
@@ -84,6 +84,8 @@ ExampleEndpoints = {
     "get_block_stream": Endpoint(func=get_block_stream, requires_additional_env_vars=False),
     "get_priority_fee_stream": Endpoint(func=get_priority_fee_stream, requires_additional_env_vars=False),
     "get_bundle_tip_stream": Endpoint(func=get_bundle_tip_stream, requires_additional_env_vars=False),
+    "get_priority_fee_by_program_stream": Endpoint(func=get_priority_fee_by_program_stream,
+                                                  requires_additional_env_vars=False),
 
     # transaction endpoints
     "trade_swap": Endpoint(func=call_trade_swap, requires_additional_env_vars=True),

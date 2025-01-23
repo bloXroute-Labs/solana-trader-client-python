@@ -511,6 +511,22 @@ async def get_bundle_tip_stream(p: provider.Provider) -> bool:
         return True if resp.timestamp is not None else False
     return False
 
+async def get_priority_fee_by_program_stream(p: provider.Provider) -> bool:
+    print("streaming priority fee by program updates...")
+    async for resp in p.get_priority_fee_by_program_stream(
+            get_priority_fee_by_program_request=proto.GetPriorityFeeByProgramRequest(
+                programs=[
+                    "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4",
+                    "CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK",
+                    "CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C"
+                ]
+            )
+    ):
+        pprint(resp)
+        await p.close()
+
+        return True if resp.data is not None else False
+    return False
 
 async def call_trade_swap(p: provider.Provider) -> bool:
     print("calling post submit trade swap (using batch submit)...")
