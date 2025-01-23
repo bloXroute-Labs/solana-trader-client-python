@@ -247,6 +247,19 @@ class HttpProvider(Provider):
             f"{self._endpoint_v2}/jupiter/prices{params}"
         ) as res:
             return await map_response(res, proto.GetJupiterPricesResponse())
+        
+    async def get_leader_schedule(
+        self,
+        get_leader_schedule_request: proto.GetLeaderScheduleRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.GetLeaderScheduleResponse:
+        async with self._session.get(
+            f"{self._endpoint_v2}/system/leader-schedule?maxSlots={get_leader_schedule_request.max_slots}"
+        ) as res:
+            return await map_response(res, proto.GetLeaderScheduleResponse())
 
     async def post_jupiter_swap(
         self,

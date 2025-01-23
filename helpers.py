@@ -287,6 +287,13 @@ async def get_pump_fun_quotes(p: provider.Provider) -> bool:
 
     return True if resp.out_amount is not None else False
 
+async def get_leader_schedule(p: provider.Provider) -> bool:
+    resp = await p.get_leader_schedule(proto.GetLeaderScheduleRequest(max_slots=0))
+
+    pprint(resp)
+
+    # return True if resp
+    return True
 
 async def get_priority_fee(p: provider.Provider) -> bool:
     resp = await p.get_priority_fee(proto.GetPriorityFeeRequest())
