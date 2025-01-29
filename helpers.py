@@ -1,4 +1,5 @@
 from asyncio.log import logger
+import base64
 from collections.abc import Callable, Awaitable
 from pprint import pprint
 
@@ -10,6 +11,19 @@ from bxsolana_trader_proto import api as proto
 import os
 
 from bxsolana.transaction import create_trader_api_tip_tx_signed, load_private_key_from_env
+
+from solders import pubkey as pk # pyre-ignore[21]: module is too hard to find
+from solders import instruction as inst # pyre-ignore[21]: module is too hard to find
+from solders import transaction as solders_tx  # pyre-ignore[21]: module is too hard to find
+from solders.hash import Hash
+from solders.keypair import Keypair
+from solders.message import MessageV0
+from solders.pubkey import Pubkey
+from solders.system_program import transfer, TransferParams
+from solders.transaction import VersionedTransaction
+from solders import message as msg # pyre-ignore[21]: module is too hard to find
+import base64
+
 
 
 class Endpoint:
@@ -287,6 +301,13 @@ async def get_pump_fun_quotes(p: provider.Provider) -> bool:
 
     return True if resp.out_amount is not None else False
 
+async def get_leader_schedule(p: provider.Provider) -> bool:
+    resp = await p.get_leader_schedule(proto.GetLeaderScheduleRequest(max_slots=0))
+
+    pprint(resp)
+
+    # return True if resp
+    return True
 
 async def get_priority_fee(p: provider.Provider) -> bool:
     resp = await p.get_priority_fee(proto.GetPriorityFeeRequest())
@@ -504,6 +525,22 @@ async def get_bundle_tip_stream(p: provider.Provider) -> bool:
         return True if resp.timestamp is not None else False
     return False
 
+async def get_priority_fee_by_program_stream(p: provider.Provider) -> bool:
+    print("streaming priority fee by program updates...")
+    async for resp in p.get_priority_fee_by_program_stream(
+            get_priority_fee_by_program_request=proto.GetPriorityFeeByProgramRequest(
+                programs=[
+                    "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4",
+                    "CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK",
+                    "CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C"
+                ]
+            )
+    ):
+        pprint(resp)
+        await p.close()
+
+        return True if resp.data is not None else False
+    return False
 
 async def call_trade_swap(p: provider.Provider) -> bool:
     print("calling post submit trade swap (using batch submit)...")
@@ -669,4 +706,70 @@ async def create_personal_tx_and_submit(p: provider.Provider) -> bool:
     return True if response != "" else False
 
 
+async def call_submit_snipe(p: provider.Provider) -> bool:
+    resp = await p.get_recent_block_hash_v2(proto.GetRecentBlockHashRequestV2())
+    blockhash = Hash.from_string(resp.block_hash)
+    
+    fee_payer = Keypair()
+    small_tip = 100_000
+    staked_tip_threshold = 1_000_000
+    tip_wallet = Pubkey.from_string("HWEoBxYs7ssKuudEjzjmpfJVX7Dvi7wescFsVx2L5yoY")
+    jito_tip_wallet = Pubkey.from_string("96gYZGLnJYVFmbjzopPSU6QiEV5fGqZNyN9nmNhvrZU5")
 
+    # First transaction: transfer to both jito and bloxroute
+    tx1_instructions = [
+        transfer(TransferParams(
+            from_pubkey=fee_payer.pubkey(),
+            to_pubkey=jito_tip_wallet,
+            lamports=small_tip
+        )),
+        transfer(TransferParams(
+            from_pubkey=fee_payer.pubkey(),
+            to_pubkey=tip_wallet, 
+            lamports=small_tip
+        ))
+    ]
+
+    tx1_message = MessageV0.try_compile(
+        payer=fee_payer.pubkey(),
+        instructions=tx1_instructions,
+        address_lookup_table_accounts=[],
+        recent_blockhash=blockhash
+    )
+    tx1 = VersionedTransaction(tx1_message, [fee_payer])
+    signature1 = fee_payer.sign_message(msg.to_bytes_versioned(tx1.message))
+    tx1 = VersionedTransaction.populate(tx1.message, [signature1])
+
+    # Second transaction: staked transfer to bloxroute
+    tx2_instructions = [
+        transfer(TransferParams(
+            from_pubkey=fee_payer.pubkey(),
+            to_pubkey=tip_wallet,
+            lamports=staked_tip_threshold
+        ))
+    ]
+    
+    tx2_message = MessageV0.try_compile(
+        payer=fee_payer.pubkey(),
+        instructions=tx2_instructions,
+        address_lookup_table_accounts=[],
+        recent_blockhash=blockhash
+    )
+    tx2 = VersionedTransaction(tx2_message, [fee_payer])
+    signature2 = fee_payer.sign_message(msg.to_bytes_versioned(tx2.message))
+    tx2 = VersionedTransaction.populate(tx2.message, [signature2])
+
+    transactions = [
+        proto.TransactionMessage(
+            content=base64.b64encode(bytes(tx1)).decode(),
+            is_cleanup=False
+        ),
+        proto.TransactionMessage(
+            content=base64.b64encode(bytes(tx2)).decode(),
+            is_cleanup=False
+        )
+    ]
+
+    result = await p.submit_snipe(transactions, use_staked_rpcs=True)
+    print("Snipe Signatures:", result)
+    return len(result) > 0

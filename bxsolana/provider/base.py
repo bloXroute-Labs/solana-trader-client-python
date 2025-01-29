@@ -573,6 +573,57 @@ class Provider(api.ApiStub, ABC):
         )
 
         return result.signature
+    
+    async def submit_snipe(
+        self,
+        transactions: List[str],
+        use_staked_rpcs: bool = False,
+        skip_pre_flight: bool = False,
+    ) -> List[str]:
+            pk = self.require_private_key()
+            
+            entries = []
+            for tx in transactions:
+                signed_tx = transaction.sign_tx_message_with_private_key(tx, pk)
+                entries.append(
+                    api.PostSubmitRequestEntry(
+                        transaction=signed_tx,
+                        skip_pre_flight=skip_pre_flight
+                    )
+                )
+
+            result = await self.post_submit_snipe_v2(
+                post_submit_snipe_request=api.PostSubmitSnipeRequest(
+                    entries=entries,
+                    use_staked_rp_cs=use_staked_rpcs
+                )
+            )
+            
+            return [
+                entry.signature 
+                for entry in result.transactions 
+                if entry.submitted
+            ]
+
+    async def submit_paladin(
+        self,
+        transaction_message: str,
+    ) -> str:
+        pk = self.require_private_key()
+        signed_tx = transaction.sign_tx_message_with_private_key(
+            transaction_message, 
+            pk
+        )
+        
+        result = await self.post_submit_paladin(
+            post_submit_paladin_request=api.PostSubmitPaladinRequest(
+                transaction=api.TransactionMessageV2(
+                    content=signed_tx.content
+                )
+            )
+        )
+        
+        return result.signature
 
 
 class NotConnectedException(Exception):
