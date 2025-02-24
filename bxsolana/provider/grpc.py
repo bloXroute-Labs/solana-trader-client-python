@@ -85,7 +85,7 @@ def grpc(auth_header: Optional[str] = None, region: Optional[constants.Region] =
     return GrpcProvider(
         host=host,
         port=constants.MAINNET_API_GRPC_PORT,
-        use_ssl=False
+        use_ssl=True
     )
 
 def grpc_pump_ny(auth_header: Optional[str] = None) -> Provider:
