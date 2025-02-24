@@ -73,9 +73,20 @@ class GrpcProvider(Provider):
             self.channel.close()
 
 
-def grpc(auth_header: Optional[str] = None) -> Provider:
-    return GrpcProvider(auth_header=auth_header, use_ssl=True)
+def grpc(auth_header: Optional[str] = None, region: Optional[constants.Region] = None) -> GrpcProvider:
+    # Default to UK if no region specified
+    if region is None or region == constants.Region.UK:
+        host = constants.MAINNET_API_UK_GRPC_HOST
+    elif region == constants.Region.NY:
+        host = constants.MAINNET_API_NY_GRPC_HOST
+    else:
+        raise ValueError(f"Unsupported region: {region}")
 
+    return GrpcProvider(
+        host=host,
+        port=constants.MAINNET_API_GRPC_PORT,
+        use_ssl=False
+    )
 
 def grpc_pump_ny(auth_header: Optional[str] = None) -> Provider:
     return GrpcProvider(

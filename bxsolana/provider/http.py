@@ -1002,9 +1002,16 @@ def serialize_projects(projects: List[proto.Project]) -> str:
     return serialize_list("projects", [project.name for project in projects])
 
 
-def http() -> Provider:
-    return HttpProvider()
+def http(region: Optional[constants.Region] = None) -> Provider:
+    # default to UK if no region specified
+    if region is None or region == constants.Region.UK:
+        endpoint = constants.MAINNET_API_UK_HTTP
+    elif region == constants.Region.NY:
+        endpoint = constants.MAINNET_API_NY_HTTP
+    else:
+        raise ValueError(f"Unsupported region: {region}")
 
+    return HttpProvider(endpoint=endpoint)
 
 def http_testnet() -> Provider:
     return HttpProvider(endpoint=constants.TESTNET_API_HTTP)
