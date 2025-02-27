@@ -8,6 +8,7 @@ import nest_asyncio
 import os
 import pyfiglet
 
+from bxsolana.provider import constants
 from menu import MenuSelection
 from helpers import Endpoint, get_markets, get_pools, get_tickers, get_raydium_clmm_pools, \
     get_orderbook, get_raydium_pool_reserves, get_market_depth, get_open_orders, get_transaction, get_recent_blockhash, \
@@ -106,19 +107,28 @@ def choose_provider() -> provider.Provider:
     menu = MenuSelection(provider_options, visible_items=3)
     choice = menu.run()
 
+    print('Choose region for provider: (only NY and UK are supported for full sdk examples)')
+    provider_options_region = ["ny", "uk"]
+    menu = MenuSelection(provider_options_region, visible_items=2)
+    region_choice = menu.run()
+
+    selected_region = constants.Region[region_choice.upper()]
+
     print('Choose environment for provider: ')
     provider_options_environment = ["mainnet", "testnet", "local"]
 
     menu_environment = MenuSelection(provider_options_environment, visible_items=3)
     env = menu_environment.run()
 
+
     if env == "mainnet":
         if choice == "http":
-            p = provider.http()
+            p = provider.http(region=selected_region)
         elif choice == "grpc":
-            p = provider.grpc()
+            p = provider.grpc(region=selected_region)
         else:
-            p = provider.ws()
+            p = provider.ws(region=selected_region)
+
 
     elif env == "testnet":
         if choice == "http":

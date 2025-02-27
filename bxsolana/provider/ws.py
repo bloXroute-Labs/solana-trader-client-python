@@ -113,9 +113,17 @@ def _ws_endpoint(route: str) -> str:
     return route.split("/")[-1]
 
 
-def ws() -> Provider:
-    return WsProvider()
+def ws(region: Optional[constants.Region] = None) -> WsProvider:
+    # Default to UK if no region specified
+    if region is None or region == constants.Region.UK:
+        endpoint = constants.MAINNET_API_UK_WS
+    elif region == constants.Region.NY:
+        endpoint = constants.MAINNET_API_NY_WS
+    else:
+        raise ValueError(f"Unsupported region: {region}")
 
+    # Pass the appropriate endpoint to WsProvider
+    return WsProvider(endpoint=endpoint)
 
 def ws_pump_ny() -> Provider:
     return WsProvider(endpoint=constants.MAINNET_API_PUMP_NY_WS)
