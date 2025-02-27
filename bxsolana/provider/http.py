@@ -211,8 +211,6 @@ class HttpProvider(Provider):
             f"outToken={get_jupiter_quotes_request.out_token}&inAmount={get_jupiter_quotes_request.in_amount}&"
             f"slippage={get_jupiter_quotes_request.slippage}"
         )
-        if get_jupiter_quotes_request.fast_mode is not None:
-            url += f"&fastMode={get_jupiter_quotes_request.fast_mode}"
         async with self._session.get(url) as res:
             return await map_response(res, proto.GetJupiterQuotesResponse())
 

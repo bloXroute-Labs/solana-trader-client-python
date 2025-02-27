@@ -291,7 +291,6 @@ async def do_requests(
                     out_token="So11111111111111111111111111111111111111112",
                     in_amount=0.01,
                     slippage=10,
-                    fast_mode=True,
                 )
             )
         ).to_json()
@@ -560,7 +559,6 @@ async def do_requests(
                     in_amount=0.01,
                     out_token="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
                     slippage=0.01,
-                    fast_mode=True,
                 )
             )
         )
