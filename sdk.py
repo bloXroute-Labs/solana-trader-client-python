@@ -10,15 +10,15 @@ import pyfiglet
 
 from bxsolana.provider import constants
 from menu import MenuSelection
-from helpers import Endpoint, get_markets, get_pools, get_tickers, get_raydium_clmm_pools, \
-    get_orderbook, get_raydium_pool_reserves, get_market_depth, get_open_orders, get_transaction, get_recent_blockhash, \
+from helpers import Endpoint, get_pools, get_raydium_clmm_pools, \
+    get_raydium_pool_reserves, get_transaction, get_recent_blockhash, \
     get_recent_blockhash_offset, get_rate_limit, get_price, get_raydium_pools, get_raydium_prices, get_jupiter_prices, \
-    get_unsettled, get_account_balance, get_quotes, get_raydium_quotes, get_raydium_cpmm_quotes, \
-    get_raydium_clmm_quotes, get_jupiter_quotes, get_pump_fun_quotes, get_leader_schedule, orderbook_stream, market_depth_stream, \
-    get_tickers_stream, get_prices_stream, get_swaps_stream, get_trades_stream, get_new_raydium_pools_stream, \
+    get_quotes, get_raydium_quotes, get_raydium_cpmm_quotes, \
+    get_raydium_clmm_quotes, get_jupiter_quotes, get_pump_fun_quotes, get_leader_schedule, \
+    get_prices_stream, get_swaps_stream, get_new_raydium_pools_stream, \
     get_new_raydium_pools_stream_cpmm, get_recent_blockhash_stream, get_pool_reserve_stream, \
     get_block_stream, get_priority_fee, get_priority_fee_stream, get_bundle_tip_stream, get_priority_fee_by_program_stream, get_token_accounts, \
-    call_trade_swap, call_route_trade_swap, call_raydium_trade_swap, call_raydium_cpmm_trade_swap, \
+    call_raydium_trade_swap, call_raydium_cpmm_trade_swap, \
     call_raydium_clmm_trade_swap, call_jupiter_trade_swap, call_pump_fun_trade_swap, create_personal_tx_and_submit, call_submit_snipe 
 
 nest_asyncio.apply()
@@ -42,15 +42,10 @@ def print_logo():
 
 
 ExampleEndpoints = {
-    "get_markets": Endpoint(func=get_markets, requires_additional_env_vars=False),
     "get_pools": Endpoint(func=get_pools, requires_additional_env_vars=False),
-    "get_tickers": Endpoint(func=get_tickers, requires_additional_env_vars=False),
     "get_raydium_clmm_pools": Endpoint(func=get_raydium_clmm_pools, requires_additional_env_vars=False),
     "get_raydium_pool_reserve": Endpoint(func=get_raydium_pool_reserves, requires_additional_env_vars=False),
     "get_raydium_pools": Endpoint(func=get_raydium_pools, requires_additional_env_vars=False),
-    "get_orderbook": Endpoint(func=get_orderbook, requires_additional_env_vars=False),
-    "get_market_depth": Endpoint(func=get_market_depth, requires_additional_env_vars=False),
-    "get_open_orders": Endpoint(func=get_open_orders, requires_additional_env_vars=False),
     "get_transaction": Endpoint(func=get_transaction, requires_additional_env_vars=False),
     "get_recent_blockhash": Endpoint(func=get_recent_blockhash, requires_additional_env_vars=False),
     "get_recent_blockhash_offset": Endpoint(func=get_recent_blockhash_offset, requires_additional_env_vars=False),
@@ -60,8 +55,6 @@ ExampleEndpoints = {
     "get_price": Endpoint(func=get_price, requires_additional_env_vars=False),
     "get_raydium_prices": Endpoint(func=get_raydium_prices, requires_additional_env_vars=False),
     "get_jupiter_prices": Endpoint(func=get_jupiter_prices, requires_additional_env_vars=False),
-    "get_unsettled": Endpoint(func=get_unsettled, requires_additional_env_vars=False),
-    "get_account_balance": Endpoint(func=get_account_balance, requires_additional_env_vars=False),
     "get_quotes": Endpoint(func=get_quotes, requires_additional_env_vars=False),
     "get_raydium_quotes": Endpoint(func=get_raydium_quotes, requires_additional_env_vars=False),
     "get_raydium_cpmm_quotes": Endpoint(func=get_raydium_cpmm_quotes, requires_additional_env_vars=False),
@@ -71,12 +64,8 @@ ExampleEndpoints = {
     "get_leader_schedule": Endpoint(func=get_leader_schedule, requires_additional_env_vars=False),
 
     # streaming endpoints
-    "orderbook_stream": Endpoint(func=orderbook_stream, requires_additional_env_vars=False),
-    "market_depth_stream": Endpoint(func=market_depth_stream, requires_additional_env_vars=False),
-    "tickers_stream": Endpoint(func=get_tickers_stream, requires_additional_env_vars=False),
     "prices_stream": Endpoint(func=get_prices_stream, requires_additional_env_vars=False),
     "swaps_stream": Endpoint(func=get_swaps_stream, requires_additional_env_vars=False),
-    "trades_stream": Endpoint(func=get_trades_stream, requires_additional_env_vars=False),
     "new_raydium_pools_stream": Endpoint(func=get_new_raydium_pools_stream, requires_additional_env_vars=False),
     "new_raydium_pools_stream_cpmm": Endpoint(func=get_new_raydium_pools_stream_cpmm,
                                               requires_additional_env_vars=False),
@@ -89,8 +78,6 @@ ExampleEndpoints = {
                                                   requires_additional_env_vars=False),
 
     # transaction endpoints
-    "trade_swap": Endpoint(func=call_trade_swap, requires_additional_env_vars=True),
-    "route_trade_swap": Endpoint(func=call_route_trade_swap, requires_additional_env_vars=True),
     "raydium_swap": Endpoint(func=call_raydium_trade_swap, requires_additional_env_vars=True),
     "raydium_cpmm_swap": Endpoint(func=call_raydium_cpmm_trade_swap, requires_additional_env_vars=True),
     "raydium_clmm_swap": Endpoint(func=call_raydium_clmm_trade_swap, requires_additional_env_vars=True),
