@@ -61,10 +61,6 @@ def initializeEnvironmentVariables() -> EnvironmentVariables:
     if not public_key:
         logger.warning("PUBLIC_KEY environment variable not set. Will skip place/cancel/settle examples.")
 
-    open_orders_address = os.getenv("OPEN_ORDERS")
-    if not open_orders_address:
-        logger.error("OPEN_ORDERS environment variable not set. Requests may be slower.")
-
     payer = os.getenv("PAYER")
     if not payer:
         if public_key:
@@ -77,7 +73,6 @@ def initializeEnvironmentVariables() -> EnvironmentVariables:
     return EnvironmentVariables(
         private_key=private_key or "",
         public_key=public_key or "",
-        open_orders_address=open_orders_address or "",
         payer=payer
     )
 
@@ -85,24 +80,11 @@ def initializeEnvironmentVariables() -> EnvironmentVariables:
 UserEnvironment = initializeEnvironmentVariables()
 
 
-async def get_markets(p: provider.Provider) -> bool:
-    resp = await p.get_markets_v2(proto.GetMarketsRequestV2())
-    pprint(resp)
-
-    return True if resp.markets is not None else False
-
 
 async def get_pools(p: provider.Provider) -> bool:
     resp = await p.get_pools(proto.GetPoolsRequest(projects=[proto.Project.P_RAYDIUM]))
     pprint(resp)
     return True if resp is not None else False
-
-
-async def get_tickers(p: provider.Provider) -> bool:
-    resp = await p.get_tickers_v2(proto.GetTickersRequestV2(market="SOLUSDC"))
-    pprint(resp)
-
-    return True if resp.tickers is not None else False
 
 
 async def get_raydium_clmm_pools(p: provider.Provider) -> bool:
@@ -112,13 +94,6 @@ async def get_raydium_clmm_pools(p: provider.Provider) -> bool:
     return True if resp.pools is not None else False
 
 
-async def get_orderbook(p: provider.Provider) -> bool:
-    resp = await p.get_orderbook_v2(proto.GetOrderbookRequestV2("SOL-USDC"))
-    pprint(resp)
-
-    return True if resp.market is not None else False
-
-
 async def get_raydium_pool_reserves(p: provider.Provider) -> bool:
     resp = await p.get_raydium_pool_reserve(proto.GetRaydiumPoolReserveRequest(
         pairs_or_addresses=["HZ1znC9XBasm9AMDhGocd9EHSyH8Pyj1EUdiPb4WnZjo",
@@ -126,22 +101,6 @@ async def get_raydium_pool_reserves(p: provider.Provider) -> bool:
     pprint(resp)
 
     return True if resp.pools is not None else False
-
-
-async def get_market_depth(p: provider.Provider) -> bool:
-    resp = await p.get_market_depth_v2(proto.GetMarketDepthRequestV2(market="SOLUSDC"))
-    pprint(resp)
-
-    return True if resp.market is not None else False
-
-
-async def get_open_orders(p: provider.Provider) -> bool:
-    resp = await p.get_open_orders_v2(
-        proto.GetOpenOrdersRequestV2(market="SOLUSDC", address="FFqDwRq8B4hhFKRqx7N1M6Dg6vU699hVqeynDeYJdPj5"))
-    pprint(resp)
-
-    return True if resp.orders is not None else False
-
 
 async def get_transaction(p: provider.Provider) -> bool:
     resp = await p.get_transaction(
@@ -204,29 +163,6 @@ async def get_jupiter_prices(p: provider.Provider) -> bool:
     pprint(resp)
 
     return True if resp.token_prices is not None else False
-
-
-async def get_unsettled(p: provider.Provider) -> bool:
-    resp = await p.get_unsettled_v2(
-        proto.GetUnsettledRequestV2(market="SOLUSDC", owner_address="HxFLKUAmAMLz1jtT3hbvCMELwH5H9tpM2QugP8sKyfhc"))
-    pprint(resp)
-
-    return True if resp.market is not None else False
-
-
-async def get_account_balance(p: provider.Provider) -> bool:
-    if UserEnvironment.public_key != "":
-        resp = await p.get_account_balance_v2(
-            proto.GetAccountBalanceRequest(owner_address=UserEnvironment.public_key))
-        pprint(resp)
-
-    else:
-        resp = await p.get_account_balance_v2(
-            proto.GetAccountBalanceRequest(owner_address="HxFLKUAmAMLz1jtT3hbvCMELwH5H9tpM2QugP8sKyfhc"))
-        pprint(resp)
-
-    return True if resp.tokens is not None else False
-
 
 async def get_quotes(p: provider.Provider) -> bool:
     resp = await p.get_quotes(proto.GetQuotesRequest(in_token="So11111111111111111111111111111111111111112",
@@ -322,63 +258,6 @@ async def get_token_accounts(p: provider.Provider) -> bool:
 
     return True if resp.accounts is not None else False
 
-
-async def orderbook_stream(p: provider.Provider) -> bool:
-    print("streaming orderbook updates...")
-
-    async for resp in p.get_orderbooks_stream(
-            get_orderbooks_request=proto.GetOrderbooksRequest(
-                markets=["SOLUSDC"], project=proto.Project.P_OPENBOOK
-            )
-    ):
-        pprint(resp)
-        await p.close()
-
-        return True if resp.orderbook is not None else False
-    return False
-
-
-async def market_depth_stream(p: provider.Provider) -> bool:
-    print("streaming market depth updates...")
-
-    async for resp in p.get_market_depths_stream(
-            get_market_depths_request=proto.GetMarketDepthsRequest(
-                markets=["SOLUSDC"], limit=5, project=proto.Project.P_OPENBOOK
-            ),
-            timeout=10,
-    ):
-        pprint(resp)
-        await p.close()
-
-        return True if resp.data is not None else False
-    return False
-
-
-async def get_tickers_stream(p: provider.Provider) -> bool:
-    print("streaming ticker updates...")
-
-    async for resp in p.get_tickers_stream(timeout=10,
-                                           get_tickers_stream_request=proto.GetTickersStreamRequest(
-                                               markets=[
-                                                   "BONK/SOL",
-                                                   "wSOL/RAY",
-                                                   "BONK/RAY",
-                                                   "RAY/USDC",
-                                                   "SOL/USDC",
-                                                   "SOL/USDC",
-                                                   "RAY/USDC",
-                                                   "USDT/USDC",
-                                               ],
-                                               project=proto.Project.P_OPENBOOK,
-                                           )
-                                           ):
-        pprint(resp)
-        await p.close()
-
-        return True if resp.ticker is not None else False
-    return False
-
-
 async def get_prices_stream(p: provider.Provider) -> bool:
     print("streaming price streams...")
     async for resp in p.get_prices_stream(
@@ -417,21 +296,6 @@ async def get_swaps_stream(p: provider.Provider) -> bool:
         await p.close()
         return True if resp.swap is not None else False
     return False
-
-
-async def get_trades_stream(p: provider.Provider) -> bool:
-    print("streaming trade updates...")
-    async for resp in p.get_trades_stream(
-            get_trades_request=proto.GetTradesRequest(
-                market="SOLUSDC", project=proto.Project.P_OPENBOOK
-            )
-    ):
-        pprint(resp)
-
-        await p.close()
-        return True if resp.trades is not None else False
-    return False
-
 
 async def get_new_raydium_pools_stream(p: provider.Provider) -> bool:
     print("streaming raydium new pool updates without cpmm pools...")
@@ -541,49 +405,6 @@ async def get_priority_fee_by_program_stream(p: provider.Provider) -> bool:
 
         return True if resp.data is not None else False
     return False
-
-async def call_trade_swap(p: provider.Provider) -> bool:
-    print("calling post submit trade swap (using batch submit)...")
-
-    response = await p.submit_post_trade_swap(project=proto.Project.P_RAYDIUM,
-                                              owner_address=UserEnvironment.public_key,
-                                              in_token="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-                                              out_token="So11111111111111111111111111111111111111112",
-                                              in_amount=0.01,
-                                              slippage=0.5,
-                                              compute_limit=200000,
-                                              compute_price=100000,
-                                              tip=1000000,
-                                              submit_strategy=proto.SubmitStrategy.P_ABORT_ON_FIRST_ERROR,
-                                              skip_pre_flight=True)
-
-    print("signature for trade swap tx", response.transactions[0].signature)
-
-    return True if response.transactions[0].signature else False
-
-
-async def call_route_trade_swap(p: provider.Provider) -> bool:
-    print("calling post submit route trade swap (using batch submit)...")
-
-    response = await p.submit_post_route_trade_swap(project=proto.Project.P_RAYDIUM,
-                                                    owner_address=UserEnvironment.public_key,
-                                                    slippage=0.5,
-                                                    compute_price=100000,
-                                                    compute_limit=200000,
-                                                    tip=1000000,
-                                                    steps=[proto.RouteStep(
-                                                        in_token="So11111111111111111111111111111111111111112",
-                                                        out_token="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-                                                        in_amount=0.01,
-                                                        out_amount_min=0.007505,
-                                                        out_amount=0.0074,
-                                                        project=proto.StepProject(label="Raydium",
-                                                                                  id="58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2"))])
-
-    print("signature for route trade swap tx", response.transactions[0].signature)
-
-    return True if response.transactions[0].signature else False
-
 
 async def call_raydium_trade_swap(p: provider.Provider) -> bool:
     print("calling post submit raydium trade swap...")

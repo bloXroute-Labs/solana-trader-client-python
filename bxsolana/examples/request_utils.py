@@ -66,17 +66,6 @@ async def do_requests(
         ).to_json()
     )
 
-    print("fetching market depth")
-    print(
-        (
-            await api.get_market_depth_v2(
-                get_market_depth_request_v2=proto.GetMarketDepthRequestV2(
-                    limit=1, market="SOLUSDC"
-                )
-            )
-        ).to_json()
-    )
-
     print("fetching priority fee")
     print(
         (
@@ -102,49 +91,7 @@ async def do_requests(
         ).to_json()
     )
 
-    # markets API
-    print("fetching all markets")
-    print(
-        (
-            await api.get_markets_v2(
-                get_markets_request_v2=proto.GetMarketsRequestV2()
-            )
-        ).to_json()
-    )
-
-    print("fetching SOL/USDC orderbook")
-    print(
-        (
-            await api.get_orderbook_v2(
-                get_orderbook_request_v2=proto.GetOrderbookRequestV2(
-                    market="SOLUSDC"
-                )
-            )
-        ).to_json()
-    )
-
-    print("fetching SOL/USDC ticker")
-    print(
-        (
-            await api.get_tickers_v2(
-                get_tickers_request_v2=proto.GetTickersRequestV2(
-                    market="SOLUSDC"
-                )
-            )
-        ).to_json()
-    )
-
-    print("fetching all tickers")
-    print(
-        (
-            await api.get_tickers_v2(
-                get_tickers_request_v2=proto.GetTickersRequestV2()
-            )
-        ).to_json()
-    )
-
     print("fetching prices")
-
     print(
         (
             await api.get_price(
@@ -296,45 +243,6 @@ async def do_requests(
         ).to_json()
     )
 
-    # trade API
-    print("fetching open orders for account")
-    print(
-        (
-            await api.get_open_orders_v2(
-                get_open_orders_request_v2=proto.GetOpenOrdersRequestV2(
-                    order_id="",
-                    client_order_id=0,
-                    market="SOLUSDC",
-                    address=public_key,
-                    limit=0,
-                )
-            )
-        ).to_json()
-    )
-
-    print("fetching unsettled amounts")
-    print(
-        (
-            await api.get_unsettled_v2(
-                get_unsettled_request_v2=proto.GetUnsettledRequestV2(
-                    market="SOLUSDC",
-                    owner_address=public_key,
-                )
-            )
-        ).to_json()
-    )
-
-    print("fetching account balance amounts")
-    print(
-        (
-            await api.get_account_balance(
-                get_account_balance_request=proto.GetAccountBalanceRequest(
-                    owner_address=public_key
-                )
-            )
-        ).to_json()
-    )
-
     print("fetching token accounts and balances")
     print(
         (
@@ -344,129 +252,6 @@ async def do_requests(
                 )
             )
         ).to_json()
-    )
-
-    print(
-        "generating unsigned order (no sign or submission) to sell 0.1 SOL for"
-        " USDC at 150_000 USD/SOL"
-    )
-    print(
-        (
-            await api.post_order_v2(
-                post_order_request_v2=proto.PostOrderRequestV2(
-                    owner_address=public_key,
-                    payer_address=public_key,
-                    market="SOLUSDC",
-                    side="ASK",
-                    amount=0.1,
-                    price=150_000,
-                    type="limit",
-                    # optional, but much faster if known
-                    open_orders_address=open_orders,
-                    # optional, for identification
-                    client_order_id=0,
-                )
-            )
-        ).to_json()
-    )
-    if order_id != "":
-        print("generate cancel order")
-        print(
-            (
-                await api.post_cancel_order_v2(
-                    post_cancel_order_request_v2=proto.PostCancelOrderRequestV2(
-                        order_id=order_id,
-                        side="ASK",
-                        market_address="SOLUSDC",
-                        owner_address=public_key,
-                        open_orders_address=open_orders,
-                        client_order_id=0,
-                    )
-                )
-            ).to_json()
-        )
-
-    print("generate cancel order by client ID")
-    print(
-        await api.post_cancel_order_v2(
-            post_cancel_order_request_v2=proto.PostCancelOrderRequestV2(
-                client_order_id=123,
-                market_address=sol_usdc_market,
-                owner_address=public_key,
-                open_orders_address=open_orders,
-            )
-        )
-    )
-
-    print("generate settle order")
-    print(
-        await api.post_settle_v2(
-            post_settle_request_v2=proto.PostSettleRequestV2(
-                owner_address=public_key,
-                market="SOLUSDC",
-                base_token_wallet=public_key,
-                quote_token_wallet=usdc_wallet,
-                open_orders_address=open_orders,
-            )
-        )
-    )
-
-    print("generate replace by client order id")
-    print(
-        (
-            await api.post_replace_order_v2(
-                post_replace_order_request_v2=proto.PostReplaceOrderRequestV2(
-                    owner_address=public_key,
-                    payer_address=public_key,
-                    market="SOLUSDC",
-                    side="ASK",
-                    type="limit",
-                    amount=0.1,
-                    price=150_000,
-                    # optional, but much faster if known
-                    open_orders_address=open_orders,
-                    # optional, for identification
-                    client_order_id=123,
-                )
-            )
-        ).to_json()
-    )
-    if order_id != "":
-        print("generate replace by order id")
-        print(
-            (
-                await api.post_replace_order_v2(
-                    post_replace_order_request_v2=proto.PostReplaceOrderRequestV2(
-                        owner_address=public_key,
-                        payer_address=public_key,
-                        market="SOLUSDC",
-                        side="ASK",
-                        amount=0.1,
-                        price=150_000,
-                        # optional, but much faster if known
-                        open_orders_address=open_orders,
-                        # optional, for identification
-                        client_order_id=0,
-                        order_id=order_id,
-                    )
-                )
-            ).to_json()
-        )
-
-    print("generate trade swap")
-    print(
-        (
-            await api.post_trade_swap(
-                trade_swap_request=proto.TradeSwapRequest(
-                    project=proto.Project.P_RAYDIUM,
-                    owner_address=public_key,
-                    in_token="So11111111111111111111111111111111111111112",
-                    in_amount=0.01,
-                    out_token="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-                    slippage=0.01,
-                )
-            )
-        )
     )
 
     print("generate raydium swap")

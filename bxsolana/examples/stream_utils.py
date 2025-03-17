@@ -27,66 +27,6 @@ async def do_stream(
             item_count = 0
             break
 
-    print("streaming market depth updates...")
-    async for response in api.get_market_depths_stream(
-        get_market_depths_request=proto.GetMarketDepthsRequest(
-            markets=["SOLUSDC"], limit=10, project=proto.Project.P_OPENBOOK
-        )
-    ):
-        print(response.to_json())
-        item_count += 1
-        if item_count == 1:
-            item_count = 0
-            break
-
-    print("streaming orderbook updates...")
-    async for response in api.get_orderbooks_stream(
-        get_orderbooks_request=proto.GetOrderbooksRequest(
-            markets=["SOLUSDC"], project=proto.Project.P_OPENBOOK
-        )
-    ):
-        print(response.to_json())
-        item_count += 1
-        if item_count == 1:
-            item_count = 0
-            break
-
-    if run_slow:
-        print("streaming ticker updates...")
-        async for response in api.get_tickers_stream(
-            get_tickers_stream_request=proto.GetTickersStreamRequest(
-                markets=[
-                    "BONK/SOL",
-                    "wSOL/RAY",
-                    "BONK/RAY",
-                    "RAY/USDC",
-                    "SOL/USDC",
-                    "SOL/USDC",
-                    "RAY/USDC",
-                    "USDT/USDC",
-                ],
-                project=proto.Project.P_OPENBOOK,
-            )
-        ):
-            print(response.to_json())
-            item_count += 1
-            if item_count == 1:
-                item_count = 0
-                break
-
-    if run_slow:
-        print("streaming trade updates...")
-        async for response in api.get_trades_stream(
-            get_trades_request=proto.GetTradesRequest(
-                market="SOLUSDC", project=proto.Project.P_OPENBOOK
-            )
-        ):
-            print(response.to_json())
-            item_count += 1
-            if item_count == 1:
-                item_count = 0
-                break
-
     if run_slow:
         print("streaming swap events...")
         async for response in api.get_swaps_stream(
