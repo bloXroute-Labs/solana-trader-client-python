@@ -56,10 +56,10 @@ Context manager:
 from bxsolana import provider
 
 async with provider.http() as api:
-    print(await api.get_orderbook(market="ETHUSDT"))
+    print(await api.get_raydium_pools())
     
 async with provider.ws() as api:
-    async for update in api.get_orderbooks_stream(market="ETHUSDT"):
+    async for update in api.get_prices_stream(projects=[api.Project.P_RAYDIUM], tokens=["So11111111111111111111111111111111111111112"]):
         print(update)
 ```
 
@@ -74,7 +74,7 @@ p = provider.grpc()
 api = await bxsolana.trader_api(p)
 
 try:
-    await api.get_orderbook(market="ETHUSDT")
+    await api.get_jupiter_prices(tokens=["So11111111111111111111111111111111111111112", "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"])
 finally:
     await p.close()
 ```
