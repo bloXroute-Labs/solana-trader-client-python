@@ -20,6 +20,7 @@ from solders.keypair import Keypair
 from solders.message import MessageV0
 from solders.pubkey import Pubkey
 from solders.system_program import transfer, TransferParams
+from solders.compute_budget import set_compute_unit_price
 from solders.transaction import VersionedTransaction
 from solders import message as msg # pyre-ignore[21]: module is too hard to find
 import base64
@@ -77,8 +78,8 @@ def initializeEnvironmentVariables() -> EnvironmentVariables:
     return EnvironmentVariables(
         private_key=private_key or "",
         public_key=public_key or "",
-        open_orders_address=open_orders_address or "",
-        payer=payer
+        payer=payer,
+        open_orders_address=""
     )
 
 
@@ -773,3 +774,55 @@ async def call_submit_snipe(p: provider.Provider) -> bool:
     result = await p.submit_snipe(transactions, use_staked_rpcs=True)
     print("Snipe Signatures:", result)
     return len(result) > 0
+
+async def call_place_order_bundle_paladin(p: provider.Provider) -> bool:
+    print("Starting place order with bundle using Paladin...")
+    
+    # Get recent blockhash
+    resp = await p.get_recent_block_hash_v2(proto.GetRecentBlockHashRequestV2())
+    blockhash = Hash.from_string(resp.block_hash)
+    
+    # Load private key from environment
+    private_key = load_private_key_from_env()
+    
+    # Create instructions
+    # 1. Set compute unit price instruction
+    compute_budget_ix = set_compute_unit_price(
+        200000000
+    )
+    
+    # 2. Transfer instruction
+    transfer_ix = transfer(TransferParams(
+        from_pubkey=private_key.pubkey(),
+        to_pubkey=Pubkey.from_string("HWEoBxYs7ssKuudEjzjmpfJVX7Dvi7wescFsVx2L5yoY"),
+        lamports=10000000
+    ))
+    
+    # Compile message
+    tx_message = MessageV0.try_compile(
+        payer=private_key.pubkey(),
+        instructions=[compute_budget_ix, transfer_ix],
+        address_lookup_table_accounts=[],
+        recent_blockhash=blockhash
+    )
+    
+    # Create transaction
+    tx = VersionedTransaction(tx_message, [private_key])
+    signature = private_key.sign_message(msg.to_bytes_versioned(tx.message))
+    tx = VersionedTransaction.populate(tx.message, [signature])
+    
+    # Encode transaction
+    tx_base64 = base64.b64encode(bytes(tx)).decode()
+    
+    # Submit transaction using paladin
+    try:
+        signature = await p.submit_paladin(
+            signed_tx=tx_base64,
+            revert_protection=True
+        )
+        
+        print(f"Submitted order to trader API with signature: {signature}")
+        return True
+    except Exception as e:
+        print(f"Failed to sign and submit order: {e}")
+        return False

@@ -10,7 +10,7 @@ import pyfiglet
 
 from bxsolana.provider import constants
 from menu import MenuSelection
-from helpers import Endpoint, get_markets, get_pools, get_tickers, get_raydium_clmm_pools, \
+from helpers import Endpoint, get_markets, get_pools, get_tickers, get_raydium_clmm_pools, call_place_order_bundle_paladin, \
     get_orderbook, get_raydium_pool_reserves, get_market_depth, get_open_orders, get_transaction, get_recent_blockhash, \
     get_recent_blockhash_offset, get_rate_limit, get_price, get_raydium_pools, get_raydium_prices, get_jupiter_prices, \
     get_unsettled, get_account_balance, get_quotes, get_raydium_quotes, get_raydium_cpmm_quotes, \
@@ -97,7 +97,8 @@ ExampleEndpoints = {
     "jupiter_swap": Endpoint(func=call_jupiter_trade_swap, requires_additional_env_vars=True),
     "pump_fun_swap": Endpoint(func=call_pump_fun_trade_swap, requires_additional_env_vars=True),
     "create_custom_bloxroute_transfer": Endpoint(func=create_personal_tx_and_submit, requires_additional_env_vars=True),
-    "submit_snipe": Endpoint(func=call_submit_snipe, requires_additional_env_vars=True)
+    "submit_snipe": Endpoint(func=call_submit_snipe, requires_additional_env_vars=True),
+    "call_place_order_bundle_paladin": Endpoint(func=call_place_order_bundle_paladin, requires_additional_env_vars=True)
 }
 
 
