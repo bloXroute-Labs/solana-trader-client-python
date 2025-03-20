@@ -607,19 +607,15 @@ class Provider(api.ApiStub, ABC):
 
     async def submit_paladin(
         self,
-        transaction_message: str,
-    ) -> str:
-        pk = self.require_private_key()
-        signed_tx = transaction.sign_tx_message_with_private_key(
-            transaction_message, 
-            pk
-        )
-        
-        result = await self.post_submit_paladin(
+        signed_tx: str,
+        revert_protection: bool = False,
+    ) -> str:        
+        result = await self.post_submit_paladin_v2(
             post_submit_paladin_request=api.PostSubmitPaladinRequest(
                 transaction=api.TransactionMessageV2(
-                    content=signed_tx.content
-                )
+                    content=signed_tx
+                ),
+                revert_protection = revert_protection
             )
         )
         

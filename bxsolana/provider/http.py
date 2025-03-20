@@ -967,6 +967,24 @@ class HttpProvider(Provider):
             json=request_dict,
         ) as res:
             return await map_response(res, proto.PostOrderResponse())
+        
+    async def post_submit_snipe_v2(
+        self,
+        post_submit_snipe_request: "PostSubmitSnipeRequest",
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+    ) -> proto.PostSubmitResponse:
+        request_dict = post_submit_snipe_request.to_dict()
+
+        if "useStakedRpCs" in request_dict:
+            request_dict["useStakedRPCs"] = request_dict.pop("useStakedRpCs")
+
+        async with self._session.post(
+            f"{self._endpoint_v2}/submit-snipe",
+            json=request_dict,
+        ) as res:
+            return await map_response(res, proto.PostSubmitSnipeResponse())
 
     async def _unary_stream(
         self,

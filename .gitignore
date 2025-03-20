@@ -130,3 +130,5 @@ dmypy.json
 .pyre/
 test_state.json
 .vscode/
+
+myenv

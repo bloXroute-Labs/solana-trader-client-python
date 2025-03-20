@@ -86,6 +86,9 @@ class WsProvider(Provider):
 
         if "orderId" in request_dict:
             request_dict["orderID"] = request_dict.pop("orderId")
+            
+        if "useStakedRpCs" in request_dict:
+            request_dict["useStakedRPCs"] = request_dict.pop("useStakedRpCs")
 
         result = await self._ws.call(_ws_endpoint(route), request_dict)
         response = _validated_response(result, response_type)
