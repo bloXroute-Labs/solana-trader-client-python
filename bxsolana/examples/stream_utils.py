@@ -190,3 +190,15 @@ async def do_stream(
             if item_count == 1:
                 item_count = 0
                 break
+
+    if run_slow:
+        print("streaming new pump swap amm pools")
+        async for response in api.get_pump_fun_new_amm_pool_stream(
+            get_pump_fun_new_amm_pool_stream_request=proto.GetPumpFunNewAmmPoolStreamRequest()
+        ):
+            print(response.to_json())
+            item_count+=1 
+            if item_count == 1:
+                item_count = 0
+                break
+

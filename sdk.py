@@ -19,7 +19,8 @@ from helpers import Endpoint, get_markets, get_pools, get_tickers, get_raydium_c
     get_new_raydium_pools_stream_cpmm, get_recent_blockhash_stream, get_pool_reserve_stream, \
     get_block_stream, get_priority_fee, get_priority_fee_stream, get_bundle_tip_stream, get_priority_fee_by_program_stream, get_token_accounts, \
     call_trade_swap, call_route_trade_swap, call_raydium_trade_swap, call_raydium_cpmm_trade_swap, \
-    call_raydium_clmm_trade_swap, call_jupiter_trade_swap, call_pump_fun_trade_swap, create_personal_tx_and_submit, call_submit_snipe 
+    call_raydium_clmm_trade_swap, call_jupiter_trade_swap, call_pump_fun_trade_swap, create_personal_tx_and_submit, call_submit_snipe, \
+    get_pump_fun_new_amm_pool_stream
 
 nest_asyncio.apply()
 init(autoreset=True)
@@ -86,6 +87,8 @@ ExampleEndpoints = {
     "get_priority_fee_stream": Endpoint(func=get_priority_fee_stream, requires_additional_env_vars=False),
     "get_bundle_tip_stream": Endpoint(func=get_bundle_tip_stream, requires_additional_env_vars=False),
     "get_priority_fee_by_program_stream": Endpoint(func=get_priority_fee_by_program_stream,
+                                                  requires_additional_env_vars=False),
+    "get_pump_fun_new_amm_pool_stream": Endpoint(func=get_pump_fun_new_amm_pool_stream,
                                                   requires_additional_env_vars=False),
 
     # transaction endpoints
