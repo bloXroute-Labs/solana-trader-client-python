@@ -29,27 +29,25 @@ async def main():
 
 
 async def ws():
-    print("\n*** WS Example using Openbook bundles ***\n")
+    print("\n*** WS Test ***\n")
     async with provider.ws_testnet() as api:
-        openbook_bundle_tx = await api.post_order_v2(
-            post_order_request_v2=proto.PostOrderRequestV2(
+        raydium_bundle_tx = await api.post_raydium_swap(
+            proto.PostRaydiumSwapRequest(
                 owner_address=public_key,
-                payer_address=public_key,
-                market="SOLUSDC",
-                side="ASK",
-                amount=0.01,
-                price=150_000,
-                type="limit",
+                in_token="SOL",
+                out_token="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                slippage=0.2,
+                in_amount=0.01,
                 tip=1030,
             )
         )
 
         print(
-            "created OPENBOOK tx with bundle tip of 1030:"
-            f" {openbook_bundle_tx.transaction.content}"
+            "created RAYDIUM swap tx with bundle tip of 1030:"
+            f" {raydium_bundle_tx.transactions[0].content}"
         )
 
-        signed_tx = signing.sign_tx(openbook_bundle_tx.transaction.content)
+        signed_tx = signing.sign_tx(raydium_bundle_tx.transactions[0].content)
 
         post_submit_response = await api.post_submit(
             post_submit_request=proto.PostSubmitRequest(
@@ -60,8 +58,8 @@ async def ws():
         )
 
         print(
-            "submitted OPENBOOK tx with front running protection:"
-            f" {openbook_bundle_tx.transaction.content}"
+            "submitted RAYDIUM tx with front running protection:"
+            f" {post_submit_response.signature}"
         )
 
 
