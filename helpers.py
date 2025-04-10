@@ -433,6 +433,24 @@ async def get_trades_stream(p: provider.Provider) -> bool:
         return True if resp.trades is not None else False
     return False
 
+async def get_pump_fun_new_amm_pool_stream(p: provider.Provider) -> bool:
+    print("streaming new pump swap amm pools")
+
+    await p.close()
+
+    p = provider.grpc_pump_ny()
+    await p.connect()
+
+    async for resp in p.get_pump_fun_new_amm_pool_stream(
+        get_pump_fun_new_amm_pool_stream_request=proto.GetPumpFunNewAmmPoolStreamRequest()
+    ):
+        pprint(resp)
+        await p.close()
+
+        return True if resp.pool is not None else False
+
+    return False
+
 
 async def get_new_raydium_pools_stream(p: provider.Provider) -> bool:
     print("streaming raydium new pool updates without cpmm pools...")
