@@ -1000,7 +1000,7 @@ class HttpProvider(Provider):
         
     async def post_submit_paladin_v2(
         self,
-        post_submit_paladin_request_v2: proto.PostSubmitPaladinRequestV2,
+        post_submit_paladin_request_v2: proto.PostSubmitPaladinRequest,
         *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
