@@ -4,7 +4,6 @@ from typing import Type, AsyncGenerator, Optional, TYPE_CHECKING, List, Any
 import aiohttp
 
 from solders import keypair as kp  # pyre-ignore[21]: module is too hard to find
-import datetime
 
 from bxsolana_trader_proto import api as proto
 from grpclib.metadata import Deadline
