@@ -970,7 +970,7 @@ class HttpProvider(Provider):
         
     async def post_submit_snipe_v2(
         self,
-        post_submit_snipe_request: "PostSubmitSnipeRequest",
+        post_submit_snipe_request: proto.PostSubmitSnipeRequest,
         *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
@@ -985,6 +985,78 @@ class HttpProvider(Provider):
             json=request_dict,
         ) as res:
             return await map_response(res, proto.PostSubmitSnipeResponse())
+        
+    async def get_server_time(
+        self,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None,
+    ) -> proto.GetServerTimeResponse:
+        async with self._session.get(
+            f"{self._endpoint_v1}/system/time"
+        ) as res:
+            return await map_response(res, proto.GetServerTimeResponse())
+        
+    async def post_submit_paladin_v2(
+        self,
+        post_submit_paladin_request_v2: proto.PostSubmitPaladinRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+    ) -> proto.PostSubmitResponse:
+        request_dict = post_submit_paladin_request_v2.to_dict()
+
+        async with self._session.post(
+            f"{self._endpoint_v2}/submit-paladin",
+            json=request_dict,
+        ) as res:
+            return await map_response(res, proto.PostSubmitResponse())
+        
+    async def post_jupiter_swap_instructions(
+        self,
+        post_jupiter_swap_instructions_request: proto.PostJupiterSwapInstructionsRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+    ) -> proto.PostJupiterSwapInstructionsResponse:
+        request_dict = post_jupiter_swap_instructions_request.to_dict()
+
+        async with self._session.post(
+            f"{self._endpoint_v2}/jupiter/swap-instructions",
+            json=request_dict,
+        ) as res:
+            return await map_response(res, proto.PostJupiterSwapInstructionsResponse())
+        
+    async def post_pump_fun_swap_sol(
+        self,
+        post_pump_fun_swap_request_sol: proto.PostPumpFunSwapRequestSol,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+    ) -> proto.PostPumpFunSwapResponse:
+        request_dict = post_pump_fun_swap_request_sol.to_dict()
+
+        async with self._session.post(
+            f"{self._endpoint_v2}/pumpfun/swap-sol",
+            json=request_dict,
+        ) as res:
+            return await map_response(res, proto.PostPumpFunSwapResponse())
+        
+    async def post_raydium_swap_instructions(
+        self,
+        post_raydium_swap_instructions_request: proto.PostRaydiumSwapInstructionsRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+    ) -> proto.PostRaydiumSwapInstructionsResponse:
+        request_dict = post_raydium_swap_instructions_request.to_dict()
+
+        async with self._session.post(
+            f"{self._endpoint_v2}/raydium/swap-instructions",
+            json=request_dict,
+        ) as res:
+            return await map_response(res, proto.PostRaydiumSwapInstructionsResponse())
 
     async def _unary_stream(
         self,
