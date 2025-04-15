@@ -4,6 +4,7 @@ from typing import List, Optional
 from bxsolana_trader_proto import api
 from bxsolana_trader_proto.common import OrderType
 from solders import keypair as kp     # pyre-ignore[21]: module is too hard to find
+from ..utils.timestamp import timestamp
 
 from .. import transaction
 
@@ -72,7 +73,7 @@ class Provider(api.ApiStub, ABC):
         )
         result = await self.post_submit(
             post_submit_request=api.PostSubmitRequest(
-                transaction=signed_tx, skip_pre_flight=skip_pre_flight
+                transaction=signed_tx, skip_pre_flight=skip_pre_flight, timestamp=timestamp()
             )
         )
         return result.signature
@@ -107,7 +108,7 @@ class Provider(api.ApiStub, ABC):
         )
         result = await self.post_submit(
             post_submit_request=api.PostSubmitRequest(
-                transaction=signed_tx, skip_pre_flight=skip_pre_flight
+                transaction=signed_tx, skip_pre_flight=skip_pre_flight, timestamp=timestamp()
             )
         )
         return result.signature
@@ -141,7 +142,7 @@ class Provider(api.ApiStub, ABC):
         )
         result = await self.post_submit(
             post_submit_request=api.PostSubmitRequest(
-                transaction=signed_tx, skip_pre_flight=skip_pre_flight
+                transaction=signed_tx, skip_pre_flight=skip_pre_flight, timestamp=timestamp()
             )
         )
         return result.signature
@@ -176,7 +177,7 @@ class Provider(api.ApiStub, ABC):
             signed_tx = transaction.sign_tx_message_with_private_key(tx, pk)
             result = await self.post_submit(
                 post_submit_request=api.PostSubmitRequest(
-                    transaction=signed_tx, skip_pre_flight=skip_pre_flight
+                    transaction=signed_tx, skip_pre_flight=skip_pre_flight, timestamp=timestamp()
                 )
             )
             signatures.append(result.signature)
@@ -213,7 +214,7 @@ class Provider(api.ApiStub, ABC):
         )
         result = await self.post_submit(
             post_submit_request=api.PostSubmitRequest(
-                transaction=signed_tx, skip_pre_flight=skip_pre_flight
+                transaction=signed_tx, skip_pre_flight=skip_pre_flight, timestamp=timestamp()
             )
         )
         return result.signature
@@ -256,7 +257,7 @@ class Provider(api.ApiStub, ABC):
         )
         result = await self.post_submit(
             post_submit_request=api.PostSubmitRequest(
-                transaction=signed_tx, skip_pre_flight=skip_pre_flight
+                transaction=signed_tx, skip_pre_flight=skip_pre_flight, timestamp=timestamp()
             )
         )
         return result.signature
@@ -301,7 +302,7 @@ class Provider(api.ApiStub, ABC):
         )
         result = await self.post_submit(
             post_submit_request=api.PostSubmitRequest(
-                transaction=signed_tx, skip_pre_flight=skip_pre_flight
+                transaction=signed_tx, skip_pre_flight=skip_pre_flight, timestamp=timestamp()
             )
         )
         return result.signature
@@ -347,7 +348,7 @@ class Provider(api.ApiStub, ABC):
 
         return await self.post_submit_batch(
             post_submit_batch_request=api.PostSubmitBatchRequest(
-                entries=signed_txs, submit_strategy=submit_strategy
+                entries=signed_txs, submit_strategy=submit_strategy, timestamp=timestamp()
             )
         )
 
@@ -388,7 +389,7 @@ class Provider(api.ApiStub, ABC):
 
         return await self.post_submit_batch(
             post_submit_batch_request=api.PostSubmitBatchRequest(
-                entries=signed_txs, submit_strategy=submit_strategy
+                entries=signed_txs, submit_strategy=submit_strategy, timestamp=timestamp()
             )
         )
 
@@ -422,7 +423,7 @@ class Provider(api.ApiStub, ABC):
 
         result = await self.post_submit(
             post_submit_request=api.PostSubmitRequest(
-                transaction=signed_tx, skip_pre_flight=skip_pre_flight
+                transaction=signed_tx, skip_pre_flight=skip_pre_flight, timestamp=timestamp()
             )
         )
 
@@ -458,7 +459,7 @@ class Provider(api.ApiStub, ABC):
 
         result = await self.post_submit(
             post_submit_request=api.PostSubmitRequest(
-                transaction=signed_tx, skip_pre_flight=skip_pre_flight
+                transaction=signed_tx, skip_pre_flight=skip_pre_flight, timestamp=timestamp()
             )
         )
 
@@ -494,7 +495,7 @@ class Provider(api.ApiStub, ABC):
 
         result = await self.post_submit(
             post_submit_request=api.PostSubmitRequest(
-                transaction=signed_tx, skip_pre_flight=skip_pre_flight
+                transaction=signed_tx, skip_pre_flight=skip_pre_flight, timestamp=timestamp()
             )
         )
 
@@ -530,7 +531,7 @@ class Provider(api.ApiStub, ABC):
 
         result = await self.post_submit(
             post_submit_request=api.PostSubmitRequest(
-                transaction=signed_tx, skip_pre_flight=skip_pre_flight
+                transaction=signed_tx, skip_pre_flight=skip_pre_flight, timestamp=timestamp()
             )
         )
 
@@ -568,7 +569,7 @@ class Provider(api.ApiStub, ABC):
 
         result = await self.post_submit(
             post_submit_request=api.PostSubmitRequest(
-                transaction=signed_tx, skip_pre_flight=skip_pre_flight
+                transaction=signed_tx, skip_pre_flight=skip_pre_flight, timestamp=timestamp()
             )
         )
 
@@ -595,7 +596,8 @@ class Provider(api.ApiStub, ABC):
             result = await self.post_submit_snipe_v2(
                 post_submit_snipe_request=api.PostSubmitSnipeRequest(
                     entries=entries,
-                    use_staked_rp_cs=use_staked_rpcs
+                    use_staked_rp_cs=use_staked_rpcs,
+                    timestamp=timestamp()
                 )
             )
             
@@ -615,7 +617,8 @@ class Provider(api.ApiStub, ABC):
                 transaction=api.TransactionMessageV2(
                     content=signed_tx
                 ),
-                revert_protection = revert_protection
+                revert_protection = revert_protection,
+                timestamp=timestamp()
             )
         )
         
