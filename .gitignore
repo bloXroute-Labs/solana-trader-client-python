@@ -132,3 +132,4 @@ test_state.json
 .vscode/
 
 myenv
+**/.DS_Store

@@ -13,6 +13,8 @@ from . import constants
 from .base import Provider
 from .http_error import map_response
 from .package_info import NAME, VERSION
+from ..utils.timestamp import timestamp_rfc3339
+
 
 if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences,PyProtectedMember
@@ -880,8 +882,8 @@ class HttpProvider(Provider):
     ) -> proto.PostSubmitResponse:
         if transaction is None:
             raise ValueError("transaction cannot be omitted")
-
         post_submit_request_dict = post_submit_request.to_dict()
+        post_submit_request_dict["timestamp"] = timestamp_rfc3339()
         if "useStakedRpCs" in post_submit_request_dict:
             post_submit_request_dict["useStakedRPCs"] = (post_submit_request_dict.pop("useStakedRpCs"))
 
@@ -898,9 +900,11 @@ class HttpProvider(Provider):
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
     ) -> proto.PostSubmitBatchResponse:
+        post_submit_batch_request_dict = post_submit_batch_request.to_dict()
+        post_submit_batch_request_dict["timestamp"] = timestamp_rfc3339()
         async with self._session.post(
             f"{self._endpoint}/trade/submit-batch",
-            json=post_submit_batch_request.to_dict(),
+            json=post_submit_batch_request_dict,
         ) as res:
             return await map_response(res, proto.PostSubmitBatchResponse())
 
@@ -914,9 +918,10 @@ class HttpProvider(Provider):
     ) -> proto.PostSubmitResponse:
         if transaction is None:
             raise ValueError("transaction cannot be omitted")
-
+        post_submit_request_dict = post_submit_request.to_dict()
+        post_submit_request_dict["timestamp"] = timestamp_rfc3339()
         async with self._session.post(
-            f"{self._endpoint_v2}/submit", json=post_submit_request.to_dict()
+            f"{self._endpoint_v2}/submit", json=post_submit_request_dict
         ) as res:
             return await map_response(res, proto.PostSubmitResponse())
 
@@ -928,9 +933,11 @@ class HttpProvider(Provider):
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None,
     ) -> proto.PostSubmitBatchResponse:
+        post_submit_batch_request_dict = post_submit_batch_request.to_dict()
+        post_submit_batch_request_dict["timestamp"] = timestamp_rfc3339()
         async with self._session.post(
             f"{self._endpoint_v2}/submit-batch",
-            json=post_submit_batch_request.to_dict(),
+            json=post_submit_batch_request_dict,
         ) as res:
             return await map_response(res, proto.PostSubmitBatchResponse())
 
@@ -975,14 +982,14 @@ class HttpProvider(Provider):
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
     ) -> proto.PostSubmitResponse:
-        request_dict = post_submit_snipe_request.to_dict()
-
-        if "useStakedRpCs" in request_dict:
-            request_dict["useStakedRPCs"] = request_dict.pop("useStakedRpCs")
+        post_submit_snipe_request_dict = post_submit_snipe_request.to_dict()
+        post_submit_snipe_request_dict["timestamp"] = timestamp_rfc3339()
+        if "useStakedRpCs" in post_submit_snipe_request_dict:
+            post_submit_snipe_request_dict["useStakedRPCs"] = post_submit_snipe_request_dict.pop("useStakedRpCs")
 
         async with self._session.post(
             f"{self._endpoint_v2}/submit-snipe",
-            json=request_dict,
+            json=post_submit_snipe_request_dict,
         ) as res:
             return await map_response(res, proto.PostSubmitSnipeResponse())
         
