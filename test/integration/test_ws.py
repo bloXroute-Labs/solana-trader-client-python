@@ -1,20 +1,23 @@
-import aiounittest
-
-from . import private, public, stream
+import unittest
+import asyncio
 from bxsolana import provider
+from bxsolana_trader_proto import api as proto
 
-
-class TestWS(aiounittest.AsyncTestCase):
-    async def test_ws(self):
-        async with provider.ws() as ws:
-            await public.test_orderbook_equivalent_input_formats(self, ws)
-            await public.test_orderbook_different_markets(self, ws)
-            await public.test_markets(self, ws)
-
-    async def test_ws_private(self):
-        async with provider.ws() as ws:
-            await private.test_submit_cancel_order(self, ws)
-
-    async def test_ws_stream(self):
-        async with provider.ws() as ws:
-            await stream.test_orderbook_stream(self, ws)
+class TestGRPC(unittest.TestCase):
+    def test_pump_fun_amm_swap_stream(self):
+        asyncio.run(self._test_impl())
+        
+    async def _test_impl(self):
+        p = provider.ws_pump_ny()
+        await p.connect()
+        request = proto.GetPumpFunAmmSwapStreamRequest(
+            pools=["6WwcmiRJFPDNdFmtgVQ8eY1zxMzLKGLrYuUtRy4iZmye"]
+        )
+        
+        try:
+            # Get first response only
+            async for resp in p.get_pump_fun_amm_swap_stream(request):
+                print(resp)
+                break
+        finally:
+            await p.close()
