@@ -452,6 +452,27 @@ async def get_pump_fun_new_amm_pool_stream(p: provider.Provider) -> bool:
     return False
 
 
+async def get_pump_fun_amm_swap_stream(p: provider.Provider) -> bool:
+    print("streaming new pump swap amm swaps")
+
+    await p.close()
+
+    p = provider.grpc_pump_ny()
+    await p.connect()
+
+    async for resp in p.get_pump_fun_amm_swap_stream(
+        get_pump_fun_amm_swap_stream_request=proto.GetPumpFunAmmSwapStreamRequest(
+            pools=["4w2cysotX6czaUGmmWg13hDpY4QEMG2CzeKYEQyK9Ama"]
+        )
+    ):
+        pprint(resp)
+        await p.close()
+
+        return True if resp.tx_hash is not None else False
+
+    return False
+
+
 async def get_new_raydium_pools_stream(p: provider.Provider) -> bool:
     print("streaming raydium new pool updates without cpmm pools...")
     async for resp in p.get_new_raydium_pools_stream(
