@@ -10,3 +10,5 @@ exclude = "proto"
 [tool.pylint.main]
 # Ignore protobuf generated files
 ignore = ["proto"]
+
+license = {file = "LICENSE"}
