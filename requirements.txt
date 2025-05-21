@@ -32,7 +32,7 @@ jaraco-classes~=3.4.0
 nest-asyncio~=1.6.0
 termcolor~=2.1.0
 bx-jsonrpc-py~=0.2.0
-bxsolana-trader-proto~=0.1.7
+bxsolana-trader-proto==0.1.7
 async-timeout~=4.0.3
 prompt-toolkit~=3.0.48
 
