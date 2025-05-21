@@ -511,6 +511,24 @@ async def get_recent_blockhash_stream(p: provider.Provider) -> bool:
         return True if resp.block_hash is not None else False
     return False
 
+async def get_recent_pump_fun_token() -> proto.GetPumpFunNewTokensStreamResponse:
+    print("getting new pump fun token...")
+    
+    # Don't close the provider inside this function if it's needed elsewhere
+    p = provider.grpc_pump_ny()
+    await p.connect()
+    try:
+        request = proto.GetPumpFunNewTokensStreamRequest()
+        async for resp in p.get_pump_fun_new_tokens_stream(request):
+            return resp
+    except Exception as e:
+        print(f"Error getting pump fun token: {e}")
+        raise
+    finally:
+        await p.close()
+    
+    # If we didn't get any responses
+    return None
 
 async def get_pool_reserve_stream(p: provider.Provider) -> bool:
     print("streaming pool reserves...")
@@ -708,10 +726,13 @@ async def call_pump_fun_trade_swap(p: provider.Provider) -> bool:
     p = provider.http_pump_ny()
     await p.connect()
 
+    new_token = await get_recent_pump_fun_token()
+
     response = await p.submit_pump_fun_swap(
         owner_address=UserEnvironment.public_key,
-        bonding_curve_address="3q1sBYJLF1bKSghg94MWsWb75NXwm2tJymT2f7VXJkju",
-        token_address="5vzEtnMtjYWcKTuhXyoA8tn572SnAsZHH6mJ9rtApump",
+        bonding_curve_address=new_token.bonding_curve,
+        token_address=new_token.mint,
+        creator=new_token.creator,
         token_amount=10,
         sol_threshold=0.0001,
         is_buy=True,
@@ -719,6 +740,8 @@ async def call_pump_fun_trade_swap(p: provider.Provider) -> bool:
         compute_limit=200000,
         tip=1100000,
     )
+
+    await p.close()
 
     print("signature for pump fun swap tx", response)
 
