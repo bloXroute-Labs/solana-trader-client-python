@@ -14,7 +14,7 @@ from helpers import Endpoint, get_markets, get_pools, get_tickers, get_raydium_c
     get_orderbook, get_raydium_pool_reserves, get_market_depth, get_open_orders, get_transaction, get_recent_blockhash, \
     get_recent_blockhash_offset, get_rate_limit, get_price, get_raydium_pools, get_raydium_prices, get_jupiter_prices, \
     get_unsettled, get_account_balance, get_quotes, get_raydium_quotes, get_raydium_cpmm_quotes, \
-    get_raydium_clmm_quotes, get_jupiter_quotes, get_pump_fun_quotes, get_leader_schedule, orderbook_stream, market_depth_stream, \
+    get_raydium_clmm_quotes, get_jupiter_quotes, get_pump_fun_quotes, orderbook_stream, market_depth_stream, \
     get_tickers_stream, get_prices_stream, get_swaps_stream, get_trades_stream, get_new_raydium_pools_stream, \
     get_new_raydium_pools_stream_cpmm, get_recent_blockhash_stream, get_pool_reserve_stream, \
     get_block_stream, get_priority_fee, get_priority_fee_stream, get_bundle_tip_stream, get_priority_fee_by_program_stream, get_token_accounts, \
@@ -69,8 +69,7 @@ ExampleEndpoints = {
     "get_raydium_clmm_quotes": Endpoint(func=get_raydium_clmm_quotes, requires_additional_env_vars=False),
     "get_jupiter_quotes": Endpoint(func=get_jupiter_quotes, requires_additional_env_vars=False),
     "get_pump_fun_quotes": Endpoint(func=get_pump_fun_quotes, requires_additional_env_vars=False),
-    "get_leader_schedule": Endpoint(func=get_leader_schedule, requires_additional_env_vars=False),
-
+    
     # streaming endpoints
     "orderbook_stream": Endpoint(func=orderbook_stream, requires_additional_env_vars=False),
     "market_depth_stream": Endpoint(func=market_depth_stream, requires_additional_env_vars=False),
