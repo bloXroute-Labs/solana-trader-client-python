@@ -739,6 +739,58 @@ async def call_pump_fun_trade_swap(p: provider.Provider) -> bool:
 
     return True if response != "" else False
 
+async def get_pump_fun_amm_quotes(p: provider.Provider) -> bool:
+    print("calling get_pump_fun_amm_quotes...")
+
+    await p.close()
+
+    p = provider.http_pump_ny()
+    await p.connect()
+
+    response = await p.get_pump_fun_amm_quotes(
+        get_pump_fun_amm_quotes_request=proto.GetPumpFunAmmQuotesRequest(
+            in_token="So11111111111111111111111111111111111111112",
+            in_amount=10,
+            out_token="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+            pool="Gf7sXMoP8iRw4iiXmJ1nq4vxcRycbGXy5RL8a8LnTd3v",
+            slippage=0.9
+        )
+    )
+
+    await p.close()
+
+    print("get_pump_fun_amm_quotes response", response)
+
+    return True if response != "" else False
+
+async def post_pump_fun_amm_swap(p: provider.Provider) -> bool:
+    print("calling post_pump_fun_amm_swap...")
+
+    await p.close()
+
+    p = provider.http_pump_ny()
+    await p.connect()
+
+    response = await p.post_pump_fun_amm_swap(
+        post_pump_fun_amm_swap_request=proto.PostPumpFunAmmSwapRequest(
+            owner_address=UserEnvironment.public_key,
+            in_token="So11111111111111111111111111111111111111112",
+            in_amount=10,
+            out_token="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+            pool="Gf7sXMoP8iRw4iiXmJ1nq4vxcRycbGXy5RL8a8LnTd3v",
+            slippage=0.9,
+            compute_limit=130000,
+            compute_price=100000,
+            tip=1000000,
+        )
+    )
+
+    await p.close()
+
+    print("post_pump_fun_amm_swap response", response)
+
+    return True if response != "" else False
+
 async def create_personal_tx_and_submit(p: provider.Provider) -> bool:
     print("creating own transaction and submitting to trader api... ")
 
