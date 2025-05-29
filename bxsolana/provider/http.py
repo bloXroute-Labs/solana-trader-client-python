@@ -1037,6 +1037,37 @@ class HttpProvider(Provider):
         ) as res:
             return await map_response(res, proto.PostPumpFunSwapResponse())
         
+    async def get_pump_fun_amm_quotes(
+        self,
+        get_pump_fun_amm_quotes_request: proto.GetPumpFunAmmQuotesRequest,
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+    ) -> proto.GetPumpFunAmmQuotesResponse:
+        request_dict = get_pump_fun_amm_quotes_request.to_dict()
+
+        async with self._session.post(
+            f"{self._endpoint_v2}/pumpfun/amm/quotes",
+            json=request_dict,
+        ) as res:
+            return await map_response(res, proto.GetPumpFunAmmQuotesResponse())
+        
+    async def post_pump_fun_amm_swap(
+        self, 
+        post_pump_fun_amm_swap_request, 
+        *, 
+        timeout = None, 
+        deadline = None, 
+        metadata = None,
+    ) -> proto.PostPumpFunAmmSwapResponse:
+        request_dict = post_pump_fun_amm_swap_request.to_dict()
+
+        async with self._session.post(
+            f"{self._endpoint_v2}/pumpfun/amm/swap",
+            json=request_dict,
+        ) as res:
+            return await map_response(res, proto.PostPumpFunAmmSwapResponse())
+
     async def post_raydium_swap_instructions(
         self,
         post_raydium_swap_instructions_request: proto.PostRaydiumSwapInstructionsRequest,

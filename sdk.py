@@ -20,7 +20,7 @@ from helpers import Endpoint, get_markets, get_pools, get_tickers, get_raydium_c
     get_block_stream, get_priority_fee, get_priority_fee_stream, get_bundle_tip_stream, get_priority_fee_by_program_stream, get_token_accounts, \
     call_trade_swap, call_route_trade_swap, call_raydium_trade_swap, call_raydium_cpmm_trade_swap, \
     call_raydium_clmm_trade_swap, call_jupiter_trade_swap, call_pump_fun_trade_swap, create_personal_tx_and_submit, call_submit_snipe, \
-    get_pump_fun_new_amm_pool_stream, get_pump_fun_amm_swap_stream
+    get_pump_fun_new_amm_pool_stream, get_pump_fun_amm_swap_stream, get_pump_fun_amm_quotes, post_pump_fun_amm_swap
 
 nest_asyncio.apply()
 init(autoreset=True)
@@ -69,7 +69,8 @@ ExampleEndpoints = {
     "get_raydium_clmm_quotes": Endpoint(func=get_raydium_clmm_quotes, requires_additional_env_vars=False),
     "get_jupiter_quotes": Endpoint(func=get_jupiter_quotes, requires_additional_env_vars=False),
     "get_pump_fun_quotes": Endpoint(func=get_pump_fun_quotes, requires_additional_env_vars=False),
-    
+    "get_pump_fun_amm_quotes": Endpoint(func=get_pump_fun_amm_quotes, requires_additional_env_vars=False),
+
     # streaming endpoints
     "orderbook_stream": Endpoint(func=orderbook_stream, requires_additional_env_vars=False),
     "market_depth_stream": Endpoint(func=market_depth_stream, requires_additional_env_vars=False),
@@ -100,6 +101,7 @@ ExampleEndpoints = {
     "raydium_clmm_swap": Endpoint(func=call_raydium_clmm_trade_swap, requires_additional_env_vars=True),
     "jupiter_swap": Endpoint(func=call_jupiter_trade_swap, requires_additional_env_vars=True),
     "pump_fun_swap": Endpoint(func=call_pump_fun_trade_swap, requires_additional_env_vars=True),
+    "pump_fun_amm_swap": Endpoint(func=post_pump_fun_amm_swap, requires_additional_env_vars=True),
     "create_custom_bloxroute_transfer": Endpoint(func=create_personal_tx_and_submit, requires_additional_env_vars=True),
     "submit_snipe": Endpoint(func=call_submit_snipe, requires_additional_env_vars=True),
     "call_place_order_bundle_paladin": Endpoint(func=call_place_order_bundle_paladin, requires_additional_env_vars=True)
