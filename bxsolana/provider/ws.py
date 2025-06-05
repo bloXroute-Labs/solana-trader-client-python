@@ -1,6 +1,7 @@
 import dataclasses
 import os
 import re
+import warnings
 from typing import AsyncGenerator, Dict, Optional, TYPE_CHECKING, Type
 
 import jsonrpc
@@ -37,6 +38,9 @@ class WsProvider(Provider):
         private_key: Optional[str] = None,
         request_timeout_s: Optional[int] = None,
     ):
+        if endpoint.startswith("wss://"):
+            warnings.warn(constants.warning_tls_slowdown)
+            
         self._endpoint = endpoint
 
         if auth_header is None:

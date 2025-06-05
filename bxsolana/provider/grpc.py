@@ -1,4 +1,5 @@
 import os
+import warnings
 from typing import Optional
 
 from grpclib import client
@@ -22,7 +23,7 @@ class GrpcProvider(Provider):
 
     def __init__(
         self,
-        host: str = constants.MAINNET_API_UK_GRPC_HOST,
+        host: str = constants.MAINNET_API_NY_GRPC_HOST,
         port: int = constants.MAINNET_API_GRPC_PORT,
         private_key: Optional[str] = None,
         auth_header: Optional[str] = None,
@@ -30,6 +31,8 @@ class GrpcProvider(Provider):
         *,
         timeout: Optional[float] = None,
     ):
+        if use_ssl:
+            warnings.warn(constants.warning_tls_slowdown)
         self._host = host
         self._port = port
         self._use_ssl = use_ssl

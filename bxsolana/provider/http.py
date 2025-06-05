@@ -1,5 +1,6 @@
 import os
 from typing import Type, AsyncGenerator, Optional, TYPE_CHECKING, List, Any
+import warnings
 
 import aiohttp
 
@@ -38,6 +39,9 @@ class HttpProvider(Provider):
         auth_header: Optional[str] = None,
         private_key: Optional[str] = None,
     ):
+        if endpoint.startswith("https://"):
+            warnings.warn(constants.warning_tls_slowdown)
+
         self._endpoint = f'{endpoint}/api/v1'
         self._endpoint_v2 = f'{endpoint}/api/v2'
         if auth_header is None:
