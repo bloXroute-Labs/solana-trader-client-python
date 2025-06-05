@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import Enum, auto
 
 warning_tls_slowdown = "Performance Notice: Secure (TLS) endpoints may introduce latency due to handshake overhead. For optimal trading speed, consider using non-secure endpoints when appropriate."
 
@@ -12,6 +12,10 @@ _mainnet_pump_ny = "pump-ny.solana.dex.blxrbdn.com"
 _mainnet_pump_uk = "pump-uk.solana.dex.blxrbdn.com"
 _testnet = "solana.dex.bxrtest.com"
 _devnet = "solana-trader-api-nlb-6b0f765f2fc759e1.elb.us-east-1.amazonaws.com"
+
+class Region(Enum):
+    NY="NY"
+    UK="UK"
 
 def http_endpoint(base: str, secure: bool) -> str:
     prefix = "https" if secure else "http"
