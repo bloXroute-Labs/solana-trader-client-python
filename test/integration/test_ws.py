@@ -1,5 +1,10 @@
 import unittest
 import asyncio
+import sys
+import os
+# Use local changes when testing
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
+
 from bxsolana import provider
 from bxsolana_trader_proto import api as proto
 
@@ -11,7 +16,7 @@ class TestGRPC(unittest.TestCase):
         p = provider.ws_pump_ny()
         await p.connect()
         request = proto.GetPumpFunAmmSwapStreamRequest(
-            pools=["6WwcmiRJFPDNdFmtgVQ8eY1zxMzLKGLrYuUtRy4iZmye"]
+            pools=["Ef7wUrbarRXHNMMgBs8cstSkzRttnstjMsniaq7zMp6j"]
         )
         
         try:

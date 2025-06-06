@@ -1,76 +1,134 @@
-from enum import Enum, auto
+from enum import Enum
+from typing import Tuple
 
-warning_tls_slowdown = "Performance Notice: Secure (TLS) endpoints may introduce latency due to handshake overhead. For optimal trading speed, consider using non-secure endpoints when appropriate."
+# Warning messages
+WARNING_TLS_SLOWDOWN = "Performance Notice: Secure (TLS) endpoints may introduce latency due to handshake overhead. For optimal trading speed, consider using non-secure endpoints when appropriate."
 
-_mainnet_ny = "ny.solana.dex.blxrbdn.com"
-_mainnet_uk = "uk.solana.dex.blxrbdn.com"
-_mainnet_la = "la.solana.dex.blxrbdn.com"
-_mainnet_frankfurt = "germany.solana.dex.blxrbdn.com"
-_mainnet_amsterdam = "amsterdam.solana.dex.blxrbdn.com"
-_mainnet_tokyo = "tokyo.solana.dex.blxrbdn.com"
-_mainnet_pump_ny = "pump-ny.solana.dex.blxrbdn.com"
-_mainnet_pump_uk = "pump-uk.solana.dex.blxrbdn.com"
-_testnet = "solana.dex.bxrtest.com"
-_devnet = "solana-trader-api-nlb-6b0f765f2fc759e1.elb.us-east-1.amazonaws.com"
-
-class Region(Enum):
-    NY="NY"
-    UK="UK"
-
-def http_endpoint(base: str, secure: bool) -> str:
-    prefix = "https" if secure else "http"
-    return f"{prefix}://{base}"
-
-def ws_endpoint(base: str, secure: bool) -> str:
-    prefix = "wss" if secure else "ws"
-    return f"{prefix}://{base}/ws"
-
-# GRPC defined as host and port
-MAINNET_API_GRPC_PORT = 80
-MAINNET_API_GRPC_PORT_SECURE = 443
-
-MAINNET_API_NY_GRPC_HOST = _mainnet_ny
-MAINNET_API_PUMP_NY_GRPC_HOST = _mainnet_pump_ny
-MAINNET_API_UK_GRPC_HOST = _mainnet_uk
-MAINNET_API_PUMP_UK_GRPC_HOST = _mainnet_uk
-MAINNET_API_LA_GRPC_HOST = _mainnet_la
-MAINNET_API_AMS_GRPC_HOST = _mainnet_amsterdam
-MAINNET_API_FRANKFURT_GRPC_HOST = _mainnet_frankfurt
-MAINNET_API_TOKYO_GRPC_HOST = _mainnet_tokyo
-
-_bases = {
-    "NY": _mainnet_ny,
-    "PUMP_NY": _mainnet_pump_ny,
-    "UK": _mainnet_uk,
-    "PUMP_UK": _mainnet_pump_uk,
-    "LA": _mainnet_la,
-    "AMS": _mainnet_amsterdam,
-    "TOKYO": _mainnet_tokyo,
-    "FRANKFURT": _mainnet_frankfurt,
+# Base hostnames
+_HOSTS = {
+    "ny": "ny.solana.dex.blxrbdn.com",
+    "uk": "uk.solana.dex.blxrbdn.com", 
+    "la": "la.solana.dex.blxrbdn.com",
+    "frankfurt": "germany.solana.dex.blxrbdn.com",
+    "amsterdam": "amsterdam.solana.dex.blxrbdn.com",
+    "tokyo": "tokyo.solana.dex.blxrbdn.com",
+    "pump_ny": "pump-ny.solana.dex.blxrbdn.com",
+    "pump_uk": "pump-uk.solana.dex.blxrbdn.com",
+    "testnet": "solana.dex.bxrtest.com",
+    "devnet": "solana-trader-api-nlb-6b0f765f2fc759e1.elb.us-east-1.amazonaws.com",
 }
 
-# Create insecure endpoints
-for key, base in _bases.items():
-    globals()[f"MAINNET_API_{key}_HTTP"] = http_endpoint(base, False)
-    globals()[f"MAINNET_API_{key}_WS"] = ws_endpoint(base, False)
+class Region(Enum):
+    NY = "NY"
+    UK = "UK"
+    LA = "LA"
+    AMS = "AMS"
+    TOKYO = "TOKYO"
+    FRANKFURT = "FRANKFURT"
 
-# Create secure endpoints
-for key, base in _bases.items():
-    globals()[f"MAINNET_API_{key}_HTTP_SECURE"] = http_endpoint(base, True)
-    globals()[f"MAINNET_API_{key}_WS_SECURE"] = ws_endpoint(base, True)
+class ConnectionType(Enum):
+    GRPC = "gRPC"
+    HTTP = "HTTP" 
+    WS = "WS"
 
-# Testnet and Devnet
-TESTNET_API_HTTP = http_endpoint(_testnet, True)
-TESTNET_API_WS = ws_endpoint(_testnet, True)
-TESTNET_API_GRPC_HOST = _testnet
-TESTNET_API_GRPC_PORT = 443
+# Port constants
+GRPC_PORT_INSECURE = 80
+GRPC_PORT_SECURE = 443
+TESTNET_GRPC_PORT = 443
+DEVNET_GRPC_PORT = 80
+LOCAL_GRPC_PORT = 9000
 
-DEVNET_API_HTTP = http_endpoint(_devnet, False)
-DEVNET_API_WS = ws_endpoint(_devnet, False)
-DEVNET_API_GRPC_HOST = _devnet
-DEVNET_API_GRPC_PORT = 80
+def _build_endpoint(host: str, connection: ConnectionType, secure: bool) -> str:
+    """Build endpoint URL based on connection type and security."""
+    if connection == ConnectionType.HTTP:
+        prefix = "https" if secure else "http"
+        return f"{prefix}://{host}"
+    elif connection == ConnectionType.WS:
+        prefix = "wss" if secure else "ws"
+        return f"{prefix}://{host}/ws"
+    else:
+        raise ValueError(f"Unsupported connection type for URL building: {connection}")
 
-LOCAL_API_HTTP = "http://127.0.0.1:9000"
-LOCAL_API_WS = "ws://127.0.0.1:9000/ws"
-LOCAL_API_GRPC_HOST = "127.0.0.1"
-LOCAL_API_GRPC_PORT = 9000
+def get_endpoint(region: Region, connection: ConnectionType, secure: bool = True, pump: bool = False) -> str | Tuple[str, int]:
+    """
+    Get endpoint for specified region, connection type, and TLS settings.
+    
+    Args:
+        region: Target region
+        connection: Connection type (HTTP, WS, or GRPC)
+        secure: Whether to use secure connection
+        pump: Whether to use pump-specific endpoints
+        
+    Returns:
+        For HTTP/WS: URL string
+        For GRPC: Tuple of (host, port)
+    """
+    # Handle pump endpoints
+    if pump:
+        if region == Region.NY:
+            host = _HOSTS["pump_ny"]
+        elif region == Region.UK:
+            host = _HOSTS["pump_uk"]
+        else:
+            raise ValueError(f"Pump endpoints not supported for region {region.value}")
+    else:
+        # Map regions to hosts
+        region_map = {
+            Region.NY: _HOSTS["ny"],
+            Region.UK: _HOSTS["uk"],
+            Region.LA: _HOSTS["la"],
+            Region.AMS: _HOSTS["amsterdam"],
+            Region.TOKYO: _HOSTS["tokyo"],
+            Region.FRANKFURT: _HOSTS["frankfurt"],
+        }
+        
+        if region not in region_map:
+            raise ValueError(f"Unknown region: {region.value}")
+        
+        host = region_map[region]
+    
+    # Return based on connection type
+    if connection == ConnectionType.GRPC:
+        port = GRPC_PORT_SECURE if secure else GRPC_PORT_INSECURE
+        return host, port
+    else:
+        return _build_endpoint(host, connection, secure)
+
+# Convenience functions for backward compatibility
+def get_grpc_endpoint(region: Region, secure: bool = False, pump: bool = False) -> Tuple[str, int]:
+    """Get GRPC endpoint as (host, port) tuple."""
+    return get_endpoint(region, ConnectionType.GRPC, secure, pump)
+
+def get_http_endpoint(region: Region, secure: bool = False, pump: bool = False) -> str:
+    """Get HTTP endpoint URL."""
+    return get_endpoint(region, ConnectionType.HTTP, secure, pump)
+
+def get_ws_endpoint(region: Region, secure: bool = False, pump: bool = False) -> str:
+    """Get WebSocket endpoint URL."""
+    return get_endpoint(region, ConnectionType.WS, secure, pump)
+
+# Special environment endpoints
+def get_testnet_endpoint(connection: ConnectionType, secure: bool = False) -> str | Tuple[str, int]:
+    """Get testnet endpoint (always secure)."""
+    host = _HOSTS["testnet"]
+    if connection == ConnectionType.GRPC:
+        return host, TESTNET_GRPC_PORT
+    else:
+        return _build_endpoint(host, connection, secure=secure)
+
+def get_devnet_endpoint(connection: ConnectionType, secure: bool = False) -> str | Tuple[str, int]:
+    """Get devnet endpoint (always insecure)."""
+    host = _HOSTS["devnet"]
+    if connection == ConnectionType.GRPC:
+        return host, DEVNET_GRPC_PORT
+    else:
+        return _build_endpoint(host, connection, secure=secure)
+
+def get_local_endpoint(connection: ConnectionType) -> str | Tuple[str, int]:
+    """Get local development endpoint."""
+    if connection == ConnectionType.GRPC:
+        return "127.0.0.1", LOCAL_GRPC_PORT
+    elif connection == ConnectionType.HTTP:
+        return "http://127.0.0.1:9000"
+    elif connection == ConnectionType.WS:
+        return "ws://127.0.0.1:9000/ws"

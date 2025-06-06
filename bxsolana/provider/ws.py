@@ -7,6 +7,8 @@ from typing import AsyncGenerator, Dict, Optional, TYPE_CHECKING, Type
 import jsonrpc
 from . import jsonrpc_patch  # noqa: F401, Used for side-effect patching
 from solders import keypair as kp # pyre-ignore[21]: module is too hard to find
+import asyncio
+import websockets
 
 from . import Provider, constants
 from .. import transaction
@@ -33,15 +35,19 @@ class WsProvider(Provider):
 
     def __init__(
         self,
-        endpoint: str = constants.MAINNET_API_NY_WS,
+        endpoint: str = constants.get_ws_endpoint(constants.Region.NY, secure=False),
         auth_header: Optional[str] = None,
         private_key: Optional[str] = None,
         request_timeout_s: Optional[int] = None,
+        keep_alive_ping_interval: Optional[int] = 30,
     ):
         if endpoint.startswith("wss://"):
             warnings.warn(constants.warning_tls_slowdown)
             
         self._endpoint = endpoint
+
+        self._ping_interval = keep_alive_ping_interval
+        self._keep_alive_task = None
 
         if auth_header is None:
             auth_header = os.environ["AUTH_HEADER"]
@@ -66,11 +72,32 @@ class WsProvider(Provider):
 
     async def connect(self):
         await self._ws.connect()
+        self._keep_alive_task = asyncio.create_task(self._ping_loop())
+
+    async def _ping_loop(self):
+        """Send periodic pings to keep connection alive"""
+        if self._ping_interval is None:
+            return 
+        while True:
+            try:
+                await asyncio.sleep(self._ping_interval)
+                if hasattr(self._ws, '_websocket') and self._ws._websocket:
+                    await self._ws._websocket.ping()
+            except (websockets.exceptions.ConnectionClosed, AttributeError):
+                break
+            except Exception:
+                continue
 
     def private_key(self) -> Optional[kp.Keypair]:
         return self._private_key
-
+    
     async def close(self):
+        if self._keep_alive_task:
+            self._keep_alive_task.cancel()
+            try:
+                await self._keep_alive_task
+            except asyncio.CancelledError:
+                pass
         await self._ws.close()
 
     async def _unary_unary(
@@ -120,32 +147,29 @@ def _ws_endpoint(route: str) -> str:
     return route.split("/")[-1]
 
 
-def ws(region: Optional[constants.Region] = None) -> WsProvider:
-    # Default to UK if no region specified
-    if region is None or region == constants.Region.UK:
-        endpoint = constants.MAINNET_API_UK_WS
-    elif region == constants.Region.NY:
-        endpoint = constants.MAINNET_API_NY_WS
-    else:
-        raise ValueError(f"Unsupported region: {region}")
-
-    # Pass the appropriate endpoint to WsProvider
+def ws(region: Optional[constants.Region] = constants.Region.NY, secure: Optional[bool] = False) -> WsProvider:
+    endpoint = constants.get_ws_endpoint(region, secure=secure)
     return WsProvider(endpoint=endpoint)
 
-def ws_pump_ny() -> Provider:
-    return WsProvider(endpoint=constants.MAINNET_API_PUMP_NY_WS)
+def ws_pump_ny(secure: Optional[bool] = False) -> Provider:
+    endpoint = constants.get_ws_endpoint(constants.Region.NY, secure=secure, pump=True)
+    return WsProvider(endpoint=endpoint)
 
+def ws_pump_uk(secure: Optional[bool] = False) -> Provider:
+    endpoint = constants.get_ws_endpoint(constants.Region.UK, secure=secure, pump=True)
+    return WsProvider(endpoint=endpoint)
 
-def ws_testnet() -> Provider:
-    return WsProvider(endpoint=constants.TESTNET_API_WS)
+def ws_testnet(secure: Optional[bool] = False) -> Provider:
+    endpoint = constants.get_testnet_endpoint(constants.ConnectionType.WS, secure=secure)
+    return WsProvider(endpoint=endpoint)
 
-
-def ws_devnet() -> Provider:
-    return WsProvider(endpoint=constants.DEVNET_API_WS)
-
+def ws_devnet(secure: Optional[bool] = False) -> Provider:
+    endpoint = constants.get_devnet_endpoint(constants.ConnectionType.WS, secure=secure)
+    return WsProvider(endpoint=endpoint)
 
 def ws_local() -> Provider:
-    return WsProvider(endpoint=constants.LOCAL_API_WS)
+    endpoint = constants.get_local_endpoint(constants.ConnectionType.WS)
+    return WsProvider(endpoint=endpoint)
 
 
 def _validated_response(response: Dict, response_type: Type["T"]) -> "T":
