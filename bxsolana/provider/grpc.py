@@ -3,6 +3,7 @@ import warnings
 from typing import Optional
 
 from grpclib import client
+from grpclib.config import Configuration
 from solders import keypair as kp # pyre-ignore[21]: module is too hard to find
 
 from .. import transaction
@@ -59,8 +60,14 @@ class GrpcProvider(Provider):
 
     async def connect(self):
         if self.channel is None:
+            config = Configuration(
+                _keepalive_time=15.0,
+                _keepalive_timeout=5.0,
+                _keepalive_permit_without_calls=True,  # PermitWithoutStream equivalent
+            )
+
             self.channel = client.Channel(
-                self._host, self._port, ssl=self._use_ssl
+                self._host, self._port, ssl=self._use_ssl, config=config
             )
             self.metadata = {
                 "authorization": self._auth_header,
