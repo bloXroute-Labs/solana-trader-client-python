@@ -1,5 +1,6 @@
 import os
 from typing import Type, AsyncGenerator, Optional, TYPE_CHECKING, List, Any
+import warnings
 
 import aiohttp
 
@@ -34,16 +35,28 @@ class HttpProvider(Provider):
     # noinspection PyMissingConstructor
     def __init__(
         self,
-        endpoint: str = constants.MAINNET_API_UK_HTTP,
+        endpoint: str = constants.get_http_endpoint(constants.Region.NY, secure=False),
         auth_header: Optional[str] = None,
         private_key: Optional[str] = None,
     ):
+        if endpoint.startswith("https://"):
+            warnings.warn(constants.warning_tls_slowdown)
+
         self._endpoint = f'{endpoint}/api/v1'
         self._endpoint_v2 = f'{endpoint}/api/v2'
         if auth_header is None:
             auth_header = os.environ["AUTH_HEADER"]
 
-        self._session = aiohttp.ClientSession()
+        connector = aiohttp.TCPConnector(
+            keepalive_timeout=0,
+            enable_cleanup_closed=True,
+            limit=200,
+            limit_per_host=200,
+        )
+
+        self._session = aiohttp.ClientSession(
+            connector=connector,
+        )
         self._session.headers["authorization"] = auth_header
         self._session.headers["x-sdk"] = NAME
         self._session.headers["x-sdk-version"] = VERSION
@@ -1115,28 +1128,26 @@ def serialize_projects(projects: List[proto.Project]) -> str:
     return serialize_list("projects", [project.name for project in projects])
 
 
-def http(region: Optional[constants.Region] = None) -> Provider:
-    # default to UK if no region specified
-    if region is None or region == constants.Region.UK:
-        endpoint = constants.MAINNET_API_UK_HTTP
-    elif region == constants.Region.NY:
-        endpoint = constants.MAINNET_API_NY_HTTP
-    else:
-        raise ValueError(f"Unsupported region: {region}")
+def http(region: Optional[constants.Region] = constants.Region.NY, secure: Optional[bool] = False) -> Provider:
+    endpoint = constants.get_http_endpoint(region, secure=secure)
+    return HttpProvider(endpoint=endpoint) 
 
+def http_pump_ny(secure: Optional[bool] = False) -> Provider:
+    endpoint = constants.get_http_endpoint(constants.Region.NY, secure=secure, pump=True)
     return HttpProvider(endpoint=endpoint)
 
-def http_testnet() -> Provider:
-    return HttpProvider(endpoint=constants.TESTNET_API_HTTP)
+def http_pump_uk(secure: Optional[bool] = False) -> Provider:
+    endpoint = constants.get_http_endpoint(constants.Region.UK, secure=secure, pump=True)
+    return HttpProvider(endpoint=endpoint)
 
+def http_testnet(secure: Optional[bool] = False) -> Provider:
+    endpoint = constants.get_testnet_endpoint(constants.ConnectionType.HTTP, secure=secure)
+    return HttpProvider(endpoint=endpoint)
 
-def http_devnet() -> Provider:
-    return HttpProvider(endpoint=constants.DEVNET_API_HTTP)
-
-
-def http_pump_ny() -> Provider:
-    return HttpProvider(endpoint=constants.MAINNET_API_PUMP_NY_HTTP)
-
+def http_devnet(secure: Optional[bool] = False) -> Provider:
+    endpoint = constants.get_devnet_endpoint(constants.ConnectionType.HTTP, secure=secure)
+    return HttpProvider(endpoint=endpoint)
 
 def http_local() -> Provider:
-    return HttpProvider(endpoint=constants.LOCAL_API_HTTP)
+    endpoint = constants.get_local_endpoint(constants.ConnectionType.HTTP)
+    return HttpProvider(endpoint=endpoint)

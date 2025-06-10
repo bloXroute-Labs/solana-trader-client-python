@@ -1,7 +1,9 @@
 import os
+import warnings
 from typing import Optional
 
 from grpclib import client
+from grpclib.config import Configuration
 from solders import keypair as kp # pyre-ignore[21]: module is too hard to find
 
 from .. import transaction
@@ -22,14 +24,17 @@ class GrpcProvider(Provider):
 
     def __init__(
         self,
-        host: str = constants.MAINNET_API_UK_GRPC_HOST,
-        port: int = constants.MAINNET_API_GRPC_PORT,
+        host: str = constants._HOSTS["ny"],
+        port: int = constants.GRPC_PORT_INSECURE,
         private_key: Optional[str] = None,
         auth_header: Optional[str] = None,
         use_ssl: bool = False,
         *,
         timeout: Optional[float] = None,
     ):
+        if use_ssl:
+             warnings.warn(constants.WARNING_TLS_SLOWDOWN)
+             
         self._host = host
         self._port = port
         self._use_ssl = use_ssl
@@ -55,66 +60,88 @@ class GrpcProvider(Provider):
 
     async def connect(self):
         if self.channel is None:
+            config = Configuration(
+                _keepalive_time=15.0,
+                _keepalive_timeout=5.0,
+                _keepalive_permit_without_calls=True,  # PermitWithoutStream equivalent
+            )
+
             self.channel = client.Channel(
-                self._host, self._port, ssl=self._use_ssl
+                self._host, self._port, ssl=self._use_ssl, config=config
             )
             self.metadata = {
                 "authorization": self._auth_header,
                 "x-sdk": NAME,
-                "s-sdk-version": VERSION,
+                "x-sdk-version": VERSION,
             }
 
     def private_key(self) -> Optional[kp.Keypair]:
         return self._private_key
 
     async def close(self):
-        channel = self.channel
-        if channel is not None:
+        if self.channel is not None:
             self.channel.close()
+            self.channel = None
 
 
-def grpc(auth_header: Optional[str] = None, region: Optional[constants.Region] = None) -> GrpcProvider:
-    # Default to UK if no region specified
-    if region is None or region == constants.Region.UK:
-        host = constants.MAINNET_API_UK_GRPC_HOST
-    elif region == constants.Region.NY:
-        host = constants.MAINNET_API_NY_GRPC_HOST
-    else:
-        raise ValueError(f"Unsupported region: {region}")
-
+def grpc(auth_header: Optional[str] = None, private_key: Optional[str] = None, region: Optional[constants.Region] = constants.Region.NY, secure: Optional[bool] = False) -> GrpcProvider:
+    host, port = constants.get_grpc_endpoint(region, secure)
     return GrpcProvider(
         host=host,
-        port=constants.MAINNET_API_GRPC_PORT,
-        use_ssl=True
+        port=port,
+        use_ssl=secure,
+        private_key=private_key,
+        auth_header=auth_header
     )
 
-def grpc_pump_ny(auth_header: Optional[str] = None) -> Provider:
+def grpc_pump_ny(auth_header: Optional[str] = None, private_key: Optional[str] = None, secure: Optional[bool] = False) -> Provider:
+    host, port = constants.get_grpc_endpoint(constants.Region.NY, secure, pump=True)
     return GrpcProvider(
-        host=constants.MAINNET_API_PUMP_NY_GRPC_HOST,
+        host=host,
+        port=port,
         auth_header=auth_header,
-        use_ssl=True,
+        private_key=private_key,
+        use_ssl=secure,
     )
 
-
-def grpc_testnet(auth_header: Optional[str] = None) -> Provider:
+def grpc_pump_uk(auth_header: Optional[str] = None, private_key: Optional[str] = None, secure: Optional[bool] = False) -> Provider:
+    host, port = constants.get_grpc_endpoint(constants.Region.UK, secure, pump=True)
     return GrpcProvider(
-        host=constants.TESTNET_API_GRPC_HOST,
-        port=constants.TESTNET_API_GRPC_PORT,
+        host=host,
+        port=port,
         auth_header=auth_header,
+        private_key=private_key,
+        use_ssl=secure,
     )
 
 
-def grpc_devnet(auth_header: Optional[str] = None) -> Provider:
+def grpc_testnet(auth_header: Optional[str] = None, private_key: Optional[str] = None, secure: Optional[bool] = False) -> Provider:
+    host, port = constants.get_testnet_endpoint(constants.ConnectionType.GRPC, secure=secure)
     return GrpcProvider(
-        host=constants.DEVNET_API_GRPC_HOST,
-        port=constants.DEVNET_API_GRPC_PORT,
+        host=host,
+        port=port,
         auth_header=auth_header,
+        private_key=private_key,
+        use_ssl=secure
     )
 
 
-def grpc_local(auth_header: Optional[str] = None) -> Provider:
+def grpc_devnet(auth_header: Optional[str] = None, private_key: Optional[str] = None, secure: Optional[bool] = False) -> Provider:
+    host, port = constants.get_devnet_endpoint(constants.ConnectionType.GRPC, secure=secure)
+    return GrpcProvider(
+        host=host,
+        port=port,
+        private_key=private_key,
+        auth_header=auth_header,
+        use_ssl=secure
+    )
+
+
+def grpc_local(auth_header: Optional[str] = None, private_key: Optional[str] = None) -> Provider:
     return GrpcProvider(
         host=constants.LOCAL_API_GRPC_HOST,
         port=constants.LOCAL_API_GRPC_PORT,
+        private_key=private_key,
         auth_header=auth_header,
+        use_ssl=False
     )
