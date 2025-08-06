@@ -63,7 +63,9 @@ class GrpcProvider(Provider):
             config = Configuration(
                 _keepalive_time=15.0,
                 _keepalive_timeout=5.0,
-                _keepalive_permit_without_calls=True,  # PermitWithoutStream equivalent
+                _keepalive_permit_without_calls=True,       # PermitWithoutStream equivalent
+                http2_stream_window_size=1024*1024,         # 1mb
+                http2_connection_window_size=16*1024*1024,  # 16MB
             )
 
             self.channel = client.Channel(
