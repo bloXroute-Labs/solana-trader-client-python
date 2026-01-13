@@ -21,7 +21,6 @@ AUTH_HEADER: bloXRoute Auth Header
 PRIVATE_KEY: solana signing key to be used for examples
 PUBLIC_KEY: solana public key to be used for examples (default `payer` if not specified)
 PAYER: payer responsible for transaction fees (optional)
-OPEN_ORDERS: openbook open orders address (optional)
 ```
 
 Once your environment is set run

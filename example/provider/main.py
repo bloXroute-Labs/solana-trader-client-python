@@ -52,20 +52,6 @@ async def http():
             api,
             pny_api,
             examples.PUBLIC_KEY,
-            examples.OPEN_ORDERS,
-            examples.ORDER_ID,
-            examples.USDC_WALLET,
-            examples.MARKET,
-        )
-        await examples.do_transaction_requests(
-            api,
-            RUN_TRADES,
-            examples.PUBLIC_KEY,
-            examples.PUBLIC_KEY,
-            examples.OPEN_ORDERS,
-            examples.ORDER_ID,
-            examples.USDC_WALLET,
-            examples.MARKET,
         )
     except Exception as e:
         print(e)
@@ -90,22 +76,7 @@ async def ws():
                 api,
                 pnyy,
                 examples.PUBLIC_KEY,
-                examples.OPEN_ORDERS,
-                examples.ORDER_ID,
-                examples.USDC_WALLET,
-                examples.MARKET,
             )
-            await examples.do_transaction_requests(
-                api,
-                RUN_TRADES,
-                examples.PUBLIC_KEY,
-                examples.PUBLIC_KEY,
-                examples.OPEN_ORDERS,
-                examples.ORDER_ID,
-                examples.USDC_WALLET,
-                examples.MARKET,
-            )
-
             await examples.do_stream(api, pnyy, RUN_SLOW_STREAMS)
 
 
@@ -125,20 +96,6 @@ async def grpc():
             api,
             pumpny_api,
             examples.PUBLIC_KEY,
-            examples.OPEN_ORDERS,
-            examples.ORDER_ID,
-            examples.USDC_WALLET,
-            examples.MARKET,
-        )
-        await examples.do_transaction_requests(
-            api,
-            RUN_TRADES,
-            examples.PUBLIC_KEY,
-            examples.PUBLIC_KEY,
-            examples.OPEN_ORDERS,
-            examples.ORDER_ID,
-            examples.USDC_WALLET,
-            examples.MARKET,
         )
         await examples.do_stream(api, pumpny_api, RUN_SLOW_STREAMS)
     finally:
